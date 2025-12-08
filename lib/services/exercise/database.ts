@@ -1,7 +1,7 @@
 // Exercise Database Service
-// Adapted for Expo/React Native
+// Using JSON file for React Native compatibility
 
-import { prisma } from '@/lib/db/client';
+import exercisesData from '@/data/exercises.json';
 
 export interface ExerciseDatabaseEntry {
   id: string;
@@ -12,41 +12,29 @@ export interface ExerciseDatabaseEntry {
   videoUrl?: string;
 }
 
-// Cache for exercise database to avoid repeated DB queries
+// Cache for exercise database
 let exerciseDatabaseCache: ExerciseDatabaseEntry[] | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 export async function getExerciseDatabase(): Promise<ExerciseDatabaseEntry[]> {
-  // Check cache first
-  const now = Date.now();
-  if (exerciseDatabaseCache && (now - cacheTimestamp) < CACHE_TTL) {
+  // Return cache if available
+  if (exerciseDatabaseCache) {
     return exerciseDatabaseCache;
   }
 
-  try {
-    // Try to load from database first
-    const dbExercises = await prisma.exerciseDatabase.findMany();
+  // Load from JSON file and add IDs
+  const result: ExerciseDatabaseEntry[] = exercisesData.map((ex: any, index) => ({
+    id: `ex-${index + 1}`,
+    name: ex.name,
+    aliases: ex.aliases || [],
+    category: ex.category,
+    equipment: ex.equipment || [],
+    videoUrl: ex.videoUrl,
+  }));
 
-    const result: ExerciseDatabaseEntry[] = dbExercises.map(ex => ({
-      id: ex.id,
-      name: ex.name,
-      aliases: JSON.parse(ex.aliases),
-      category: ex.category || undefined,
-      equipment: JSON.parse(ex.equipment),
-      videoUrl: ex.videoUrl || undefined,
-    }));
+  // Update cache
+  exerciseDatabaseCache = result;
 
-    // Update cache
-    exerciseDatabaseCache = result;
-    cacheTimestamp = now;
-
-    return result;
-  } catch (error) {
-    console.error('Error loading exercise database:', error);
-    // Return empty array if database is not available
-    return [];
-  }
+  return result;
 }
 
 /**
@@ -54,7 +42,6 @@ export async function getExerciseDatabase(): Promise<ExerciseDatabaseEntry[]> {
  */
 export function clearExerciseDatabaseCache(): void {
   exerciseDatabaseCache = null;
-  cacheTimestamp = 0;
 }
 
 export async function searchExercises(query: string): Promise<ExerciseDatabaseEntry[]> {

@@ -6,7 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { prisma } from '@/lib/db/client';
+import { saveProgram } from '@/lib/db/storage';
 import { parseCSV } from '@/lib/services/parser/csv';
 import { router } from 'expo-router';
 
@@ -50,6 +50,7 @@ export default function UploadScreen() {
       });
 
       if (result.canceled || !result.assets || !result.assets[0]) {
+        setUploading(false);
         return;
       }
 
@@ -59,17 +60,15 @@ export default function UploadScreen() {
       // Parse CSV
       const parsed = await parseCSV(content);
 
-      // Create program
-      const program = await prisma.program.create({
-        data: {
-          userId: 'demo-user', // In real app, use actual user ID
-          name: programName || 'Untitled Program',
-          description: `${parsed.workouts.length} workouts`,
-          sourceFileUri: fileUri,
-          sourceType: 'CSV',
-          status: 'PARSING',
-          parsedData: JSON.stringify(parsed),
-        },
+      // Save program using AsyncStorage
+      await saveProgram({
+        userId: 'demo-user',
+        name: programName || 'Untitled Program',
+        description: `${parsed.workouts.length} workout${parsed.workouts.length !== 1 ? 's' : ''}`,
+        sourceFileUri: fileUri,
+        sourceType: 'CSV',
+        status: 'READY',
+        parsedData: JSON.stringify(parsed),
       });
 
       Alert.alert('Success!', 'Program uploaded successfully', [

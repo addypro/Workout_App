@@ -1,18 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { prisma } from '@/lib/db/client';
-
-interface Program {
-  id: string;
-  name: string;
-  description: string | null;
-  status: string;
-  createdAt: Date;
-}
+import { getPrograms, type Program } from '@/lib/db/storage';
+import { useFocusEffect } from 'expo-router';
 
 export default function ProgramsScreen() {
   const [programs, setPrograms] = useState<Program[]>([]);
@@ -20,17 +13,16 @@ export default function ProgramsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  useEffect(() => {
-    loadPrograms();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadPrograms();
+    }, [])
+  );
 
   async function loadPrograms() {
     try {
-      // In a real app, filter by current user
-      const data = await prisma.program.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 20,
-      });
+      setLoading(true);
+      const data = await getPrograms();
       setPrograms(data);
     } catch (error) {
       console.error('Error loading programs:', error);
