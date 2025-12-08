@@ -1,0 +1,326 @@
+// Prisma Schema for Workout App (Mobile)
+// Adapted from Workout Tracker App for Expo/React Native
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./workout.db"
+}
+
+enum UserRole {
+  CONSUMER
+  COACH
+}
+
+enum SourceType {
+  PDF
+  CSV
+  EXCEL
+  IMAGE
+}
+
+enum ProgramStatus {
+  PARSING
+  MAPPING
+  READY
+  ERROR
+}
+
+enum MembershipTier {
+  FREE
+  BASIC
+  PREMIUM
+}
+
+enum FitnessGoal {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  STRENGTH
+  ENDURANCE
+  GENERAL_FITNESS
+  FLEXIBILITY
+}
+
+enum FitnessLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?
+  password      String    // Hashed password
+  role          UserRole  @default(CONSUMER)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  programs      Program[]
+  profile       UserProfile?
+  workoutLogs   WorkoutLog[]
+  activities    Activity[]
+  bookings      WorkoutSession[]
+  memberships   Membership[]
+  programRatings ProgramRating[]
+  createdChallenges Challenge[] @relation("ChallengeCreator")
+  challengeParticipants ChallengeParticipant[]
+}
+
+model Program {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name          String
+  description   String?
+  sourceFileUri String      // Local file URI
+  sourceType    SourceType
+
+  status        ProgramStatus @default(PARSING)
+  parsedData    String?      // JSON string
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  versions      ProgramVersion[]
+  installLinks  InstallLink[]
+  workoutLogs   WorkoutLog[]
+  sessions      WorkoutSession[]
+  ratings       ProgramRating[]
+}
+
+model ProgramVersion {
+  id          String   @id @default(uuid())
+  programId   String
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  version     Int      @default(1)
+  data        String   // JSON string
+
+  createdAt   DateTime @default(now())
+
+  workouts    Workout[]
+}
+
+model Workout {
+  id          String   @id @default(uuid())
+  versionId   String
+  version     ProgramVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  week        Int
+  day         Int
+  name        String?
+
+  exercises   Exercise[]
+  order       Int      @default(0)
+}
+
+model Exercise {
+  id          String   @id @default(uuid())
+  workoutId   String
+  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+
+  name        String
+  originalName String?
+  mappedExerciseId String?
+  sets        Int
+  reps        String?
+  weight      String?
+  restSeconds Int?
+  notes       String?
+
+  order       Int      @default(0)
+}
+
+model ExerciseDatabase {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  aliases     String   // JSON array
+  category    String?
+  equipment   String   // JSON array
+  videoUrl    String?
+  createdAt   DateTime @default(now())
+}
+
+model InstallLink {
+  id          String   @id @default(uuid())
+  programId   String
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  slug        String   @unique
+  exportUri   String   // Local file URI to CSV
+  installCount Int     @default(0)
+
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model UserProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fitnessGoal   FitnessGoal?
+  fitnessLevel  FitnessLevel?
+  age           Int?
+  height        Float?
+  weight        Float?
+  bio           String?
+  location      String?
+
+  preferredWorkoutTime String?
+  workoutDaysPerWeek Int? @default(3)
+  preferredEquipment String  // JSON array
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model WorkoutLog {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  programId   String?
+  program     Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+  workoutId   String?
+  week        Int?
+  day         Int?
+
+  completedAt DateTime @default(now())
+  duration    Int?
+  notes       String?
+
+  exercises   WorkoutLogExercise[]
+}
+
+model WorkoutLogExercise {
+  id          String   @id @default(uuid())
+  workoutLogId String
+  workoutLog  WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+
+  exerciseName String
+  sets        Int
+  reps        String?
+  weight      String?
+  completed   Boolean  @default(false)
+  notes       String?
+
+  order       Int      @default(0)
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime
+  steps       Int?
+  calories    Int?
+  heartRate   Int?
+  distance    Float?
+  activeMinutes Int?
+
+  source      String?
+  sourceId    String?
+
+  createdAt   DateTime @default(now())
+}
+
+model WorkoutSession {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  programId   String?
+  program     Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
+
+  scheduledAt DateTime
+  duration    Int      @default(60)
+  status      String   @default("scheduled")
+  notes       String?
+
+  reminderSent Boolean @default(false)
+  reminderSentAt DateTime?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Membership {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tier        MembershipTier @default(FREE)
+
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProgramRating {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  programId   String
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  rating      Int
+  review      String?
+  isPublic    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, programId])
+}
+
+model Challenge {
+  id          String   @id @default(uuid())
+  createdById String
+  createdBy   User     @relation("ChallengeCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+
+  goal        String?
+  rules       String?  // JSON
+
+  isActive    Boolean  @default(true)
+  isPublic    Boolean  @default(true)
+
+  participants ChallengeParticipant[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ChallengeParticipant {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  progress    String?  // JSON
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  joinedAt    DateTime @default(now())
+
+  @@unique([userId, challengeId])
+}

@@ -1,98 +1,178 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { useState, useEffect } from 'react';
+import { StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { prisma } from '@/lib/db/client';
 
-export default function HomeScreen() {
+interface Program {
+  id: string;
+  name: string;
+  description: string | null;
+  status: string;
+  createdAt: Date;
+}
+
+export default function ProgramsScreen() {
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+
+  useEffect(() => {
+    loadPrograms();
+  }, []);
+
+  async function loadPrograms() {
+    try {
+      // In a real app, filter by current user
+      const data = await prisma.program.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      });
+      setPrograms(data);
+    } catch (error) {
+      console.error('Error loading programs:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'READY':
+        return '#4CAF50';
+      case 'MAPPING':
+        return '#FF9800';
+      case 'PARSING':
+        return '#2196F3';
+      case 'ERROR':
+        return '#F44336';
+      default:
+        return colors.text;
+    }
+  };
+
+  const renderProgram = ({ item }: { item: Program }) => (
+    <TouchableOpacity
+      style={[styles.programCard, { backgroundColor: colors.background, borderColor: colors.text + '20' }]}
+    >
+      <ThemedView style={styles.programHeader}>
+        <ThemedText type="subtitle" style={styles.programName}>
+          {item.name}
+        </ThemedText>
+        <ThemedView
+          style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '20' }]}
+        >
+          <ThemedText
+            style={[styles.statusText, { color: getStatusColor(item.status) }]}
+          >
+            {item.status}
+          </ThemedText>
+        </ThemedView>
+      </ThemedView>
+      {item.description && (
+        <ThemedText style={styles.description}>{item.description}</ThemedText>
+      )}
+      <ThemedText style={styles.date}>
+        {new Date(item.createdAt).toLocaleDateString()}
+      </ThemedText>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <ActivityIndicator size="large" color={colors.tint} />
+      </ThemedView>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+    <ThemedView style={styles.container}>
+      <ThemedView style={styles.header}>
+        <ThemedText type="title">My Programs</ThemedText>
+        <ThemedText style={styles.subtitle}>
+          {programs.length} program{programs.length !== 1 ? 's' : ''}
         </ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      {programs.length === 0 ? (
+        <ThemedView style={styles.emptyState}>
+          <ThemedText type="subtitle">No programs yet</ThemedText>
+          <ThemedText style={styles.emptyText}>
+            Use the Upload tab to add your first workout program
+          </ThemedText>
+        </ThemedView>
+      ) : (
+        <FlatList
+          data={programs}
+          renderItem={renderProgram}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+        />
+      )}
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    marginBottom: 20,
+    paddingTop: 50,
+  },
+  subtitle: {
+    opacity: 0.6,
+    marginTop: 4,
+  },
+  list: {
+    gap: 12,
+  },
+  programCard: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
+  },
+  programHeader: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  programName: {
+    flex: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  description: {
+    opacity: 0.7,
+    fontSize: 14,
+  },
+  date: {
+    opacity: 0.5,
+    fontSize: 12,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  emptyText: {
+    textAlign: 'center',
+    opacity: 0.6,
+    paddingHorizontal: 32,
   },
 });
