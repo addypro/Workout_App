@@ -5,11 +5,13 @@ import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getPrograms, type Program } from '@/lib/db/storage';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function ProgramsScreen() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -47,7 +49,7 @@ export default function ProgramsScreen() {
   };
 
   const renderProgram = ({ item }: { item: Program }) => (
-    <TouchableOpacity
+    <ThemedView
       style={[styles.programCard, { backgroundColor: colors.background, borderColor: colors.text + '20' }]}
     >
       <ThemedView style={styles.programHeader}>
@@ -70,7 +72,17 @@ export default function ProgramsScreen() {
       <ThemedText style={styles.date}>
         {new Date(item.createdAt).toLocaleDateString()}
       </ThemedText>
-    </TouchableOpacity>
+
+      {item.status === 'READY' && (
+        <TouchableOpacity
+          style={[styles.startButton, { backgroundColor: colors.tint }]}
+          onPress={() => router.push(`/workout/${item.id}`)}
+        >
+          <IconSymbol name="play.fill" size={16} color="#fff" />
+          <ThemedText style={styles.startButtonText}>Start Workout</ThemedText>
+        </TouchableOpacity>
+      )}
+    </ThemedView>
   );
 
   if (loading) {
@@ -166,5 +178,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.6,
     paddingHorizontal: 32,
+  },
+  startButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  startButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
