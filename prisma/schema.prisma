@@ -1,13 +1,13 @@
 // Prisma Schema for Workout App (Mobile)
-// Adapted from Workout Tracker App for Expo/React Native
+// Configured for Supabase PostgreSQL
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./workout.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -52,10 +52,10 @@ enum FitnessLevel {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique
   name          String?
-  password      String    // Hashed password
+  password      String    // Hashed password (use bcrypt!)
   role          UserRole  @default(CONSUMER)
   image         String?
   createdAt     DateTime  @default(now())
@@ -70,20 +70,22 @@ model User {
   programRatings ProgramRating[]
   createdChallenges Challenge[] @relation("ChallengeCreator")
   challengeParticipants ChallengeParticipant[]
+
+  @@map("users")
 }
 
 model Program {
-  id            String      @id @default(uuid())
-  userId        String
+  id            String      @id @default(uuid()) @db.Uuid
+  userId        String      @db.Uuid
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   name          String
   description   String?
-  sourceFileUri String      // Local file URI
+  sourceFileUri String      // Local file URI or Supabase storage path
   sourceType    SourceType
 
   status        ProgramStatus @default(PARSING)
-  parsedData    String?      // JSON string
+  parsedData    Json?        // Native PostgreSQL JSONB
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -93,24 +95,28 @@ model Program {
   workoutLogs   WorkoutLog[]
   sessions      WorkoutSession[]
   ratings       ProgramRating[]
+
+  @@map("programs")
 }
 
 model ProgramVersion {
-  id          String   @id @default(uuid())
-  programId   String
+  id          String   @id @default(uuid()) @db.Uuid
+  programId   String   @db.Uuid
   program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   version     Int      @default(1)
-  data        String   // JSON string
+  data        Json     // Native PostgreSQL JSONB
 
   createdAt   DateTime @default(now())
 
   workouts    Workout[]
+
+  @@map("program_versions")
 }
 
 model Workout {
-  id          String   @id @default(uuid())
-  versionId   String
+  id          String   @id @default(uuid()) @db.Uuid
+  versionId   String   @db.Uuid
   version     ProgramVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
 
   week        Int
@@ -119,16 +125,18 @@ model Workout {
 
   exercises   Exercise[]
   order       Int      @default(0)
+
+  @@map("workouts")
 }
 
 model Exercise {
-  id          String   @id @default(uuid())
-  workoutId   String
+  id          String   @id @default(uuid()) @db.Uuid
+  workoutId   String   @db.Uuid
   workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
 
   name        String
   originalName String?
-  mappedExerciseId String?
+  mappedExerciseId String? @db.Uuid
   sets        Int
   reps        String?
   weight      String?
@@ -136,73 +144,86 @@ model Exercise {
   notes       String?
 
   order       Int      @default(0)
+
+  @@map("exercises")
 }
 
 model ExerciseDatabase {
-  id          String   @id @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   name        String   @unique
-  aliases     String   // JSON array
+  aliases     Json     @default("[]") // PostgreSQL JSONB array
   category    String?
-  equipment   String   // JSON array
+  equipment   Json     @default("[]") // PostgreSQL JSONB array
+  muscleGroups Json?   // Primary and secondary muscle groups
   videoUrl    String?
+  instructions String? // Exercise instructions
   createdAt   DateTime @default(now())
+
+  @@map("exercise_database")
 }
 
 model InstallLink {
-  id          String   @id @default(uuid())
-  programId   String
+  id          String   @id @default(uuid()) @db.Uuid
+  programId   String   @db.Uuid
   program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
   slug        String   @unique
-  exportUri   String   // Local file URI to CSV
+  exportUri   String   // Supabase storage path or local URI
   installCount Int     @default(0)
 
   expiresAt   DateTime?
   createdAt   DateTime @default(now())
+
+  @@map("install_links")
 }
 
 model UserProfile {
-  id            String   @id @default(uuid())
-  userId        String   @unique
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @unique @db.Uuid
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   fitnessGoal   FitnessGoal?
   fitnessLevel  FitnessLevel?
   age           Int?
-  height        Float?
-  weight        Float?
+  height        Float?   // in cm
+  weight        Float?   // in kg
   bio           String?
   location      String?
 
   preferredWorkoutTime String?
   workoutDaysPerWeek Int? @default(3)
-  preferredEquipment String  // JSON array
+  preferredEquipment Json @default("[]") // PostgreSQL JSONB array
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@map("user_profiles")
 }
 
 model WorkoutLog {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  programId   String?
+  programId   String?  @db.Uuid
   program     Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
-  workoutId   String?
+  workoutId   String?  @db.Uuid
   week        Int?
   day         Int?
 
   completedAt DateTime @default(now())
-  duration    Int?
+  duration    Int?     // in minutes
   notes       String?
+  rating      Int?     // 1-5 workout difficulty/satisfaction
 
   exercises   WorkoutLogExercise[]
+
+  @@map("workout_logs")
 }
 
 model WorkoutLogExercise {
-  id          String   @id @default(uuid())
-  workoutLogId String
+  id          String   @id @default(uuid()) @db.Uuid
+  workoutLogId String  @db.Uuid
   workoutLog  WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
 
   exerciseName String
@@ -211,39 +232,44 @@ model WorkoutLogExercise {
   weight      String?
   completed   Boolean  @default(false)
   notes       String?
+  rpe         Int?     // Rate of Perceived Exertion (1-10)
 
   order       Int      @default(0)
+
+  @@map("workout_log_exercises")
 }
 
 model Activity {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   date        DateTime
   steps       Int?
   calories    Int?
   heartRate   Int?
-  distance    Float?
+  distance    Float?   // in km
   activeMinutes Int?
 
-  source      String?
-  sourceId    String?
+  source      String?  // e.g., "apple_health", "google_fit"
+  sourceId    String?  // External ID from source
 
   createdAt   DateTime @default(now())
+
+  @@map("activities")
 }
 
 model WorkoutSession {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  programId   String?
+  programId   String?  @db.Uuid
   program     Program? @relation(fields: [programId], references: [id], onDelete: SetNull)
 
   scheduledAt DateTime
-  duration    Int      @default(60)
-  status      String   @default("scheduled")
+  duration    Int      @default(60) // in minutes
+  status      String   @default("scheduled") // scheduled, completed, skipped, cancelled
   notes       String?
 
   reminderSent Boolean @default(false)
@@ -251,11 +277,13 @@ model WorkoutSession {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("workout_sessions")
 }
 
 model Membership {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   tier        MembershipTier @default(FREE)
@@ -266,17 +294,19 @@ model Membership {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("memberships")
 }
 
 model ProgramRating {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  programId   String
+  programId   String   @db.Uuid
   program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
 
-  rating      Int
+  rating      Int      // 1-5
   review      String?
   isPublic    Boolean  @default(true)
 
@@ -284,11 +314,12 @@ model ProgramRating {
   updatedAt   DateTime @updatedAt
 
   @@unique([userId, programId])
+  @@map("program_ratings")
 }
 
 model Challenge {
-  id          String   @id @default(uuid())
-  createdById String
+  id          String   @id @default(uuid()) @db.Uuid
+  createdById String   @db.Uuid
   createdBy   User     @relation("ChallengeCreator", fields: [createdById], references: [id], onDelete: Cascade)
 
   name        String
@@ -297,7 +328,7 @@ model Challenge {
   endDate     DateTime
 
   goal        String?
-  rules       String?  // JSON
+  rules       Json?    // PostgreSQL JSONB
 
   isActive    Boolean  @default(true)
   isPublic    Boolean  @default(true)
@@ -306,21 +337,24 @@ model Challenge {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("challenges")
 }
 
 model ChallengeParticipant {
-  id          String   @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  challengeId String
+  challengeId String   @db.Uuid
   challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
-  progress    String?  // JSON
+  progress    Json?    // PostgreSQL JSONB
   completed   Boolean  @default(false)
   completedAt DateTime?
 
   joinedAt    DateTime @default(now())
 
   @@unique([userId, challengeId])
+  @@map("challenge_participants")
 }
