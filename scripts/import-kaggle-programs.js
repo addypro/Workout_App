@@ -32,10 +32,11 @@ async function importKaggleDataset(datasetPath) {
   csvFiles.forEach(f => console.log(`   - ${f}`));
   console.log();
 
-  // Identify the main program file (usually the largest or with "program" in name)
+  // Use the detailed programs file which has exercise data
   const programFile = csvFiles.find(f =>
-    f.toLowerCase().includes('program') ||
-    f.toLowerCase().includes('workout')
+    f.toLowerCase().includes('detailed')
+  ) || csvFiles.find(f =>
+    f.toLowerCase().includes('program')
   ) || csvFiles[0];
 
   console.log(`📊 Processing main file: ${programFile}\n`);
@@ -97,39 +98,37 @@ function transformToAppFormat(records) {
   const programs = [];
   const programMap = new Map();
 
-  // Group records by program
-  records.forEach(record => {
-    // Try to identify program identifier (adjust based on actual CSV structure)
-    const programId = record.program_id || record.id || record.Program_ID || record.ID;
-    const programName = record.program_name || record.name || record.Program_Name || record.Name || 'Untitled Program';
+  // Group records by program title
+  records.forEach((record, index) => {
+    // Use title as the program identifier
+    const programTitle = record.title || record.program_name || record.name || `Program-${index}`;
 
-    if (!programId) {
-      // Skip records without identifier
-      return;
+    if (!programTitle || programTitle.trim() === '') {
+      return; // Skip empty records
     }
 
-    if (!programMap.has(programId)) {
+    if (!programMap.has(programTitle)) {
       // Create new program
       const program = {
-        id: `kaggle-${programId}`,
-        name: programName,
+        id: `kaggle-${Buffer.from(programTitle).toString('base64').substring(0, 16)}`,
+        name: programTitle,
         type: detectProgramType(record),
-        duration: parseDuration(record.duration || record.weeks || record.program_duration || 4),
-        difficulty: normalizeDifficulty(record.difficulty || record.level || 'INTERMEDIATE'),
-        muscleGroups: parseMuscleGroups(record.target_muscles || record.muscle_groups || record.muscles || ''),
+        duration: parseDuration(record.program_length || record.duration || record.weeks || 4),
+        difficulty: normalizeDifficulty(record.level || record.difficulty || 'INTERMEDIATE'),
+        muscleGroups: parseMuscleGroups(record.goal || record.target_muscles || record.muscle_groups || ''),
         equipment: parseEquipment(record.equipment || record.equipment_required || ''),
-        description: record.description || record.program_description || '',
+        description: record.description || '',
         workouts: [],
         source: 'kaggle',
       };
 
-      programMap.set(programId, program);
+      programMap.set(programTitle, program);
     }
 
     // Add workout/exercise data if available
-    const program = programMap.get(programId);
+    const program = programMap.get(programTitle);
 
-    if (record.exercise_name || record.exercise) {
+    if (record.exercise_name) {
       // This record contains exercise data
       addExerciseToProgram(program, record);
     }
@@ -139,13 +138,15 @@ function transformToAppFormat(records) {
 }
 
 function detectProgramType(record) {
-  const typeStr = (record.type || record.program_type || '').toLowerCase();
+  const typeStr = (record.goal || record.type || record.program_type || '').toLowerCase();
 
   if (typeStr.includes('strength') || typeStr.includes('power')) return 'STRENGTH';
-  if (typeStr.includes('hypertrophy') || typeStr.includes('bodybuilding')) return 'HYPERTROPHY';
+  if (typeStr.includes('hypertrophy') || typeStr.includes('bodybuilding') || typeStr.includes('muscle') || typeStr.includes('sculpting')) return 'HYPERTROPHY';
   if (typeStr.includes('endurance') || typeStr.includes('cardio')) return 'ENDURANCE';
   if (typeStr.includes('weight loss') || typeStr.includes('fat')) return 'WEIGHT_LOSS';
-  if (typeStr.includes('athlete') || typeStr.includes('sport')) return 'ATHLETIC';
+  if (typeStr.includes('athlete') || typeStr.includes('sport') || typeStr.includes('athletics')) return 'ATHLETIC';
+  if (typeStr.includes('olympic') || typeStr.includes('weightlifting')) return 'STRENGTH';
+  if (typeStr.includes('bodyweight')) return 'BODYWEIGHT';
 
   return 'GENERAL_FITNESS';
 }
@@ -185,6 +186,9 @@ function addExerciseToProgram(program, record) {
   const week = parseInt(record.week || record.week_number || 1);
   const day = parseInt(record.day || record.day_number || 1);
 
+  // Skip invalid records
+  if (isNaN(week) || isNaN(day)) return;
+
   // Find or create workout
   let workout = program.workouts.find(w => w.week === week && w.day === day);
 
@@ -198,13 +202,24 @@ function addExerciseToProgram(program, record) {
     program.workouts.push(workout);
   }
 
+  // Parse reps (negative values indicate time in seconds)
+  let reps = record.reps || record.repetitions || '10';
+  const repsNum = parseFloat(reps);
+  if (!isNaN(repsNum) && repsNum < 0) {
+    // Time-based exercise (convert seconds to readable format)
+    const seconds = Math.abs(repsNum);
+    reps = `${seconds}s`;
+  } else if (!isNaN(repsNum)) {
+    reps = String(Math.floor(repsNum));
+  }
+
   // Add exercise
   const exercise = {
     name: record.exercise_name || record.exercise || 'Unknown Exercise',
     sets: parseInt(record.sets || 3),
-    reps: record.reps || record.repetitions || '10',
+    reps: reps,
     weight: record.weight || null,
-    restTime: parseInt(record.rest_seconds || record.rest || 60),
+    restTime: parseInt(record.intensity || 60), // 'intensity' appears to be rest time in the dataset
   };
 
   workout.exercises.push(exercise);

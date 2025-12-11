@@ -68,7 +68,7 @@ export async function parseCSV(csvContent: string): Promise<ParsedProgram> {
     }
 
     // Add exercise to current workout
-    if (exerciseName && sets > 0) {
+    if (exerciseName && sets > 0 && currentWorkout) {
       const exercise: ParsedExercise = {
         name: exerciseName.trim(),
         sets,

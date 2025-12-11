@@ -104,10 +104,31 @@ export default function ProgramsScreen() {
 
       {programs.length === 0 ? (
         <ThemedView style={styles.emptyState}>
-          <ThemedText type="subtitle">No programs yet</ThemedText>
-          <ThemedText style={styles.emptyText}>
-            Use the Upload tab to add your first workout program
+          <ThemedText style={styles.emptyEmoji}>💪</ThemedText>
+          <ThemedText type="subtitle" style={styles.emptyTitle}>
+            Ready to get started?
           </ThemedText>
+          <ThemedText style={styles.emptyText}>
+            Browse 2,598 expert-designed programs{'\n'}or create your own
+          </ThemedText>
+          <TouchableOpacity
+            style={[styles.emptyButton, { backgroundColor: colors.tint }]}
+            onPress={() => router.push('/(tabs)/browse')}
+          >
+            <IconSymbol name="square.grid.2x2" size={20} color="#fff" />
+            <ThemedText style={styles.emptyButtonText}>
+              Browse Programs
+            </ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.emptyButtonSecondary, { borderColor: colors.tint }]}
+            onPress={() => router.push('/(tabs)/upload')}
+          >
+            <IconSymbol name="arrow.up.circle" size={20} color={colors.tint} />
+            <ThemedText style={[styles.emptyButtonSecondaryText, { color: colors.tint }]}>
+              Upload Program
+            </ThemedText>
+          </TouchableOpacity>
         </ThemedView>
       ) : (
         <FlatList
@@ -172,12 +193,48 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: 16,
+    paddingHorizontal: 32,
+  },
+  emptyEmoji: {
+    fontSize: 80,
+    marginBottom: 8,
+  },
+  emptyTitle: {
+    textAlign: 'center',
   },
   emptyText: {
     textAlign: 'center',
     opacity: 0.6,
-    paddingHorizontal: 32,
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  emptyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  emptyButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  emptyButtonSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+  emptyButtonSecondaryText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   startButton: {
     flexDirection: 'row',

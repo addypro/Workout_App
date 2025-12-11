@@ -14,7 +14,7 @@ import { ThemedView } from '@/components/themed-view';
 import { RestTimer } from '@/components/rest-timer';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import {
   WorkoutSession,
   WorkoutExercise,
@@ -26,6 +26,7 @@ import {
   formatDuration,
   isWorkoutComplete,
 } from '@/lib/types/workout-session';
+import { getProgram } from '@/lib/db/storage';
 
 export default function ActiveWorkoutScreen() {
   const { id } = useLocalSearchParams();
@@ -55,44 +56,58 @@ export default function ActiveWorkoutScreen() {
   }, [session?.status]);
 
   const loadWorkout = async () => {
-    // TODO: Load from storage/Supabase
-    // For now, create a sample workout
-    const sampleSession: WorkoutSession = {
-      id: id as string,
-      workoutName: 'Sample Workout',
-      exercises: [
-        {
-          id: 'ex1',
-          name: 'Barbell Bench Press',
-          sets: [
-            { id: 's1', reps: 10, weight: 135, isCompleted: false },
-            { id: 's2', reps: 10, weight: 135, isCompleted: false },
-            { id: 's3', reps: 8, weight: 145, isCompleted: false },
-          ],
-          restTime: 90,
-          currentSetIndex: 0,
-          muscleGroups: ['Chest', 'Triceps'],
-        },
-        {
-          id: 'ex2',
-          name: 'Dumbbell Incline Press',
-          sets: [
-            { id: 's4', reps: 12, weight: 50, isCompleted: false },
-            { id: 's5', reps: 12, weight: 50, isCompleted: false },
-            { id: 's6', reps: 10, weight: 55, isCompleted: false },
-          ],
-          restTime: 60,
-          currentSetIndex: 0,
-        },
-      ],
-      startTime: new Date(),
-      currentExerciseIndex: 0,
-      isResting: false,
-      restTimeRemaining: 0,
-      status: 'in_progress',
-    };
+    try {
+      // Load program from storage
+      const program = await getProgram(id as string);
 
-    setSession(sampleSession);
+      if (!program || program.status !== 'READY') {
+        Alert.alert('Error', 'This program is not ready to start yet.');
+        router.back();
+        return;
+      }
+
+      // Get the first workout from the program
+      const parsedData = program.parsedData as any;
+      const firstWorkout = parsedData?.workouts?.[0];
+
+      if (!firstWorkout || !firstWorkout.exercises || firstWorkout.exercises.length === 0) {
+        Alert.alert('Error', 'No exercises found in this program.');
+        router.back();
+        return;
+      }
+
+      // Convert program exercises to workout session format
+      const exercises: WorkoutExercise[] = firstWorkout.exercises.map((ex: any, index: number) => ({
+        id: `ex${index}`,
+        name: ex.name || 'Unknown Exercise',
+        sets: Array.from({ length: ex.sets || 3 }, (_, setIndex) => ({
+          id: `s${index}-${setIndex}`,
+          reps: ex.reps || 10,
+          weight: ex.weight ? parseFloat(ex.weight) : undefined,
+          isCompleted: false,
+        })),
+        restTime: ex.restTime || 60,
+        currentSetIndex: 0,
+        muscleGroups: [],
+      }));
+
+      const newSession: WorkoutSession = {
+        id: id as string,
+        workoutName: firstWorkout.name || program.name,
+        exercises,
+        startTime: new Date(),
+        currentExerciseIndex: 0,
+        isResting: false,
+        restTimeRemaining: 0,
+        status: 'in_progress',
+      };
+
+      setSession(newSession);
+    } catch (error) {
+      console.error('Error loading workout:', error);
+      Alert.alert('Error', 'Failed to load workout. Please try again.');
+      router.back();
+    }
   };
 
   const completeSet = (exerciseIndex: number, setIndex: number) => {

@@ -122,7 +122,7 @@ export function useFilteredExercises(filters: {
 
     // Filter by equipment
     if (filters.equipment) {
-      result = result.filter(ex => ex.equipment?.includes(filters.equipment));
+      result = result.filter(ex => ex.equipment?.includes(filters.equipment!));
     }
 
     return result;

@@ -8,10 +8,10 @@ export interface Program {
   userId: string;
   name: string;
   description: string | null;
-  sourceFileUri: string;
-  sourceType: 'CSV' | 'PDF' | 'EXCEL' | 'IMAGE';
+  sourceFileUri: string | null;
+  sourceType: 'CSV' | 'PDF' | 'EXCEL' | 'IMAGE' | 'KAGGLE';
   status: 'PARSING' | 'MAPPING' | 'READY' | 'ERROR';
-  parsedData: string | null;
+  parsedData: any;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,6 +24,16 @@ export async function getPrograms(): Promise<Program[]> {
   } catch (error) {
     console.error('Error loading programs:', error);
     return [];
+  }
+}
+
+export async function getProgram(id: string): Promise<Program | null> {
+  try {
+    const programs = await getPrograms();
+    return programs.find(p => p.id === id) || null;
+  } catch (error) {
+    console.error('Error loading program:', error);
+    return null;
   }
 }
 
