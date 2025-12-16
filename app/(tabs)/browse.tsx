@@ -1,415 +1,526 @@
-import { useState, useMemo } from 'react';
+/**
+ * Browse Screen
+ * 
+ * Displays all 2,598 workout programs with selection UI.
+ * Uses virtualized list for performance.
+ */
+
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  StyleSheet,
+  ActivityIndicator,
+  Alert,
   FlatList,
-  TouchableOpacity,
+  Platform,
+  Pressable,
+  StyleSheet,
   TextInput,
-  ScrollView,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { ProgramCard } from '@/components/program/program-card';
+import { Screen } from '@/components/screen';
+import { SwipeTabs } from '@/components/swipe-tabs';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import {
-  filterPrograms,
-  getProgramTypes,
-  getProgramDifficulties,
-  type KaggleProgram,
-  type ProgramFilters,
-} from '@/lib/kaggle-programs';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import type { DifficultyLevel, ProgramDisplayItem, ProgramType } from '@/lib/domain/program';
+import { programsService } from '@/lib/services/programs/programs-service';
+
+// ============================================
+// CONSTANTS
+// ============================================
+
+const PAGE_SIZE = 50; // Load 50 at a time for performance
+
+const FILTER_OPTIONS = {
+  type: ['All', 'STRENGTH', 'HYPERTROPHY', 'FULL_BODY', 'BODYWEIGHT', 'ATHLETIC', 'POWERLIFTING'],
+  difficulty: ['All', 'BEGINNER', 'INTERMEDIATE', 'ADVANCED'],
+};
+
+// ============================================
+// SCREEN COMPONENT
+// ============================================
 
 export default function BrowseScreen() {
-  const [filters, setFilters] = useState<ProgramFilters>({
-    type: 'ALL',
-    difficulty: 'ALL',
-    duration: 'ALL',
-    search: '',
-  });
-  const [expandedFilters, setExpandedFilters] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [difficultyFilter, setDifficultyFilter] = useState('All');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPaging, setIsPaging] = useState(false);
+  const [catalogTotal, setCatalogTotal] = useState(0);
+  const [filteredTotal, setFilteredTotal] = useState(0);
+  const [displayedPrograms, setDisplayedPrograms] = useState<ProgramDisplayItem[]>([]);
 
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  // Filter programs based on current filters
-  const programs = useMemo(() => {
-    return filterPrograms(filters);
-  }, [filters]);
+  const filters = useMemo(() => {
+    const f: { type?: ProgramType; difficulty?: DifficultyLevel } = {};
+    if (typeFilter !== 'All') f.type = typeFilter as ProgramType;
+    if (difficultyFilter !== 'All') f.difficulty = difficultyFilter as DifficultyLevel;
+    return f;
+  }, [typeFilter, difficultyFilter]);
 
-  const programTypes = useMemo(() => getProgramTypes(), []);
-  const difficulties = useMemo(() => getProgramDifficulties(), []);
+  const loadPage = useCallback(
+    async (opts?: { reset?: boolean }) => {
+      const reset = opts?.reset ?? false;
+      const offset = reset ? 0 : displayedPrograms.length;
 
-  const updateFilter = (key: keyof ProgramFilters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
+      if (reset) setIsLoading(true);
+      else setIsPaging(true);
 
-  const clearFilters = () => {
-    setFilters({
-      type: 'ALL',
-      difficulty: 'ALL',
-      duration: 'ALL',
-      search: '',
+      try {
+        const res = await programsService.listCatalog({
+          q: searchQuery,
+          filters,
+          limit: PAGE_SIZE,
+          offset,
+        });
+
+        setCatalogTotal(programsService.getTotalCount());
+        setFilteredTotal(res.total);
+        setDisplayedPrograms((prev) => (reset ? res.items : [...prev, ...res.items]));
+      } finally {
+        setIsLoading(false);
+        setIsPaging(false);
+      }
+    },
+    [displayedPrograms.length, filters, searchQuery]
+  );
+
+  // Initial load + reload on filter/search changes
+  useEffect(() => {
+    loadPage({ reset: true });
+  }, [loadPage]);
+
+  const loadMore = useCallback(() => {
+    if (isLoading || isPaging) return;
+    if (displayedPrograms.length >= filteredTotal) return;
+    loadPage({ reset: false });
+  }, [displayedPrograms.length, filteredTotal, isLoading, isPaging, loadPage]);
+
+  // Toggle selection
+  const toggleSelect = useCallback((program: ProgramDisplayItem) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(program.id)) {
+        next.delete(program.id);
+      } else {
+        next.add(program.id);
+      }
+      return next;
     });
+  }, []);
+
+  // Clear selection
+  const clearSelection = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedIds(new Set());
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'STRENGTH':
-        return '#F44336';
-      case 'HYPERTROPHY':
-        return '#2196F3';
-      case 'ENDURANCE':
-        return '#4CAF50';
-      case 'ATHLETIC':
-        return '#FF9800';
-      case 'BODYWEIGHT':
-        return '#9C27B0';
-      case 'WEIGHT_LOSS':
-        return '#FF5722';
-      default:
-        return colors.tint;
+  // Add selected programs to My Programs
+  const handleAddSelected = async () => {
+    if (selectedIds.size === 0) return;
+
+    setIsAdding(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    try {
+      const addedCount = await programsService.installProgramsByCatalogIds(Array.from(selectedIds));
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setSelectedIds(new Set());
+
+      const message = `Added ${addedCount} program${addedCount !== 1 ? 's' : ''} to My Programs!`;
+
+      if (Platform.OS === 'web') {
+        if (window.confirm(`${message} Go there now?`)) {
+          router.push('/(tabs)');
+        }
+      } else {
+        Alert.alert('Success!', message, [
+          { text: 'View Programs', onPress: () => router.push('/(tabs)') },
+          { text: 'OK', style: 'cancel' },
+        ]);
+      }
+    } catch (e) {
+      console.error(e);
+      const msg = 'Failed to add programs';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Error', msg);
+    } finally {
+      setIsAdding(false);
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'BEGINNER':
-        return '#4CAF50';
-      case 'INTERMEDIATE':
-        return '#FF9800';
-      case 'ADVANCED':
-        return '#F44336';
-      default:
-        return colors.text;
-    }
+  // Render a program card
+  const renderItem = useCallback(({ item }: { item: ProgramDisplayItem }) => (
+    <View style={styles.cardWrapper}>
+      <ProgramCard
+        program={item}
+        isSelected={selectedIds.has(item.id)}
+        onToggleSelect={toggleSelect}
+      />
+    </View>
+  ), [selectedIds, toggleSelect]);
+
+  // Render footer (progress indicator)
+  const renderFooter = () => {
+    const remaining = filteredTotal - displayedPrograms.length;
+    if (remaining <= 0) return null;
+    return (
+      <View style={styles.footerInfo}>
+        {isPaging ? <ActivityIndicator size="small" color={colors.tint} /> : null}
+        <ThemedText style={[styles.footerInfoText, { color: colors.textSecondary }]}>
+          {isPaging ? `Loading more… (${remaining} remaining)` : `${remaining} remaining`}
+        </ThemedText>
+      </View>
+    );
   };
 
-  const renderProgram = ({ item }: { item: KaggleProgram }) => (
-    <TouchableOpacity
-      style={[styles.programCard, { backgroundColor: colors.background, borderColor: colors.text + '20' }]}
-      onPress={() => router.push(`/browse/${item.id}`)}
-    >
-      <ThemedView style={styles.programHeader}>
-        <ThemedText type="subtitle" style={styles.programName} numberOfLines={2}>
-          {item.name}
-        </ThemedText>
-      </ThemedView>
-
-      {item.description && (
-        <ThemedText style={styles.description} numberOfLines={2}>
-          {item.description}
-        </ThemedText>
-      )}
-
-      <ThemedView style={styles.badges}>
-        <ThemedView
-          style={[styles.badge, { backgroundColor: getTypeColor(item.type) + '20' }]}
-        >
-          <ThemedText style={[styles.badgeText, { color: getTypeColor(item.type) }]}>
-            {item.type}
-          </ThemedText>
-        </ThemedView>
-        <ThemedView
-          style={[styles.badge, { backgroundColor: getDifficultyColor(item.difficulty) + '20' }]}
-        >
-          <ThemedText style={[styles.badgeText, { color: getDifficultyColor(item.difficulty) }]}>
-            {item.difficulty}
-          </ThemedText>
-        </ThemedView>
-      </ThemedView>
-
-      <ThemedView style={styles.stats}>
-        <ThemedView style={styles.stat}>
-          <IconSymbol name="calendar" size={14} color={colors.text} />
-          <ThemedText style={styles.statText}>{item.duration} weeks</ThemedText>
-        </ThemedView>
-        <ThemedView style={styles.stat}>
-          <IconSymbol name="figure.strengthtraining.traditional" size={14} color={colors.text} />
-          <ThemedText style={styles.statText}>{item.workouts.length} workouts</ThemedText>
-        </ThemedView>
-      </ThemedView>
-
-      {item.muscleGroups.length > 0 && (
-        <ThemedView style={styles.muscleGroups}>
-          <ThemedText style={styles.muscleGroupsText} numberOfLines={1}>
-            🎯 {item.muscleGroups.slice(0, 3).join(', ')}
-            {item.muscleGroups.length > 3 && ` +${item.muscleGroups.length - 3}`}
-          </ThemedText>
-        </ThemedView>
-      )}
-    </TouchableOpacity>
-  );
-
-  const renderFilterChip = (label: string, value: string, activeValue: string, onPress: () => void) => (
-    <TouchableOpacity
-      style={[
-        styles.filterChip,
-        {
-          backgroundColor: value === activeValue ? colors.tint : colors.background,
-          borderColor: value === activeValue ? colors.tint : colors.text + '30',
-        },
-      ]}
-      onPress={onPress}
-    >
-      <ThemedText
-        style={[
-          styles.filterChipText,
-          { color: value === activeValue ? '#fff' : colors.text },
-        ]}
-      >
-        {label}
-      </ThemedText>
-    </TouchableOpacity>
-  );
+  const selectedCount = selectedIds.size;
+  const hasSelection = selectedCount > 0;
+  const totalCount = catalogTotal;
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Header */}
-      <ThemedView style={styles.header}>
-        <ThemedText type="title">Browse Programs</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          {programs.length} program{programs.length !== 1 ? 's' : ''} available
-        </ThemedText>
-      </ThemedView>
+    <SwipeTabs current="browse">
+      <Screen contentStyle={styles.screenContent}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <ThemedText style={[styles.headerTitle, { color: colors.text }]}>
+              Browse Programs
+            </ThemedText>
+            <ThemedText style={[styles.headerCount, { color: colors.textSecondary }]}>
+              {totalCount.toLocaleString()} available
+            </ThemedText>
+          </View>
+          
+          {/* Search Bar */}
+          <View style={[styles.searchBar, { backgroundColor: colors.card, borderColor: colors.separator }]}>
+            <IconSymbol name="magnifyingglass" size={18} color={colors.textTertiary} />
+            <TextInput
+              style={[styles.searchInput, { color: colors.text }]}
+              placeholder="Search programs..."
+              placeholderTextColor={colors.textTertiary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery !== '' && (
+              <Pressable onPress={() => setSearchQuery('')}>
+                <IconSymbol name="xmark.circle.fill" size={18} color={colors.textTertiary} />
+              </Pressable>
+            )}
+          </View>
 
-      {/* Search Bar */}
-      <ThemedView style={[styles.searchContainer, { backgroundColor: colors.background, borderColor: colors.text + '20' }]}>
-        <IconSymbol name="magnifyingglass" size={20} color={colors.text} />
-        <TextInput
-          style={[styles.searchInput, { color: colors.text }]}
-          placeholder="Search programs..."
-          placeholderTextColor={colors.text + '60'}
-          value={filters.search}
-          onChangeText={(text) => updateFilter('search', text)}
-        />
-        {filters.search !== '' && (
-          <TouchableOpacity onPress={() => updateFilter('search', '')}>
-            <IconSymbol name="xmark.circle.fill" size={20} color={colors.text} />
-          </TouchableOpacity>
+          {/* Filter Chips */}
+          <View style={styles.filterRow}>
+            {/* Type Filter */}
+            <View style={styles.filterGroup}>
+              <ThemedText style={[styles.filterLabel, { color: colors.textSecondary }]}>Type:</ThemedText>
+              <FlatList
+                horizontal
+                data={FILTER_OPTIONS.type}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <Pressable
+                    style={[
+                      styles.filterChip,
+                      {
+                        backgroundColor: typeFilter === item ? colors.tint : colors.card,
+                        borderColor: typeFilter === item ? colors.tint : colors.separator,
+                      },
+                    ]}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setTypeFilter(item);
+                    }}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.filterChipText,
+                        { color: typeFilter === item ? '#fff' : colors.text },
+                      ]}
+                    >
+                      {item === 'All' ? 'All' : item.replace(/_/g, ' ')}
+                    </ThemedText>
+                  </Pressable>
+                )}
+                keyExtractor={(item) => item}
+              />
+            </View>
+
+            {/* Difficulty Filter */}
+            <View style={styles.filterGroup}>
+              <ThemedText style={[styles.filterLabel, { color: colors.textSecondary }]}>Level:</ThemedText>
+              <FlatList
+                horizontal
+                data={FILTER_OPTIONS.difficulty}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <Pressable
+                    style={[
+                      styles.filterChip,
+                      {
+                        backgroundColor: difficultyFilter === item ? colors.tint : colors.card,
+                        borderColor: difficultyFilter === item ? colors.tint : colors.separator,
+                      },
+                    ]}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setDifficultyFilter(item);
+                    }}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.filterChipText,
+                        { color: difficultyFilter === item ? '#fff' : colors.text },
+                      ]}
+                    >
+                      {item === 'All' ? 'All' : item.charAt(0) + item.slice(1).toLowerCase()}
+                    </ThemedText>
+                  </Pressable>
+                )}
+                keyExtractor={(item) => item}
+              />
+            </View>
+          </View>
+
+          {/* Results count and selection */}
+          <View style={styles.resultsRow}>
+            <ThemedText style={[styles.resultsText, { color: colors.textSecondary }]}>
+              {filteredTotal.toLocaleString()} results
+            </ThemedText>
+            {hasSelection && (
+              <Pressable style={styles.clearSelection} onPress={clearSelection}>
+                <ThemedText style={[styles.clearSelectionText, { color: colors.tint }]}>
+                  Clear ({selectedCount})
+                </ThemedText>
+              </Pressable>
+            )}
+          </View>
+        </View>
+
+        {/* Program List */}
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.tint} />
+            <ThemedText style={[styles.loadingText, { color: colors.textSecondary }]}>
+              Loading {totalCount.toLocaleString()} programs...
+            </ThemedText>
+          </View>
+        ) : filteredTotal === 0 ? (
+          <View style={styles.emptyState}>
+            <View style={[styles.emptyIcon, { backgroundColor: colors.tintMuted }]}>
+              <IconSymbol name="magnifyingglass" size={32} color={colors.tint} />
+            </View>
+            <ThemedText style={[styles.emptyTitle, { color: colors.text }]}>
+              No programs found
+            </ThemedText>
+            <ThemedText style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+              Try adjusting your filters
+            </ThemedText>
+          </View>
+        ) : (
+          <FlatList
+            data={displayedPrograms}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={[styles.list, { paddingBottom: hasSelection ? 100 : 120 }]}
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={renderFooter}
+            initialNumToRender={15}
+            maxToRenderPerBatch={20}
+            windowSize={10}
+            removeClippedSubviews={true}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.7}
+            getItemLayout={(data, index) => ({
+              length: 120, // Approximate item height
+              offset: 120 * index,
+              index,
+            })}
+          />
         )}
-      </ThemedView>
 
-      {/* Filter Toggle */}
-      <TouchableOpacity
-        style={styles.filterToggle}
-        onPress={() => setExpandedFilters(!expandedFilters)}
-      >
-        <IconSymbol name="slider.horizontal.3" size={18} color={colors.tint} />
-        <ThemedText style={[styles.filterToggleText, { color: colors.tint }]}>
-          {expandedFilters ? 'Hide Filters' : 'Show Filters'}
-        </ThemedText>
-      </TouchableOpacity>
-
-      {/* Expanded Filters */}
-      {expandedFilters && (
-        <ThemedView style={styles.filtersContainer}>
-          {/* Type Filter */}
-          <ThemedView style={styles.filterSection}>
-            <ThemedText style={styles.filterLabel}>Type</ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-              {renderFilterChip('All', 'ALL', filters.type || 'ALL', () => updateFilter('type', 'ALL'))}
-              {programTypes.map(type => renderFilterChip(type, type, filters.type || 'ALL', () => updateFilter('type', type)))}
-            </ScrollView>
-          </ThemedView>
-
-          {/* Difficulty Filter */}
-          <ThemedView style={styles.filterSection}>
-            <ThemedText style={styles.filterLabel}>Difficulty</ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-              {renderFilterChip('All', 'ALL', filters.difficulty || 'ALL', () => updateFilter('difficulty', 'ALL'))}
-              {difficulties.map(diff => renderFilterChip(diff, diff, filters.difficulty || 'ALL', () => updateFilter('difficulty', diff)))}
-            </ScrollView>
-          </ThemedView>
-
-          {/* Duration Filter */}
-          <ThemedView style={styles.filterSection}>
-            <ThemedText style={styles.filterLabel}>Duration</ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
-              {renderFilterChip('All', 'ALL', filters.duration || 'ALL', () => updateFilter('duration', 'ALL'))}
-              {renderFilterChip('1-4 weeks', 'SHORT', filters.duration || 'ALL', () => updateFilter('duration', 'SHORT'))}
-              {renderFilterChip('5-8 weeks', 'MEDIUM', filters.duration || 'ALL', () => updateFilter('duration', 'MEDIUM'))}
-              {renderFilterChip('9-12 weeks', 'LONG', filters.duration || 'ALL', () => updateFilter('duration', 'LONG'))}
-              {renderFilterChip('12+ weeks', 'EXTENDED', filters.duration || 'ALL', () => updateFilter('duration', 'EXTENDED'))}
-            </ScrollView>
-          </ThemedView>
-
-          {/* Clear Filters */}
-          <TouchableOpacity
-            style={[styles.clearButton, { borderColor: colors.text + '30' }]}
-            onPress={clearFilters}
-          >
-            <IconSymbol name="xmark" size={16} color={colors.text} />
-            <ThemedText style={styles.clearButtonText}>Clear All Filters</ThemedText>
-          </TouchableOpacity>
-        </ThemedView>
-      )}
-
-      {/* Programs List */}
-      {programs.length === 0 ? (
-        <ThemedView style={styles.emptyState}>
-          <IconSymbol name="magnifyingglass" size={48} color={colors.text + '40'} />
-          <ThemedText type="subtitle">No programs found</ThemedText>
-          <ThemedText style={styles.emptyText}>
-            Try adjusting your filters or search query
-          </ThemedText>
-        </ThemedView>
-      ) : (
-        <FlatList
-          data={programs}
-          renderItem={renderProgram}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
-    </ThemedView>
+        {/* Floating Add Button */}
+        {hasSelection && (
+          <View style={[styles.floatingBar, { paddingBottom: insets.bottom + 10 }]}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.addButton,
+                { backgroundColor: colors.tint, opacity: pressed || isAdding ? 0.8 : 1 },
+              ]}
+              onPress={handleAddSelected}
+              disabled={isAdding}
+            >
+              <IconSymbol name="plus.circle.fill" size={20} color="#fff" />
+              <ThemedText style={styles.addButtonText}>
+                {isAdding ? 'Adding...' : `Add ${selectedCount} to My Programs`}
+              </ThemedText>
+            </Pressable>
+          </View>
+        )}
+      </Screen>
+    </SwipeTabs>
   );
 }
 
+// ============================================
+// STYLES
+// ============================================
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
+  screenContent: {
+    paddingHorizontal: 0,
   },
   header: {
-    marginBottom: 16,
-    paddingTop: 50,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    gap: Spacing.sm,
   },
-  subtitle: {
-    opacity: 0.6,
-    marginTop: 4,
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
   },
-  searchContainer: {
+  headerTitle: {
+    ...Typography.title2,
+  },
+  headerCount: {
+    ...Typography.footnote,
+  },
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 8,
-    marginBottom: 12,
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: Radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    ...Typography.body,
+    padding: 0,
   },
-  filterToggle: {
+  filterRow: {
+    gap: Spacing.xs,
+  },
+  filterGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    marginBottom: 12,
-  },
-  filterToggleText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  filtersContainer: {
-    gap: 12,
-    marginBottom: 16,
-  },
-  filterSection: {
     gap: 8,
   },
   filterLabel: {
-    fontSize: 14,
+    ...Typography.caption1,
     fontWeight: '600',
-    opacity: 0.8,
-  },
-  filterScroll: {
-    flexGrow: 0,
+    width: 40,
   },
   filterChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.full,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginRight: 6,
   },
   filterChipText: {
-    fontSize: 13,
+    ...Typography.caption1,
     fontWeight: '600',
   },
-  clearButton: {
+  resultsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
+    justifyContent: 'space-between',
+    paddingTop: Spacing.xs,
   },
-  clearButtonText: {
-    fontSize: 14,
+  resultsText: {
+    ...Typography.footnote,
+  },
+  clearSelection: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  clearSelectionText: {
+    ...Typography.footnote,
     fontWeight: '600',
   },
   list: {
-    gap: 12,
-    paddingBottom: 20,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
   },
-  programCard: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 12,
+  cardWrapper: {
+    marginBottom: Spacing.sm,
   },
-  programHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  programName: {
-    flex: 1,
-  },
-  description: {
-    opacity: 0.7,
-    fontSize: 14,
-  },
-  badges: {
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  stats: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  stat: {
+  footerInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: Spacing.md,
   },
-  statText: {
-    fontSize: 13,
-    opacity: 0.7,
+  footerInfoText: {
+    ...Typography.footnote,
+    fontWeight: '500',
   },
-  muscleGroups: {
-    paddingTop: 4,
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.md,
   },
-  muscleGroupsText: {
-    fontSize: 12,
-    opacity: 0.6,
+  loadingText: {
+    ...Typography.body,
   },
   emptyState: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.md,
   },
-  emptyText: {
+  emptyIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+  },
+  emptyTitle: {
+    ...Typography.title3,
+  },
+  emptySubtitle: {
+    ...Typography.body,
     textAlign: 'center',
-    opacity: 0.6,
-    paddingHorizontal: 32,
+  },
+  floatingBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 16,
+    borderRadius: Radius.lg,
+    ...Shadows.md,
+  },
+  addButtonText: {
+    ...Typography.headline,
+    color: '#fff',
   },
 });
