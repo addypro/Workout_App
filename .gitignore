@@ -42,3 +42,6 @@ app-example
 # generated native folders
 /ios
 /android
+data/programs_detailed_boostcamp_kaggle.csv
+data/workout-programs.json
+data/workout-programs-original.json

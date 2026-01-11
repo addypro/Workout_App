@@ -5,7 +5,22 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  /**
+   * Typography variants (keep old names for compatibility).
+   * Apple-like defaults: fewer weights, clearer hierarchy.
+   */
+  type?:
+    | 'default'
+    | 'title'
+    | 'defaultSemiBold'
+    | 'subtitle'
+    | 'link'
+    | 'largeTitle'
+    | 'headline'
+    | 'body'
+    | 'callout'
+    | 'footnote'
+    | 'caption';
 };
 
 export function ThemedText({
@@ -22,6 +37,12 @@ export function ThemedText({
       style={[
         { color },
         type === 'default' ? styles.default : undefined,
+        type === 'body' ? styles.body : undefined,
+        type === 'callout' ? styles.callout : undefined,
+        type === 'footnote' ? styles.footnote : undefined,
+        type === 'caption' ? styles.caption : undefined,
+        type === 'headline' ? styles.headline : undefined,
+        type === 'largeTitle' ? styles.largeTitle : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
@@ -38,19 +59,46 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  body: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  callout: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  footnote: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  caption: {
+    fontSize: 12,
+    lineHeight: 16,
+  },
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: '600',
   },
+  headline: {
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+  largeTitle: {
+    fontSize: 34,
+    lineHeight: 41,
+    fontWeight: '700',
+  },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontSize: 28,
+    fontWeight: '700',
+    lineHeight: 34,
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '700',
+    lineHeight: 26,
   },
   link: {
     lineHeight: 30,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Vibration } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { ThemedText } from './themed-text';
 import { ThemedView } from './themed-view';
 import { Colors } from '@/constants/theme';
@@ -26,14 +27,22 @@ export function RestTimer({ duration, onComplete, onSkip, nextExercise }: RestTi
       setTimeRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          // Vibrate on completion
-          Vibration.vibrate([0, 200, 100, 200]);
+          // Completion feedback
+          if (process.env.EXPO_OS === 'ios') {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          } else {
+            Vibration.vibrate(80);
+          }
           onComplete();
           return 0;
         }
-        // Short vibration at 3, 2, 1
+        // Subtle countdown ticks at 3, 2, 1
         if (prev <= 3) {
-          Vibration.vibrate(100);
+          if (process.env.EXPO_OS === 'ios') {
+            Haptics.selectionAsync();
+          } else {
+            Vibration.vibrate(20);
+          }
         }
         return prev - 1;
       });
@@ -43,8 +52,6 @@ export function RestTimer({ duration, onComplete, onSkip, nextExercise }: RestTi
   }, [isPaused, timeRemaining, onComplete]);
 
   const progress = timeRemaining / duration;
-  const circumference = 2 * Math.PI * 80; // radius = 80
-  const strokeDashoffset = circumference * (1 - progress);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -59,36 +66,18 @@ export function RestTimer({ duration, onComplete, onSkip, nextExercise }: RestTi
           Rest Time
         </ThemedText>
 
-        {/* Circular Progress */}
-        <View style={styles.timerContainer}>
-          <svg width="200" height="200" viewBox="0 0 200 200">
-            {/* Background circle */}
-            <circle
-              cx="100"
-              cy="100"
-              r="80"
-              fill="none"
-              stroke={colors.text + '20'}
-              strokeWidth="12"
+        {/* Progress */}
+        <ThemedView style={styles.progressWrap}>
+          <ThemedText style={styles.timeText}>{formatTime(timeRemaining)}</ThemedText>
+          <View style={[styles.progressTrack, { backgroundColor: colors.separator + '66' }]}>
+            <View
+              style={[
+                styles.progressFill,
+                { width: `${Math.max(0, Math.min(1, progress)) * 100}%`, backgroundColor: colors.tint },
+              ]}
             />
-            {/* Progress circle */}
-            <circle
-              cx="100"
-              cy="100"
-              r="80"
-              fill="none"
-              stroke={colors.tint}
-              strokeWidth="12"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              transform="rotate(-90 100 100)"
-            />
-          </svg>
-          <View style={styles.timeDisplay}>
-            <ThemedText style={styles.timeText}>{formatTime(timeRemaining)}</ThemedText>
           </View>
-        </View>
+        </ThemedView>
 
         {/* Next Exercise Preview */}
         {nextExercise && (
@@ -144,25 +133,25 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 8,
   },
-  timerContainer: {
-    position: 'relative',
-    width: 200,
-    height: 200,
-    justifyContent: 'center',
+  progressWrap: {
+    width: '100%',
+    maxWidth: 420,
     alignItems: 'center',
-  },
-  timeDisplay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
+    gap: 16,
   },
   timeText: {
     fontSize: 48,
     fontWeight: 'bold',
+  },
+  progressTrack: {
+    width: '100%',
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 3,
   },
   nextExercise: {
     alignItems: 'center',

@@ -1,0 +1,4519 @@
+{
+  "taxonomy_version": "2.0",
+  "generated": "2024-12-29",
+  "movement_patterns": [
+    {
+      "pattern_id": "SQUAT",
+      "canonical_name": "Squat",
+      "description": "Knee-dominant lower body movement with hip and knee flexion",
+      "icon": "figure.strengthtraining.traditional",
+      "default_exercise_id": "EX_SQ_001",
+      "exercises": [
+        {
+          "id": "EX_SQ_001",
+          "canonical_name": "Barbell Back Squat",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true,
+            "variations": [
+              "EX_SQ_001_HIGH",
+              "EX_SQ_001_LOW",
+              "EX_SQ_001_PAUSE"
+            ]
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "squat_rack"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "push"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "adductors",
+              "erector_spinae"
+            ],
+            "stabilizers": [
+              "core",
+              "calves"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Back Squat",
+              "BB Squat",
+              "Squat",
+              "Barbell Squat"
+            ],
+            "slang_terms": [
+              "Wheels Builder",
+              "Leg Day King"
+            ],
+            "misspellings": [
+              "Back Sqaut",
+              "Squats"
+            ],
+            "intent_triggers": [
+              "heavy leg day",
+              "build quads",
+              "powerlifting",
+              "leg strength"
+            ]
+          },
+          "smart_suggestions": {
+            "progression_id": "EX_SQ_002",
+            "regression_id": "EX_SQ_003",
+            "siblings": [
+              "EX_SQ_002",
+              "EX_SQ_003",
+              "EX_SQ_004"
+            ]
+          },
+          "ui_prompts": {
+            "clarification_question": "Which style of Back Squat?",
+            "options": [
+              {
+                "id": "EX_SQ_001_HIGH",
+                "label": "High Bar (Olympic)",
+                "default": true
+              },
+              {
+                "id": "EX_SQ_001_LOW",
+                "label": "Low Bar (Powerlifting)"
+              },
+              {
+                "id": "EX_SQ_001_PAUSE",
+                "label": "Pause Squat"
+              }
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_002",
+          "canonical_name": "Front Squat",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "anterior_load"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "squat_rack"
+            ],
+            "difficulty": "advanced",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "upper_back"
+            ],
+            "secondary": [
+              "gluteus_maximus",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Front Rack Squat",
+              "Olympic Squat",
+              "Clean Grip Squat"
+            ],
+            "intent_triggers": [
+              "olympic lifting",
+              "quad isolation",
+              "upright torso"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_003",
+          "canonical_name": "Goblet Squat",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "regression"
+          },
+          "constraints": {
+            "equipment": [
+              "kettlebell",
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "core",
+              "upper_back"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "KB Squat",
+              "DB Squat",
+              "Goblet"
+            ],
+            "intent_triggers": [
+              "beginner legs",
+              "home workout",
+              "learning to squat",
+              "warmup"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_004",
+          "canonical_name": "Bodyweight Squat",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "bodyweight"
+          },
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "calves"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Air Squat",
+              "Free Squat",
+              "BW Squat",
+              "Squat"
+            ],
+            "slang_terms": [
+              "ATG Squat"
+            ],
+            "intent_triggers": [
+              "no equipment",
+              "cardio",
+              "warmup",
+              "HIIT"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_005",
+          "canonical_name": "Bulgarian Split Squat",
+          "type": "variation_node",
+          "popularity_score": 82,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "bench",
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "hip_flexors"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "BSS",
+              "Rear Foot Elevated Split Squat",
+              "RFESS"
+            ],
+            "intent_triggers": [
+              "single leg",
+              "balance",
+              "glute focus"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_006",
+          "canonical_name": "Sumo Squat",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "stance_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell",
+              "kettlebell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "adductors",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "quadriceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Plie Squat",
+              "Wide Stance Squat"
+            ],
+            "intent_triggers": [
+              "inner thigh",
+              "adductors",
+              "glutes"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_007",
+          "canonical_name": "Hack Squat",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "machine"
+          },
+          "constraints": {
+            "equipment": [
+              "hack_squat_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps"
+            ],
+            "secondary": [
+              "gluteus_maximus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Machine Hack Squat",
+              "Hack"
+            ],
+            "intent_triggers": [
+              "quad focus",
+              "machine",
+              "safe squatting"
+            ]
+          }
+        },
+        {
+          "id": "EX_SQ_008",
+          "canonical_name": "Pistol Squat",
+          "type": "variation_node",
+          "popularity_score": 65,
+          "hierarchy": {
+            "parent_id": "EX_SQ_001",
+            "variation_type": "advanced_unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "expert",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hip_flexors",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Single Leg Squat",
+              "One Leg Squat"
+            ],
+            "intent_triggers": [
+              "calisthenics",
+              "advanced bodyweight",
+              "mobility"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "HINGE",
+      "canonical_name": "Hip Hinge",
+      "description": "Hip-dominant movement with minimal knee flexion, targeting posterior chain",
+      "icon": "figure.strengthtraining.traditional",
+      "default_exercise_id": "EX_HG_001",
+      "exercises": [
+        {
+          "id": "EX_HG_001",
+          "canonical_name": "Conventional Deadlift",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true,
+            "variations": [
+              "EX_HG_001_CONV",
+              "EX_HG_001_DEFICIT",
+              "EX_HG_001_PAUSE"
+            ]
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "pull"
+          },
+          "muscles": {
+            "primary": [
+              "erector_spinae",
+              "gluteus_maximus",
+              "hamstrings"
+            ],
+            "secondary": [
+              "quadriceps",
+              "trapezius",
+              "forearms"
+            ],
+            "stabilizers": [
+              "core",
+              "lats"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Deadlift",
+              "DL",
+              "Deads",
+              "Floor Pull",
+              "Conventional"
+            ],
+            "slang_terms": [
+              "King of Lifts"
+            ],
+            "misspellings": [
+              "Deadlift",
+              "Dead Lift"
+            ],
+            "intent_triggers": [
+              "posterior chain",
+              "back strength",
+              "powerlifting",
+              "total body"
+            ]
+          },
+          "smart_suggestions": {
+            "progression_id": "EX_HG_007",
+            "regression_id": "EX_HG_004",
+            "siblings": [
+              "EX_HG_002",
+              "EX_HG_003",
+              "EX_HG_004"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_002",
+          "canonical_name": "Romanian Deadlift",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "eccentric_focus"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "RDL",
+              "Roms",
+              "Romanian DL",
+              "Stiff Leg RDL"
+            ],
+            "intent_triggers": [
+              "hamstrings",
+              "glute focus",
+              "eccentric",
+              "hypertrophy"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_003",
+          "canonical_name": "Sumo Deadlift",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "stance_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus",
+              "adductors",
+              "quadriceps"
+            ],
+            "secondary": [
+              "hamstrings",
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Sumo DL",
+              "Sumo Pull",
+              "Wide Stance Deadlift"
+            ],
+            "intent_triggers": [
+              "wide stance",
+              "less back stress",
+              "powerlifting"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_004",
+          "canonical_name": "Trap Bar Deadlift",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "equipment_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "trap_bar"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Hex Bar Deadlift",
+              "Trap Bar DL",
+              "Hex Bar DL"
+            ],
+            "intent_triggers": [
+              "safer deadlift",
+              "less back stress",
+              "athletic training"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_005",
+          "canonical_name": "Kettlebell Swing",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "ballistic"
+          },
+          "constraints": {
+            "equipment": [
+              "kettlebell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus",
+              "hamstrings"
+            ],
+            "secondary": [
+              "core",
+              "shoulders"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "KB Swing",
+              "Swing",
+              "Russian Swing",
+              "American Swing"
+            ],
+            "intent_triggers": [
+              "cardio",
+              "conditioning",
+              "explosive",
+              "HIIT"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_006",
+          "canonical_name": "Single-Leg Deadlift",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "kettlebell",
+              "none"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "core",
+              "hip_stabilizers"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "SLDL",
+              "Single Leg RDL",
+              "One Leg Deadlift",
+              "1-Leg DL"
+            ],
+            "intent_triggers": [
+              "balance",
+              "unilateral",
+              "asymmetry correction"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_007",
+          "canonical_name": "Deficit Deadlift",
+          "type": "variation_node",
+          "popularity_score": 60,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "range_of_motion"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "plates"
+            ],
+            "difficulty": "advanced",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings",
+              "gluteus_maximus",
+              "quadriceps"
+            ],
+            "secondary": [
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Deficit DL",
+              "Elevated Deadlift"
+            ],
+            "intent_triggers": [
+              "increased ROM",
+              "leg drive",
+              "powerlifting accessory"
+            ]
+          }
+        },
+        {
+          "id": "EX_HG_008",
+          "canonical_name": "Good Morning",
+          "type": "variation_node",
+          "popularity_score": 55,
+          "hierarchy": {
+            "parent_id": "EX_HG_001",
+            "variation_type": "accessory"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "advanced",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings",
+              "erector_spinae"
+            ],
+            "secondary": [
+              "gluteus_maximus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "GM",
+              "Goodmorning"
+            ],
+            "intent_triggers": [
+              "posterior chain",
+              "lower back strength",
+              "squat accessory"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "HORIZONTAL_PUSH",
+      "canonical_name": "Horizontal Push",
+      "description": "Pushing movement in the horizontal plane, targeting chest and triceps",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_HP_001",
+      "exercises": [
+        {
+          "id": "EX_HP_001",
+          "canonical_name": "Barbell Bench Press",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true,
+            "variations": [
+              "EX_HP_001_FLAT",
+              "EX_HP_001_PAUSE",
+              "EX_HP_001_CLOSE"
+            ]
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "push"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major",
+              "anterior_deltoid",
+              "triceps"
+            ],
+            "secondary": [
+              "serratus_anterior"
+            ],
+            "stabilizers": [
+              "core",
+              "lats"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bench Press",
+              "Bench",
+              "Flat Bench",
+              "BB Bench",
+              "Barbell Bench"
+            ],
+            "slang_terms": [
+              "Chest Day",
+              "How Much Ya Bench"
+            ],
+            "misspellings": [
+              "Bench Pres",
+              "Benchpress"
+            ],
+            "intent_triggers": [
+              "chest",
+              "upper body strength",
+              "powerlifting",
+              "push day"
+            ]
+          },
+          "smart_suggestions": {
+            "progression_id": "EX_HP_003",
+            "regression_id": "EX_HP_002",
+            "siblings": [
+              "EX_HP_002",
+              "EX_HP_003",
+              "EX_HP_004"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_002",
+          "canonical_name": "Push-Up",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "bodyweight"
+          },
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major",
+              "triceps"
+            ],
+            "secondary": [
+              "anterior_deltoid",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Press-Up",
+              "Pushup",
+              "Push Up"
+            ],
+            "intent_triggers": [
+              "no equipment",
+              "home workout",
+              "warmup",
+              "calisthenics"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_003",
+          "canonical_name": "Dumbbell Bench Press",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "equipment_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "bench"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major",
+              "triceps"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Bench",
+              "Dumbbell Press",
+              "DB Press"
+            ],
+            "intent_triggers": [
+              "chest hypertrophy",
+              "muscle balance",
+              "fuller ROM"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_004",
+          "canonical_name": "Incline Bench Press",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "angle_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "incline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "clavicular_pectoralis",
+              "anterior_deltoid"
+            ],
+            "secondary": [
+              "triceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Incline Press",
+              "Incline BB Press",
+              "Incline"
+            ],
+            "intent_triggers": [
+              "upper chest",
+              "shoulder emphasis",
+              "bodybuilding"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_005",
+          "canonical_name": "Close-Grip Bench Press",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "grip_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "triceps",
+              "pectoralis_major"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "CGBP",
+              "Close Grip Bench",
+              "Tricep Bench"
+            ],
+            "intent_triggers": [
+              "triceps",
+              "lockout strength",
+              "powerlifting accessory"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_006",
+          "canonical_name": "Dip",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "bodyweight_advanced"
+          },
+          "constraints": {
+            "equipment": [
+              "dip_station",
+              "parallel_bars"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major",
+              "triceps"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Chest Dip",
+              "Parallel Bar Dip",
+              "Dips"
+            ],
+            "intent_triggers": [
+              "calisthenics",
+              "chest stretch",
+              "bodyweight strength"
+            ]
+          }
+        },
+        {
+          "id": "EX_HP_007",
+          "canonical_name": "Floor Press",
+          "type": "variation_node",
+          "popularity_score": 60,
+          "hierarchy": {
+            "parent_id": "EX_HP_001",
+            "variation_type": "range_of_motion"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "triceps",
+              "pectoralis_major"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Floor Bench"
+            ],
+            "intent_triggers": [
+              "shoulder friendly",
+              "lockout strength",
+              "home gym"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "VERTICAL_PUSH",
+      "canonical_name": "Vertical Push",
+      "description": "Overhead pressing movement targeting shoulders and triceps",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_VP_001",
+      "exercises": [
+        {
+          "id": "EX_VP_001",
+          "canonical_name": "Overhead Press",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "push"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid",
+              "lateral_deltoid",
+              "triceps"
+            ],
+            "secondary": [
+              "upper_chest",
+              "trapezius"
+            ],
+            "stabilizers": [
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "OHP",
+              "Military Press",
+              "Strict Press",
+              "Standing Press",
+              "Shoulder Press"
+            ],
+            "misspellings": [
+              "Millitary Press"
+            ],
+            "intent_triggers": [
+              "shoulder strength",
+              "overhead strength",
+              "boulder shoulders"
+            ]
+          },
+          "smart_suggestions": {
+            "siblings": [
+              "EX_VP_002",
+              "EX_VP_003",
+              "EX_VP_004"
+            ]
+          }
+        },
+        {
+          "id": "EX_VP_002",
+          "canonical_name": "Seated Dumbbell Press",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "hierarchy": {
+            "parent_id": "EX_VP_001",
+            "variation_type": "seated"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "bench"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid",
+              "lateral_deltoid"
+            ],
+            "secondary": [
+              "triceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Seated Shoulder Press",
+              "DB Shoulder Press",
+              "Seated DB Press"
+            ],
+            "intent_triggers": [
+              "shoulder hypertrophy",
+              "isolated shoulders",
+              "bodybuilding"
+            ]
+          }
+        },
+        {
+          "id": "EX_VP_003",
+          "canonical_name": "Push Press",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "hierarchy": {
+            "parent_id": "EX_VP_001",
+            "variation_type": "power"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid",
+              "quadriceps"
+            ],
+            "secondary": [
+              "triceps",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Push Jerk",
+              "Power Press"
+            ],
+            "intent_triggers": [
+              "explosive",
+              "power",
+              "CrossFit",
+              "heavy overhead"
+            ]
+          }
+        },
+        {
+          "id": "EX_VP_004",
+          "canonical_name": "Arnold Press",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_VP_001",
+            "variation_type": "rotation"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid",
+              "lateral_deltoid"
+            ],
+            "secondary": [
+              "triceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Arnold Shoulder Press",
+              "Rotating Press"
+            ],
+            "intent_triggers": [
+              "shoulder hypertrophy",
+              "time under tension",
+              "bodybuilding"
+            ]
+          }
+        },
+        {
+          "id": "EX_VP_005",
+          "canonical_name": "Landmine Press",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "hierarchy": {
+            "parent_id": "EX_VP_001",
+            "variation_type": "angle_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "landmine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid",
+              "pectoralis_major"
+            ],
+            "secondary": [
+              "triceps",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Angled Press",
+              "Landmine Shoulder Press"
+            ],
+            "intent_triggers": [
+              "shoulder friendly",
+              "limited mobility",
+              "hybrid press"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "HORIZONTAL_PULL",
+      "canonical_name": "Horizontal Pull",
+      "description": "Pulling movement in the horizontal plane, targeting back and biceps",
+      "icon": "figure.rowing",
+      "default_exercise_id": "EX_HR_001",
+      "exercises": [
+        {
+          "id": "EX_HR_001",
+          "canonical_name": "Barbell Row",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true
+          },
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "pull"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids",
+              "trapezius"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid",
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bent Over Row",
+              "BB Row",
+              "Pendlay Row",
+              "Barbell Bent Over Row"
+            ],
+            "intent_triggers": [
+              "back thickness",
+              "rowing strength",
+              "pull day"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_002",
+          "canonical_name": "Single-Arm Dumbbell Row",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "bench"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Row",
+              "One Arm Row",
+              "Kroc Row",
+              "Dumbbell Row"
+            ],
+            "intent_triggers": [
+              "back hypertrophy",
+              "unilateral",
+              "lat focus"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_003",
+          "canonical_name": "Seated Cable Row",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "machine"
+          },
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Cable Row",
+              "Low Row",
+              "Seated Row"
+            ],
+            "intent_triggers": [
+              "constant tension",
+              "back hypertrophy",
+              "machine work"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_004",
+          "canonical_name": "T-Bar Row",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "equipment_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "t_bar",
+              "landmine"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Landmine Row",
+              "T Bar",
+              "Corner Row"
+            ],
+            "intent_triggers": [
+              "back thickness",
+              "heavy rowing",
+              "old school"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_005",
+          "canonical_name": "Face Pull",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "isolation"
+          },
+          "constraints": {
+            "equipment": [
+              "cable_machine",
+              "band"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "rear_deltoid",
+              "rhomboids"
+            ],
+            "secondary": [
+              "external_rotators",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Cable Face Pull",
+              "Band Face Pull"
+            ],
+            "intent_triggers": [
+              "shoulder health",
+              "posture",
+              "rear delts",
+              "prehab"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_006",
+          "canonical_name": "Machine Row",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "machine"
+          },
+          "constraints": {
+            "equipment": [
+              "row_machine",
+              "plate_loaded_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Plate Loaded Row",
+              "Hammer Strength Row",
+              "Seated Machine Row",
+              "Machine Back Row"
+            ],
+            "slang_terms": [
+              "Machine Row"
+            ],
+            "intent_triggers": [
+              "back machine",
+              "guided row",
+              "back thickness"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_007",
+          "canonical_name": "Chest Supported Row",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "strict_form"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "incline_bench"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Incline DB Row",
+              "Seal Row",
+              "Prone Row",
+              "Chest Supported Dumbbell Row"
+            ],
+            "intent_triggers": [
+              "strict row",
+              "no momentum",
+              "back isolation"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_008",
+          "canonical_name": "Inverted Row",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "bodyweight"
+          },
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "smith_machine",
+              "rings"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "rhomboids"
+            ],
+            "secondary": [
+              "biceps",
+              "core"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Body Row",
+              "Australian Pull-Up",
+              "Horizontal Pull-Up",
+              "Ring Row"
+            ],
+            "intent_triggers": [
+              "bodyweight back",
+              "beginner pull",
+              "calisthenics"
+            ]
+          }
+        },
+        {
+          "id": "EX_HR_009",
+          "canonical_name": "Meadows Row",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "hierarchy": {
+            "parent_id": "EX_HR_001",
+            "variation_type": "unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "landmine",
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi"
+            ],
+            "secondary": [
+              "biceps",
+              "rear_deltoid",
+              "obliques"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Landmine Meadows Row",
+              "Single Arm Landmine Row"
+            ],
+            "intent_triggers": [
+              "lat stretch",
+              "unilateral back",
+              "John Meadows"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "VERTICAL_PULL",
+      "canonical_name": "Vertical Pull",
+      "description": "Pulling movement in the vertical plane, targeting lats and biceps",
+      "icon": "figure.climbing",
+      "default_exercise_id": "EX_VR_001",
+      "exercises": [
+        {
+          "id": "EX_VR_001",
+          "canonical_name": "Pull-Up",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true
+          },
+          "constraints": {
+            "equipment": [
+              "pull_up_bar"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound",
+            "force": "pull"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "biceps"
+            ],
+            "secondary": [
+              "rhomboids",
+              "rear_deltoid",
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Pull Up",
+              "Pullup",
+              "Overhand Pull-Up"
+            ],
+            "intent_triggers": [
+              "back width",
+              "V-taper",
+              "calisthenics",
+              "bodyweight"
+            ]
+          }
+        },
+        {
+          "id": "EX_VR_002",
+          "canonical_name": "Chin-Up",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "hierarchy": {
+            "parent_id": "EX_VR_001",
+            "variation_type": "grip_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "pull_up_bar"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "biceps"
+            ],
+            "secondary": [
+              "rhomboids"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Chin Up",
+              "Chinup",
+              "Underhand Pull-Up",
+              "Supinated Pull-Up"
+            ],
+            "intent_triggers": [
+              "biceps emphasis",
+              "easier pull-up",
+              "arm builder"
+            ]
+          }
+        },
+        {
+          "id": "EX_VR_003",
+          "canonical_name": "Lat Pulldown",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "hierarchy": {
+            "parent_id": "EX_VR_001",
+            "variation_type": "machine"
+          },
+          "constraints": {
+            "equipment": [
+              "lat_pulldown_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi"
+            ],
+            "secondary": [
+              "biceps",
+              "rhomboids"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Pulldown",
+              "Cable Pulldown",
+              "Lat Pull"
+            ],
+            "intent_triggers": [
+              "scalable pull-up",
+              "back width",
+              "beginner back"
+            ]
+          }
+        },
+        {
+          "id": "EX_VR_004",
+          "canonical_name": "Neutral Grip Pull-Up",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_VR_001",
+            "variation_type": "grip_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "pull_up_bar"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "latissimus_dorsi",
+              "brachialis"
+            ],
+            "secondary": [
+              "biceps",
+              "rhomboids"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Hammer Grip Pull-Up",
+              "Parallel Grip Pull-Up"
+            ],
+            "intent_triggers": [
+              "shoulder friendly",
+              "brachialis focus"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "LUNGE",
+      "canonical_name": "Lunge",
+      "description": "Unilateral lower body movement with split stance",
+      "icon": "figure.walk",
+      "default_exercise_id": "EX_LU_001",
+      "exercises": [
+        {
+          "id": "EX_LU_001",
+          "canonical_name": "Reverse Lunge",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "barbell",
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "hip_stabilizers"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Backward Lunge",
+              "Step Back Lunge"
+            ],
+            "intent_triggers": [
+              "knee friendly",
+              "unilateral",
+              "glutes"
+            ]
+          }
+        },
+        {
+          "id": "EX_LU_002",
+          "canonical_name": "Walking Lunge",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "hierarchy": {
+            "parent_id": "EX_LU_001",
+            "variation_type": "dynamic"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "barbell",
+              "none"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "calves"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Traveling Lunge",
+              "Walking Lunges"
+            ],
+            "intent_triggers": [
+              "conditioning",
+              "functional",
+              "leg endurance"
+            ]
+          }
+        },
+        {
+          "id": "EX_LU_003",
+          "canonical_name": "Forward Lunge",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "hierarchy": {
+            "parent_id": "EX_LU_001",
+            "variation_type": "classic"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "barbell",
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps"
+            ],
+            "secondary": [
+              "gluteus_maximus",
+              "hamstrings"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Front Lunge",
+              "Step Forward Lunge",
+              "Lunge"
+            ],
+            "intent_triggers": [
+              "quad focus",
+              "classic lunge"
+            ]
+          }
+        },
+        {
+          "id": "EX_LU_004",
+          "canonical_name": "Lateral Lunge",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "hierarchy": {
+            "parent_id": "EX_LU_001",
+            "variation_type": "plane_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "none"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "adductors",
+              "quadriceps"
+            ],
+            "secondary": [
+              "gluteus_maximus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Side Lunge",
+              "Cossack Squat"
+            ],
+            "intent_triggers": [
+              "inner thigh",
+              "lateral movement",
+              "mobility"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "CARRY",
+      "canonical_name": "Loaded Carry",
+      "description": "Walking with load to challenge core stability and grip",
+      "icon": "figure.walk",
+      "default_exercise_id": "EX_CA_001",
+      "exercises": [
+        {
+          "id": "EX_CA_001",
+          "canonical_name": "Farmer's Walk",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "hierarchy": {
+            "parent_id": null,
+            "is_default": true
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "kettlebell",
+              "farmer_handles"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "forearms",
+              "trapezius",
+              "core"
+            ],
+            "secondary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Farmer Walk",
+              "Farmers Carry",
+              "Farmer Carry"
+            ],
+            "intent_triggers": [
+              "grip strength",
+              "conditioning",
+              "strongman",
+              "core"
+            ]
+          }
+        },
+        {
+          "id": "EX_CA_002",
+          "canonical_name": "Suitcase Carry",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "hierarchy": {
+            "parent_id": "EX_CA_001",
+            "variation_type": "unilateral"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "kettlebell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "obliques",
+              "quadratus_lumborum"
+            ],
+            "secondary": [
+              "forearms",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "One Arm Carry",
+              "Single Arm Farmer Walk"
+            ],
+            "intent_triggers": [
+              "anti-lateral flexion",
+              "core asymmetry",
+              "obliques"
+            ]
+          }
+        },
+        {
+          "id": "EX_CA_003",
+          "canonical_name": "Overhead Carry",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "hierarchy": {
+            "parent_id": "EX_CA_001",
+            "variation_type": "position_modification"
+          },
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "kettlebell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "core",
+              "shoulders"
+            ],
+            "secondary": [
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Waiter Walk",
+              "Overhead Walk"
+            ],
+            "intent_triggers": [
+              "shoulder stability",
+              "overhead strength",
+              "core"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "ARM_BICEPS",
+      "canonical_name": "Biceps Isolation",
+      "description": "Elbow flexion movements targeting the biceps brachii",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_BI_001",
+      "exercises": [
+        {
+          "id": "EX_BI_001",
+          "canonical_name": "Barbell Curl",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "brachialis",
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "BB Curl",
+              "Standing Barbell Curl",
+              "Barbell Bicep Curl",
+              "BB Bicep Curl"
+            ],
+            "slang_terms": [
+              "Curls",
+              "Bicep Curls"
+            ],
+            "misspellings": [
+              "Bicept Curl",
+              "Barbell Curl"
+            ],
+            "intent_triggers": [
+              "arms",
+              "biceps",
+              "guns",
+              "arm day"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_002",
+          "canonical_name": "Dumbbell Curl",
+          "type": "variation_node",
+          "popularity_score": 98,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "brachialis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Curl",
+              "Dumbbell Bicep Curl",
+              "Dumbbell Bicep Curls",
+              "DB Bicep Curl",
+              "Standing DB Curl",
+              "Standing Dumbbell Curl",
+              "Bicep Curl",
+              "Bicep Curls"
+            ],
+            "intent_triggers": [
+              "biceps",
+              "unilateral arms",
+              "arm pump"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_003",
+          "canonical_name": "Hammer Curl",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "brachialis",
+              "biceps"
+            ],
+            "secondary": [
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Neutral Grip Curl",
+              "DB Hammer Curl"
+            ],
+            "intent_triggers": [
+              "forearm thickness",
+              "brachialis",
+              "arm width"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_004",
+          "canonical_name": "Preacher Curl",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell",
+              "preacher_bench"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "brachialis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Scott Curl",
+              "Preacher Bench Curl",
+              "EZ Bar Preacher Curl"
+            ],
+            "intent_triggers": [
+              "bicep peak",
+              "strict curl",
+              "isolation"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_005",
+          "canonical_name": "Incline Dumbbell Curl",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "incline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps_long_head"
+            ],
+            "secondary": [
+              "biceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Incline Curl",
+              "Stretch Curl"
+            ],
+            "intent_triggers": [
+              "bicep stretch",
+              "long head biceps",
+              "incline bench"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_006",
+          "canonical_name": "Cable Curl",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Cable Bicep Curl",
+              "Low Cable Curl"
+            ],
+            "intent_triggers": [
+              "constant tension",
+              "cable arms"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_007",
+          "canonical_name": "Concentration Curl",
+          "type": "variation_node",
+          "popularity_score": 82,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "brachialis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Seated Concentration Curl"
+            ],
+            "intent_triggers": [
+              "bicep peak",
+              "isolation",
+              "mind muscle connection"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_008",
+          "canonical_name": "EZ Bar Curl",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "constraints": {
+            "equipment": [
+              "ez_bar"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "EZ Curl",
+              "Cambered Bar Curl"
+            ],
+            "intent_triggers": [
+              "wrist friendly curl",
+              "biceps"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_009",
+          "canonical_name": "Spider Curl",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "barbell",
+              "incline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "brachialis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Prone Incline Curl"
+            ],
+            "intent_triggers": [
+              "bicep peak",
+              "short head"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_010",
+          "canonical_name": "Reverse Curl",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "ez_bar"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "brachioradialis"
+            ],
+            "secondary": [
+              "biceps",
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Overhand Curl",
+              "Pronated Curl"
+            ],
+            "intent_triggers": [
+              "forearms",
+              "brachioradialis",
+              "grip strength"
+            ]
+          }
+        },
+        {
+          "id": "EX_BI_011",
+          "canonical_name": "21s",
+          "type": "variation_node",
+          "popularity_score": 72,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "biceps"
+            ],
+            "secondary": [
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bicep 21s",
+              "Twenty-Ones"
+            ],
+            "intent_triggers": [
+              "bicep pump",
+              "intensity technique",
+              "burn"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "ARM_TRICEPS",
+      "canonical_name": "Triceps Isolation",
+      "description": "Elbow extension movements targeting the triceps brachii",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_TR_001",
+      "exercises": [
+        {
+          "id": "EX_TR_001",
+          "canonical_name": "Tricep Pushdown",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "triceps"
+            ],
+            "secondary": [
+              "forearms"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Cable Pushdown",
+              "Triceps Pushdown",
+              "Pressdown",
+              "Tricep Extension"
+            ],
+            "slang_terms": [
+              "Tris",
+              "Pushdowns"
+            ],
+            "intent_triggers": [
+              "triceps",
+              "arm day",
+              "horseshoe triceps"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_002",
+          "canonical_name": "Skull Crusher",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "ez_bar",
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "triceps_long_head",
+              "triceps"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Lying Triceps Extension",
+              "Skullcrusher",
+              "Skull Crushers",
+              "French Press",
+              "Nose Breakers"
+            ],
+            "slang_terms": [
+              "Skullies"
+            ],
+            "misspellings": [
+              "Scull Crusher"
+            ],
+            "intent_triggers": [
+              "tricep mass",
+              "long head triceps"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_003",
+          "canonical_name": "Overhead Tricep Extension",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "triceps_long_head"
+            ],
+            "secondary": [
+              "triceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Overhead Extension",
+              "French Press",
+              "DB Overhead Extension"
+            ],
+            "intent_triggers": [
+              "long head triceps",
+              "overhead triceps",
+              "tricep stretch"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_004",
+          "canonical_name": "Rope Pushdown",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "constraints": {
+            "equipment": [
+              "cable_machine",
+              "rope_attachment"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "triceps_lateral_head"
+            ],
+            "secondary": [
+              "triceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Rope Tricep Pushdown",
+              "Cable Rope Pushdown"
+            ],
+            "intent_triggers": [
+              "lateral head triceps",
+              "tricep separation"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_005",
+          "canonical_name": "Diamond Push-Up",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "triceps"
+            ],
+            "secondary": [
+              "chest",
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Close Grip Push-Up",
+              "Triangle Push-Up"
+            ],
+            "intent_triggers": [
+              "bodyweight triceps",
+              "no equipment arms",
+              "calisthenics"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_006",
+          "canonical_name": "Tricep Kickback",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "triceps"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Kickback",
+              "Dumbbell Tricep Kickback"
+            ],
+            "intent_triggers": [
+              "tricep squeeze",
+              "tricep contraction"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_007",
+          "canonical_name": "Tricep Dip",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "dip_station",
+              "bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "triceps"
+            ],
+            "secondary": [
+              "chest",
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bench Dips",
+              "Bodyweight Dips"
+            ],
+            "intent_triggers": [
+              "tricep dips",
+              "arm dips",
+              "bodyweight arms"
+            ]
+          }
+        },
+        {
+          "id": "EX_TR_008",
+          "canonical_name": "JM Press",
+          "type": "variation_node",
+          "popularity_score": 65,
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "advanced",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "triceps"
+            ],
+            "secondary": [
+              "chest"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "JM Blakley Press"
+            ],
+            "intent_triggers": [
+              "powerlifting triceps",
+              "lockout strength"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "SHOULDER_ISOLATION",
+      "canonical_name": "Shoulder Isolation",
+      "description": "Targeted shoulder movements for all three deltoid heads",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_SH_001",
+      "exercises": [
+        {
+          "id": "EX_SH_001",
+          "canonical_name": "Lateral Raise",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "lateral_deltoid"
+            ],
+            "secondary": [
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Dumbbell Lateral Raise",
+              "Side Raise",
+              "Side Lateral Raise",
+              "DB Lateral Raise"
+            ],
+            "slang_terms": [
+              "Side Delts",
+              "Lat Raises"
+            ],
+            "misspellings": [
+              "Latteral Raise"
+            ],
+            "intent_triggers": [
+              "shoulder width",
+              "side delts",
+              "capped shoulders",
+              "boulder shoulders"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_002",
+          "canonical_name": "Cable Lateral Raise",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "lateral_deltoid"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Single Arm Cable Lateral Raise"
+            ],
+            "intent_triggers": [
+              "constant tension shoulders",
+              "cable side delts"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_003",
+          "canonical_name": "Front Raise",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "barbell",
+              "plate"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "anterior_deltoid"
+            ],
+            "secondary": [
+              "upper_chest"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Dumbbell Front Raise",
+              "Plate Front Raise",
+              "Front Delt Raise"
+            ],
+            "intent_triggers": [
+              "front delts",
+              "anterior deltoid"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_004",
+          "canonical_name": "Rear Delt Fly",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "rear_deltoid"
+            ],
+            "secondary": [
+              "rhomboids",
+              "trapezius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Reverse Fly",
+              "Bent Over Fly",
+              "Rear Delt Raise",
+              "Reverse Dumbbell Fly"
+            ],
+            "intent_triggers": [
+              "rear delts",
+              "posterior deltoid",
+              "posture",
+              "shoulder balance"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_005",
+          "canonical_name": "Dumbbell Shrug",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "trapezius"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Shrug",
+              "Shrugs"
+            ],
+            "intent_triggers": [
+              "traps",
+              "trapezius",
+              "yoke"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_006",
+          "canonical_name": "Barbell Shrug",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "barbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "trapezius"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "BB Shrug",
+              "Heavy Shrugs"
+            ],
+            "intent_triggers": [
+              "heavy traps",
+              "trapezius mass"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_007",
+          "canonical_name": "Upright Row",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "dumbbell",
+              "cable_machine"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "lateral_deltoid",
+              "trapezius"
+            ],
+            "secondary": [
+              "biceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "BB Upright Row",
+              "Cable Upright Row"
+            ],
+            "intent_triggers": [
+              "traps and delts",
+              "shoulder compound"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_008",
+          "canonical_name": "Machine Lateral Raise",
+          "type": "variation_node",
+          "popularity_score": 78,
+          "constraints": {
+            "equipment": [
+              "lateral_raise_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "lateral_deltoid"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Shoulder Machine Lateral Raise"
+            ],
+            "intent_triggers": [
+              "machine shoulders",
+              "guided lateral raise"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_009",
+          "canonical_name": "Rear Delt Machine Fly",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "constraints": {
+            "equipment": [
+              "pec_deck_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "rear_deltoid"
+            ],
+            "secondary": [
+              "rhomboids"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Reverse Pec Deck",
+              "Machine Rear Delt Fly"
+            ],
+            "intent_triggers": [
+              "machine rear delts",
+              "pec deck reverse"
+            ]
+          }
+        },
+        {
+          "id": "EX_SH_010",
+          "canonical_name": "Lu Raise",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "constraints": {
+            "equipment": [
+              "dumbbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "lateral_deltoid",
+              "anterior_deltoid"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Front to Side Raise",
+              "L Raise"
+            ],
+            "intent_triggers": [
+              "olympic shoulders",
+              "full delt sweep"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "LEG_MACHINE",
+      "canonical_name": "Leg Machine",
+      "description": "Machine-based lower body movements",
+      "icon": "figure.strengthtraining.traditional",
+      "default_exercise_id": "EX_LM_001",
+      "exercises": [
+        {
+          "id": "EX_LM_001",
+          "canonical_name": "Leg Press",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "leg_press_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "calves"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "45 Degree Leg Press",
+              "Horizontal Leg Press",
+              "Machine Leg Press"
+            ],
+            "slang_terms": [
+              "Quadzilla"
+            ],
+            "intent_triggers": [
+              "heavy legs",
+              "quad mass",
+              "leg machine",
+              "safe squatting"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_002",
+          "canonical_name": "Leg Extension",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "constraints": {
+            "equipment": [
+              "leg_extension_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "quadriceps"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Quad Extension",
+              "Machine Leg Extension",
+              "Knee Extension"
+            ],
+            "intent_triggers": [
+              "quad isolation",
+              "knee extension",
+              "leg pump"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_003",
+          "canonical_name": "Lying Leg Curl",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "constraints": {
+            "equipment": [
+              "leg_curl_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings"
+            ],
+            "secondary": [
+              "calves"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Leg Curl",
+              "Hamstring Curl",
+              "Prone Leg Curl"
+            ],
+            "intent_triggers": [
+              "hamstrings",
+              "knee flexion",
+              "ham curl"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_004",
+          "canonical_name": "Seated Leg Curl",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "seated_leg_curl_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Seated Hamstring Curl"
+            ],
+            "intent_triggers": [
+              "seated ham curl",
+              "hamstring machine"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_005",
+          "canonical_name": "Standing Calf Raise",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "constraints": {
+            "equipment": [
+              "calf_raise_machine",
+              "smith_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gastrocnemius"
+            ],
+            "secondary": [
+              "soleus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Calf Raise",
+              "Machine Calf Raise",
+              "Standing Calf"
+            ],
+            "slang_terms": [
+              "Calves"
+            ],
+            "intent_triggers": [
+              "calves",
+              "calf development",
+              "lower leg"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_006",
+          "canonical_name": "Seated Calf Raise",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "seated_calf_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "soleus"
+            ],
+            "secondary": [
+              "gastrocnemius"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Seated Calf"
+            ],
+            "intent_triggers": [
+              "soleus",
+              "calf thickness"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_007",
+          "canonical_name": "Hip Adduction Machine",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "adduction_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "adductors"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Adductor Machine",
+              "Inner Thigh Machine",
+              "Thigh Squeeze"
+            ],
+            "intent_triggers": [
+              "inner thighs",
+              "adductors"
+            ]
+          }
+        },
+        {
+          "id": "EX_LM_008",
+          "canonical_name": "Hip Abduction Machine",
+          "type": "variation_node",
+          "popularity_score": 78,
+          "constraints": {
+            "equipment": [
+              "abduction_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_medius"
+            ],
+            "secondary": [
+              "gluteus_minimus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Abductor Machine",
+              "Outer Thigh Machine",
+              "Hip Abductor"
+            ],
+            "intent_triggers": [
+              "outer thighs",
+              "hip abductors",
+              "glute medius"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "GLUTE_ISOLATION",
+      "canonical_name": "Glute Isolation",
+      "description": "Targeted glute-focused movements",
+      "icon": "figure.strengthtraining.traditional",
+      "default_exercise_id": "EX_GL_001",
+      "exercises": [
+        {
+          "id": "EX_GL_001",
+          "canonical_name": "Hip Thrust",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings",
+              "quadriceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Barbell Hip Thrust",
+              "BB Hip Thrust",
+              "Glute Bridge with Weight"
+            ],
+            "slang_terms": [
+              "Booty Builder"
+            ],
+            "intent_triggers": [
+              "glutes",
+              "booty",
+              "hip extension",
+              "glute development"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_002",
+          "canonical_name": "Glute Bridge",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "constraints": {
+            "equipment": [
+              "none",
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bodyweight Glute Bridge",
+              "Floor Bridge"
+            ],
+            "intent_triggers": [
+              "beginner glutes",
+              "glute activation",
+              "warmup"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_003",
+          "canonical_name": "Cable Kickback",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "cable_machine",
+              "ankle_strap"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Glute Kickback",
+              "Cable Glute Kickback",
+              "Hip Kickback"
+            ],
+            "intent_triggers": [
+              "glute isolation",
+              "cable glutes"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_004",
+          "canonical_name": "Glute-Ham Raise",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "ghr_machine"
+            ],
+            "difficulty": "advanced",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "hamstrings",
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "GHR",
+              "Glute Ham Developer"
+            ],
+            "intent_triggers": [
+              "posterior chain",
+              "advanced hamstrings"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_005",
+          "canonical_name": "Cable Pull Through",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus"
+            ],
+            "secondary": [
+              "hamstrings"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Pull Through",
+              "Rope Pull Through"
+            ],
+            "intent_triggers": [
+              "hip hinge pattern",
+              "glute activation"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_006",
+          "canonical_name": "Donkey Kick",
+          "type": "variation_node",
+          "popularity_score": 70,
+          "constraints": {
+            "equipment": [
+              "none",
+              "ankle_weight"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_maximus"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Quadruped Hip Extension"
+            ],
+            "intent_triggers": [
+              "home glutes",
+              "bodyweight glutes"
+            ]
+          }
+        },
+        {
+          "id": "EX_GL_007",
+          "canonical_name": "Fire Hydrant",
+          "type": "variation_node",
+          "popularity_score": 65,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "gluteus_medius"
+            ],
+            "secondary": [
+              "gluteus_maximus"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Quadruped Hip Abduction"
+            ],
+            "intent_triggers": [
+              "glute medius",
+              "hip stability"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "CORE_ISOLATION",
+      "canonical_name": "Core Isolation",
+      "description": "Targeted core and abdominal movements",
+      "icon": "figure.core.training",
+      "default_exercise_id": "EX_CO_001",
+      "exercises": [
+        {
+          "id": "EX_CO_001",
+          "canonical_name": "Plank",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isometric"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis",
+              "transverse_abdominis"
+            ],
+            "secondary": [
+              "obliques",
+              "erector_spinae"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "High Plank",
+              "Front Plank",
+              "Prone Bridge"
+            ],
+            "intent_triggers": [
+              "core stability",
+              "abs",
+              "isometric core"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_002",
+          "canonical_name": "Crunch",
+          "type": "variation_node",
+          "popularity_score": 95,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Ab Crunch",
+              "Basic Crunch",
+              "Crunches"
+            ],
+            "intent_triggers": [
+              "abs",
+              "six pack",
+              "ab workout"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_003",
+          "canonical_name": "Hanging Leg Raise",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "pull_up_bar"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis",
+              "hip_flexors"
+            ],
+            "secondary": [
+              "obliques"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Leg Raise",
+              "Hanging Knee Raise",
+              "Captain's Chair Leg Raise"
+            ],
+            "intent_triggers": [
+              "lower abs",
+              "hanging abs"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_004",
+          "canonical_name": "Cable Crunch",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Kneeling Cable Crunch",
+              "Rope Crunch"
+            ],
+            "intent_triggers": [
+              "weighted abs",
+              "cable abs"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_005",
+          "canonical_name": "Russian Twist",
+          "type": "variation_node",
+          "popularity_score": 82,
+          "constraints": {
+            "equipment": [
+              "none",
+              "medicine_ball",
+              "dumbbell"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "obliques"
+            ],
+            "secondary": [
+              "rectus_abdominis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Seated Twist",
+              "Russian Twists"
+            ],
+            "intent_triggers": [
+              "obliques",
+              "rotational core"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_006",
+          "canonical_name": "Ab Rollout",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "constraints": {
+            "equipment": [
+              "ab_wheel",
+              "barbell"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis"
+            ],
+            "secondary": [
+              "lats",
+              "shoulders"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Ab Wheel Rollout",
+              "Barbell Rollout"
+            ],
+            "intent_triggers": [
+              "advanced abs",
+              "ab wheel"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_007",
+          "canonical_name": "Dead Bug",
+          "type": "variation_node",
+          "popularity_score": 78,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "stability"
+          },
+          "muscles": {
+            "primary": [
+              "transverse_abdominis"
+            ],
+            "secondary": [
+              "rectus_abdominis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Deadbug"
+            ],
+            "intent_triggers": [
+              "core stability",
+              "rehab core",
+              "anti-extension"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_008",
+          "canonical_name": "Mountain Climber",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "dynamic"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis",
+              "hip_flexors"
+            ],
+            "secondary": [
+              "shoulders",
+              "quadriceps"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Mountain Climbers"
+            ],
+            "intent_triggers": [
+              "cardio abs",
+              "HIIT",
+              "conditioning"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_009",
+          "canonical_name": "Side Plank",
+          "type": "variation_node",
+          "popularity_score": 82,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isometric"
+          },
+          "muscles": {
+            "primary": [
+              "obliques"
+            ],
+            "secondary": [
+              "transverse_abdominis"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Lateral Plank"
+            ],
+            "intent_triggers": [
+              "obliques",
+              "side core",
+              "anti-lateral flexion"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_010",
+          "canonical_name": "V-Up",
+          "type": "variation_node",
+          "popularity_score": 75,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "rectus_abdominis"
+            ],
+            "secondary": [
+              "hip_flexors"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "V-Sit Up",
+              "Jackknife"
+            ],
+            "intent_triggers": [
+              "advanced abs",
+              "full ab contraction"
+            ]
+          }
+        },
+        {
+          "id": "EX_CO_011",
+          "canonical_name": "Bicycle Crunch",
+          "type": "variation_node",
+          "popularity_score": 88,
+          "constraints": {
+            "equipment": [
+              "none"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "obliques",
+              "rectus_abdominis"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Bicycle",
+              "Elbow to Knee Crunch"
+            ],
+            "intent_triggers": [
+              "obliques",
+              "rotational abs"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "pattern_id": "CHEST_ISOLATION",
+      "canonical_name": "Chest Isolation",
+      "description": "Isolation movements targeting the pectoralis muscles",
+      "icon": "figure.arms.open",
+      "default_exercise_id": "EX_CH_001",
+      "exercises": [
+        {
+          "id": "EX_CH_001",
+          "canonical_name": "Cable Crossover",
+          "type": "parent_node",
+          "popularity_score": 100,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Cable Fly",
+              "High Cable Crossover",
+              "Cable Chest Fly"
+            ],
+            "intent_triggers": [
+              "chest isolation",
+              "inner chest",
+              "chest squeeze"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_002",
+          "canonical_name": "Pec Deck Fly",
+          "type": "variation_node",
+          "popularity_score": 92,
+          "constraints": {
+            "equipment": [
+              "pec_deck_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Pec Deck",
+              "Machine Fly",
+              "Butterfly"
+            ],
+            "intent_triggers": [
+              "machine chest",
+              "chest fly machine"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_003",
+          "canonical_name": "Dumbbell Fly",
+          "type": "variation_node",
+          "popularity_score": 90,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "pectoralis_major"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "DB Fly",
+              "Flat Dumbbell Fly",
+              "Chest Fly"
+            ],
+            "intent_triggers": [
+              "chest stretch",
+              "pec fly",
+              "chest pump"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_004",
+          "canonical_name": "Incline Dumbbell Fly",
+          "type": "variation_node",
+          "popularity_score": 85,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "incline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "clavicular_pectoralis"
+            ],
+            "secondary": [
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Incline Fly",
+              "Incline DB Fly"
+            ],
+            "intent_triggers": [
+              "upper chest fly",
+              "incline isolation"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_005",
+          "canonical_name": "Decline Dumbbell Press",
+          "type": "variation_node",
+          "popularity_score": 80,
+          "constraints": {
+            "equipment": [
+              "dumbbell",
+              "decline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "sternal_pectoralis"
+            ],
+            "secondary": [
+              "triceps",
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Decline DB Press",
+              "Decline Press"
+            ],
+            "intent_triggers": [
+              "lower chest",
+              "decline chest"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_006",
+          "canonical_name": "Decline Bench Press",
+          "type": "variation_node",
+          "popularity_score": 78,
+          "constraints": {
+            "equipment": [
+              "barbell",
+              "decline_bench"
+            ],
+            "difficulty": "intermediate",
+            "mechanics": "compound"
+          },
+          "muscles": {
+            "primary": [
+              "sternal_pectoralis"
+            ],
+            "secondary": [
+              "triceps",
+              "anterior_deltoid"
+            ]
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Decline BB Press",
+              "Decline Barbell Press"
+            ],
+            "intent_triggers": [
+              "lower chest",
+              "decline barbell"
+            ]
+          }
+        },
+        {
+          "id": "EX_CH_007",
+          "canonical_name": "Low Cable Fly",
+          "type": "variation_node",
+          "popularity_score": 82,
+          "constraints": {
+            "equipment": [
+              "cable_machine"
+            ],
+            "difficulty": "beginner",
+            "mechanics": "isolation"
+          },
+          "muscles": {
+            "primary": [
+              "clavicular_pectoralis"
+            ],
+            "secondary": []
+          },
+          "nlp_metadata": {
+            "aliases": [
+              "Low to High Cable Fly",
+              "Cable Upper Chest Fly"
+            ],
+            "intent_triggers": [
+              "upper chest cable",
+              "low cable chest"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "slang_dictionary": {
+    "wheels": {
+      "intent": "leg_workout",
+      "patterns": [
+        "SQUAT",
+        "LUNGE",
+        "LEG_MACHINE"
+      ]
+    },
+    "guns": {
+      "intent": "arm_workout",
+      "patterns": [
+        "ARM_BICEPS",
+        "ARM_TRICEPS"
+      ]
+    },
+    "bis": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "tris": {
+      "direct_match": "Tricep Pushdown"
+    },
+    "curls": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "bicep curl": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "bicep curls": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "dumbbell curl": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "dumbbell bicep curl": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "db curl": {
+      "direct_match": "Dumbbell Curl"
+    },
+    "barbell curl": {
+      "direct_match": "Barbell Curl"
+    },
+    "bb curl": {
+      "direct_match": "Barbell Curl"
+    },
+    "tricep extension": {
+      "direct_match": "Overhead Tricep Extension"
+    },
+    "chest day": {
+      "intent": "push_workout",
+      "patterns": [
+        "HORIZONTAL_PUSH",
+        "CHEST_ISOLATION"
+      ]
+    },
+    "back day": {
+      "intent": "pull_workout",
+      "patterns": [
+        "HORIZONTAL_PULL",
+        "VERTICAL_PULL"
+      ]
+    },
+    "push day": {
+      "intent": "push_workout",
+      "patterns": [
+        "HORIZONTAL_PUSH",
+        "VERTICAL_PUSH"
+      ]
+    },
+    "pull day": {
+      "intent": "pull_workout",
+      "patterns": [
+        "HORIZONTAL_PULL",
+        "VERTICAL_PULL",
+        "HINGE"
+      ]
+    },
+    "leg day": {
+      "intent": "leg_workout",
+      "patterns": [
+        "SQUAT",
+        "HINGE",
+        "LUNGE",
+        "LEG_MACHINE",
+        "GLUTE_ISOLATION"
+      ]
+    },
+    "arm day": {
+      "intent": "arm_workout",
+      "patterns": [
+        "ARM_BICEPS",
+        "ARM_TRICEPS"
+      ]
+    },
+    "abs": {
+      "patterns": [
+        "CORE_ISOLATION"
+      ]
+    },
+    "core": {
+      "patterns": [
+        "CORE_ISOLATION",
+        "CARRY"
+      ]
+    },
+    "shoulders": {
+      "patterns": [
+        "VERTICAL_PUSH",
+        "SHOULDER_ISOLATION"
+      ]
+    },
+    "delts": {
+      "patterns": [
+        "VERTICAL_PUSH",
+        "SHOULDER_ISOLATION"
+      ]
+    },
+    "lateral raise": {
+      "direct_match": "Lateral Raise"
+    },
+    "side delts": {
+      "direct_match": "Lateral Raise"
+    },
+    "rear delts": {
+      "direct_match": "Rear Delt Fly"
+    },
+    "traps": {
+      "direct_match": "Dumbbell Shrug"
+    },
+    "calves": {
+      "direct_match": "Standing Calf Raise"
+    },
+    "glutes": {
+      "patterns": [
+        "GLUTE_ISOLATION",
+        "HINGE"
+      ]
+    },
+    "booty": {
+      "patterns": [
+        "GLUTE_ISOLATION"
+      ]
+    },
+    "lat pulldown": {
+      "direct_match": "Lat Pulldown"
+    },
+    "cable fly": {
+      "direct_match": "Cable Crossover"
+    },
+    "leg press": {
+      "direct_match": "Leg Press"
+    },
+    "leg extension": {
+      "direct_match": "Leg Extension"
+    },
+    "leg curl": {
+      "direct_match": "Lying Leg Curl"
+    },
+    "hamstring curl": {
+      "direct_match": "Lying Leg Curl"
+    },
+    "machine row": {
+      "direct_match": "Machine Row"
+    },
+    "seated row": {
+      "direct_match": "Seated Cable Row"
+    },
+    "cable row": {
+      "direct_match": "Seated Cable Row"
+    },
+    "chest supported row": {
+      "direct_match": "Chest Supported Row"
+    },
+    "inverted row": {
+      "direct_match": "Inverted Row"
+    },
+    "meadows row": {
+      "direct_match": "Meadows Row"
+    },
+    "t bar row": {
+      "direct_match": "T-Bar Row"
+    },
+    "face pull": {
+      "direct_match": "Face Pull"
+    },
+    "calf raise": {
+      "direct_match": "Standing Calf Raise"
+    },
+    "hip thrust": {
+      "direct_match": "Hip Thrust"
+    },
+    "crunches": {
+      "direct_match": "Crunch"
+    },
+    "planks": {
+      "direct_match": "Plank"
+    },
+    "skullcrushers": {
+      "direct_match": "Skull Crusher"
+    },
+    "skull crushers": {
+      "direct_match": "Skull Crusher"
+    },
+    "french press": {
+      "direct_match": "Skull Crusher"
+    },
+    "ATG": {
+      "modifier": "full_rom",
+      "note": "Ass To Grass - deep squat"
+    },
+    "metcon": {
+      "intent": "conditioning",
+      "filter": {
+        "mechanics": "compound",
+        "high_rep": true
+      }
+    },
+    "compounds": {
+      "filter": {
+        "mechanics": "compound"
+      }
+    },
+    "isolation": {
+      "filter": {
+        "mechanics": "isolation"
+      }
+    },
+    "no equipment": {
+      "filter": {
+        "equipment": [
+          "none",
+          "bodyweight"
+        ]
+      }
+    },
+    "dumbbell bench": {
+      "direct_match": "Dumbbell Bench Press"
+    },
+    "dumbbell bench press": {
+      "direct_match": "Dumbbell Bench Press"
+    },
+    "db bench": {
+      "direct_match": "Dumbbell Bench Press"
+    },
+    "db bench press": {
+      "direct_match": "Dumbbell Bench Press"
+    },
+    "barbell bench": {
+      "direct_match": "Barbell Bench Press"
+    },
+    "barbell bench press": {
+      "direct_match": "Barbell Bench Press"
+    },
+    "bench press": {
+      "direct_match": "Barbell Bench Press"
+    },
+    "dumbbell row": {
+      "direct_match": "Single-Arm Dumbbell Row"
+    },
+    "db row": {
+      "direct_match": "Single-Arm Dumbbell Row"
+    },
+    "barbell row": {
+      "direct_match": "Barbell Row"
+    },
+    "bent over row": {
+      "direct_match": "Barbell Row"
+    },
+    "dumbbell shoulder press": {
+      "direct_match": "Seated Dumbbell Press"
+    },
+    "db shoulder press": {
+      "direct_match": "Seated Dumbbell Press"
+    },
+    "shoulder press": {
+      "direct_match": "Overhead Press"
+    },
+    "dumbbell shrug": {
+      "direct_match": "Dumbbell Shrug"
+    },
+    "db shrug": {
+      "direct_match": "Dumbbell Shrug"
+    },
+    "barbell shrug": {
+      "direct_match": "Barbell Shrug"
+    },
+    "dumbbell fly": {
+      "direct_match": "Dumbbell Fly"
+    },
+    "db fly": {
+      "direct_match": "Dumbbell Fly"
+    },
+    "dumbbell flys": {
+      "direct_match": "Dumbbell Fly"
+    },
+    "chest fly": {
+      "direct_match": "Dumbbell Fly"
+    },
+    "hammer curl": {
+      "direct_match": "Hammer Curl"
+    },
+    "preacher curl": {
+      "direct_match": "Preacher Curl"
+    },
+    "incline curl": {
+      "direct_match": "Incline Dumbbell Curl"
+    },
+    "tricep pushdown": {
+      "direct_match": "Tricep Pushdown"
+    },
+    "rope pushdown": {
+      "direct_match": "Rope Pushdown"
+    },
+    "pushdown": {
+      "direct_match": "Tricep Pushdown"
+    }
+  }
+}

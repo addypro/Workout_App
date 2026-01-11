@@ -1,5 +1,7 @@
 // Type definitions for workout programs
 
+import type { SetType } from './workout-session';
+
 export interface ParsedExercise {
   name: string;
   originalName?: string;
@@ -8,7 +10,8 @@ export interface ParsedExercise {
   weight?: string;
   restSeconds?: number;
   notes?: string;
-  order: number;
+  setType?: SetType | string;
+  order?: number;
 }
 
 export interface ParsedWorkout {
@@ -16,7 +19,7 @@ export interface ParsedWorkout {
   day: number;
   name?: string;
   exercises: ParsedExercise[];
-  order: number;
+  order?: number;
 }
 
 export interface ParsedProgram {

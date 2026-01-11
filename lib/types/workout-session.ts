@@ -3,6 +3,42 @@
  * Data models for live workout execution and tracking
  */
 
+/**
+ * Set types based on "The Invisible Spotter" framework:
+ * - warmup: Light preparation sets (no RPE tracking needed)
+ * - working: Standard working sets (RPE optional)
+ * - top: Top/heavy sets targeting RPE 9-10
+ * - drop: Child sets following a main set at reduced weight
+ * - failure: Sets taken to muscular failure
+ */
+export type SetType = 'warmup' | 'working' | 'top' | 'drop' | 'failure';
+
+/**
+ * Superset phase for staggered rest flow (supports up to 4 exercises)
+ * - exercise_1 through exercise_4: Performing exercises in superset order
+ * - rest_12, rest_23, rest_34: Short rest between exercises (~30-60s)
+ * - rest_round: Full rest after completing all exercises (standard rest ~90-120s)
+ */
+export type SupersetPhase =
+  | 'exercise_1' | 'rest_12'
+  | 'exercise_2' | 'rest_23'
+  | 'exercise_3' | 'rest_34'
+  | 'exercise_4' | 'rest_round'
+  // Legacy support for 2-exercise supersets
+  | 'exercise_a' | 'rest_ab' | 'exercise_b' | 'rest_ba';
+
+/**
+ * Superset group links 2+ exercises together
+ */
+export interface SupersetGroup {
+  id: string;
+  exerciseIds: string[]; // Ordered list of exercise IDs in the superset
+  restBetween: number; // Short rest between exercises (default 30-60s)
+  restAfterRound: number; // Full rest after completing all exercises (default 90-120s)
+  currentPhase: SupersetPhase;
+  currentRound: number; // Which round of the superset we're on
+}
+
 export interface WorkoutSet {
   id: string;
   reps: number | string; // Can be "8-10" or just "10"
@@ -11,7 +47,10 @@ export interface WorkoutSet {
   completedAt?: Date;
   actualReps?: number; // What user actually completed
   actualWeight?: number;
+  actualRestTime?: number; // Actual rest time taken before this set (in seconds)
   rpe?: number; // Rate of Perceived Exertion (1-10)
+  setType?: SetType; // Type of set for visual hierarchy and RPE context
+  parentSetId?: string; // For drop sets, references the parent set
 }
 
 export interface WorkoutExercise {
@@ -24,6 +63,9 @@ export interface WorkoutExercise {
   muscleGroups?: string[];
   equipment?: string[];
   currentSetIndex: number;
+  // Superset linking
+  supersetGroupId?: string; // ID of the superset group this exercise belongs to
+  supersetOrder?: number; // Position within the superset (1, 2, 3...)
 }
 
 export interface WorkoutSession {
@@ -36,7 +78,16 @@ export interface WorkoutSession {
   currentExerciseIndex: number;
   isResting: boolean;
   restTimeRemaining: number;
+  /**
+   * When resting between sets, these identify which set triggered the rest.
+   * Used to render the inline rest panel in the correct place.
+   */
+  restExerciseIndex?: number;
+  restAfterSetIndex?: number;
   status: 'in_progress' | 'paused' | 'completed' | 'cancelled';
+  // Superset state
+  supersetGroups?: SupersetGroup[];
+  activeSupersetId?: string; // Currently executing superset group
 }
 
 export interface WorkoutSummary {
@@ -152,4 +203,185 @@ export function isWorkoutComplete(session: WorkoutSession): boolean {
   return session.exercises.every((ex) =>
     ex.sets.every((set) => set.isCompleted)
   );
+}
+
+// ============ Superset Helpers ============
+
+/**
+ * Sky Blue color palette for superset UI
+ */
+export const SUPERSET_COLORS = {
+  primary: '#5AC8FA', // Sky Blue - main accent
+  primaryLight: '#5AC8FA20', // Background tint
+  primaryMuted: '#5AC8FA40', // Connector lines
+  text: '#5AC8FA',
+  border: '#5AC8FA60',
+};
+
+/**
+ * Create a new superset group linking exercises
+ */
+export function createSupersetGroup(
+  exerciseIds: string[],
+  restBetween: number = 45,
+  restAfterRound: number = 90
+): SupersetGroup {
+  return {
+    id: `ss-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    exerciseIds,
+    restBetween,
+    restAfterRound,
+    currentPhase: 'exercise_a',
+    currentRound: 1,
+  };
+}
+
+/**
+ * Get the superset group an exercise belongs to
+ */
+export function getSupersetGroup(
+  session: WorkoutSession,
+  exerciseId: string
+): SupersetGroup | null {
+  const exercise = session.exercises.find(e => e.id === exerciseId);
+  if (!exercise?.supersetGroupId) return null;
+  return session.supersetGroups?.find(g => g.id === exercise.supersetGroupId) || null;
+}
+
+/**
+ * Get all exercises in a superset group, ordered
+ */
+export function getSupersetExercises(
+  session: WorkoutSession,
+  groupId: string
+): WorkoutExercise[] {
+  return session.exercises
+    .filter(e => e.supersetGroupId === groupId)
+    .sort((a, b) => (a.supersetOrder || 0) - (b.supersetOrder || 0));
+}
+
+/**
+ * Check if an exercise is part of a superset
+ */
+export function isInSuperset(exercise: WorkoutExercise): boolean {
+  return !!exercise.supersetGroupId;
+}
+
+/**
+ * Get the next phase in superset flow
+ */
+export function getNextSupersetPhase(
+  currentPhase: SupersetPhase,
+  exerciseCount: number = 2
+): SupersetPhase {
+  // For 2-exercise supersets: A → rest_ab → B → rest_ba → A...
+  switch (currentPhase) {
+    case 'exercise_a': return 'rest_ab';
+    case 'rest_ab': return 'exercise_b';
+    case 'exercise_b': return 'rest_ba';
+    case 'rest_ba': return 'exercise_a';
+    default: return 'exercise_a';
+  }
+}
+
+/**
+ * Get rest duration for current superset phase
+ */
+export function getSupersetRestDuration(
+  group: SupersetGroup,
+  phase: SupersetPhase
+): number {
+  switch (phase) {
+    case 'rest_ab': return group.restBetween; // Short rest between exercises
+    case 'rest_ba': return group.restAfterRound; // Full rest after round
+    default: return 0;
+  }
+}
+
+/**
+ * Check if we're in an active superset flow (performing an exercise)
+ */
+export function isActiveSupersetPhase(phase: SupersetPhase): boolean {
+  return (
+    phase === 'exercise_a' || phase === 'exercise_b' ||
+    phase === 'exercise_1' || phase === 'exercise_2' ||
+    phase === 'exercise_3' || phase === 'exercise_4'
+  );
+}
+
+/**
+ * Link multiple exercises into a superset (2-4 exercises)
+ */
+export function linkMultipleExercisesAsSuperset(
+  session: WorkoutSession,
+  exerciseIds: string[],
+  restBetween: number = 45,
+  restAfterRound: number = 90
+): WorkoutSession {
+  // Validate: need 2-4 exercises
+  if (exerciseIds.length < 2 || exerciseIds.length > 4) {
+    console.warn('Superset requires 2-4 exercises');
+    return session;
+  }
+
+  // Validate: all exercises exist and aren't already in a superset
+  const exercises = exerciseIds.map(id => session.exercises.find(e => e.id === id));
+  if (exercises.some(e => !e || e.supersetGroupId)) {
+    console.warn('Invalid exercises for superset');
+    return session;
+  }
+
+  // Create new superset group
+  const group = createSupersetGroup(exerciseIds, restBetween, restAfterRound);
+
+  // Update exercises with superset info
+  const updatedExercises = session.exercises.map(ex => {
+    const orderIndex = exerciseIds.indexOf(ex.id);
+    if (orderIndex !== -1) {
+      return { ...ex, supersetGroupId: group.id, supersetOrder: orderIndex + 1 };
+    }
+    return ex;
+  });
+
+  return {
+    ...session,
+    exercises: updatedExercises,
+    supersetGroups: [...(session.supersetGroups || []), group],
+  };
+}
+
+/**
+ * Link two exercises into a superset (legacy function for backwards compatibility)
+ */
+export function linkExercisesAsSuperset(
+  session: WorkoutSession,
+  exerciseAId: string,
+  exerciseBId: string,
+  restBetween: number = 45,
+  restAfterRound: number = 90
+): WorkoutSession {
+  return linkMultipleExercisesAsSuperset(session, [exerciseAId, exerciseBId], restBetween, restAfterRound);
+}
+
+/**
+ * Unlink exercises from a superset
+ */
+export function unlinkSuperset(
+  session: WorkoutSession,
+  groupId: string
+): WorkoutSession {
+  const updatedExercises = session.exercises.map(ex => {
+    if (ex.supersetGroupId === groupId) {
+      const { supersetGroupId, supersetOrder, ...rest } = ex;
+      return rest as WorkoutExercise;
+    }
+    return ex;
+  });
+
+  return {
+    ...session,
+    exercises: updatedExercises,
+    supersetGroups: session.supersetGroups?.filter(g => g.id !== groupId),
+    activeSupersetId: session.activeSupersetId === groupId ? undefined : session.activeSupersetId,
+  };
 }

@@ -2,6 +2,7 @@
 // Parse workout programs from CSV files
 
 import { ParsedProgram, ParsedWorkout, ParsedExercise } from '@/lib/types/program';
+import { parseSetType } from '@/lib/utils/parser-utils';
 
 export interface CSVRow {
   [key: string]: string;
@@ -49,7 +50,9 @@ export async function parseCSV(csvContent: string): Promise<ParsedProgram> {
     const sets = parseInt(row.sets || '0') || 0;
     const reps = row.reps || row.repetitions || '';
     const weight = row.weight || '';
+    const restTime = parseInt(row['rest (seconds)'] || row.rest || row['rest time'] || '0') || 0;
     const notes = row.notes || '';
+    const setType = parseSetType(row['set type'] || row.settype || row.type || row['set_type']);
 
     // Check if we need to start a new workout
     if (!currentWorkout || currentWorkout.week !== week || currentWorkout.day !== day) {
@@ -74,7 +77,9 @@ export async function parseCSV(csvContent: string): Promise<ParsedProgram> {
         sets,
         reps: reps || undefined,
         weight: weight || undefined,
+        restSeconds: restTime > 0 ? restTime : undefined,
         notes: notes || undefined,
+        setType: setType || undefined,
         order: exerciseOrder++,
       };
       currentWorkout.exercises.push(exercise);
@@ -82,8 +87,9 @@ export async function parseCSV(csvContent: string): Promise<ParsedProgram> {
   });
 
   // Add the last workout
-  if (currentWorkout && currentWorkout.exercises.length > 0) {
-    workouts.push(currentWorkout);
+  const lastWorkout = currentWorkout as ParsedWorkout | null;
+  if (lastWorkout && lastWorkout.exercises.length > 0) {
+    workouts.push(lastWorkout);
   }
 
   return {

@@ -1,0 +1,89 @@
+<instruction_block>
+    <persona>
+        <name>Claude Code Opus</name>
+        <role>Elite Senior Software Architect & Engineer</role>
+        <expertise>
+            <item>React Native / Expo Ecosystem (Deep internal knowledge of expo-av)</item>
+            <item>Supabase Edge Functions (Deno/TypeScript)</item>
+            <item>Multimodal AI Integration (Gemini 1.5 Flash)</item>
+            <item>User Experience Design (Voice Interfaces)</item>
+        </expertise>
+        <style>Precise, Efficient, Robust, "Measure twice, cut once"</style>
+    </persona>
+
+    <mission>
+        Implement a state-of-the-art "Direct-to-Intent" Voice Logging feature for the Workout App.
+        Critically, do NOT use a separate Speech-to-Text (STT) service like Whisper. 
+        Leverage the native audio understanding capabilities of Gemini 1.5 Flash to go directly from AUDIO -> structured JSON.
+    </mission>
+
+    <context>
+        <current_architecture>
+            - Frontend: Expo Go (React Native)
+            - Backend: Supabase Edge Functions
+            - Parsing Service: Exists at `lib/services/parser/extractor-service.ts`
+        </current_architecture>
+        <constraints>
+            - Must remain compatible with Expo Go (No native code compilation required).
+            - Audio Format: AAC (.m4a) for bandwidth efficiency.
+            - Latency: Minimize round-trips.
+        </constraints>
+    </context>
+
+    <execution_plan>
+        <step id="1" name="Frontend Audio Recorder">
+            <file>app/components/VoiceRecorder.tsx</file>
+            <requirements>
+                - Use `expo-av` for recording.
+                - Preset: `Audio.RecordingOptionsPresets.HIGH_QUALITY` (adjust to AAC/m4a output).
+                - Visual Feedback: Simple pulsing animation or red indicator when recording.
+                - Permissions: Handle microphone permission requests gracefully.
+            </requirements>
+        </step>
+
+        <step id="2" name="Service Layer Integration">
+            <file>lib/services/voice/voice-service.ts</file>
+            <requirements>
+                - Function `recordAudio()`: Handles start/stop.
+                - Function `uploadAudio(uri)`: Sends file to Supabase Edge Function.
+                - Integration with `ExtractorService`: Extend it to accept 'audio' type.
+            </requirements>
+        </step>
+
+        <step id="3.1" name="Intelligent Caching (Edge Function)">
+            <file>supabase/functions/extract-workout-data/caching.ts</file>
+            <requirements>
+                - Implement SHA-256 hashing of incoming file buffers.
+                - Check a new Supabase table `extraction_cache` (hash, result, created_at).
+                - IF hash exists: Return stored JSON (Cost = $0).
+                - IF hash new: Proceed to AI extraction, then store result.
+                - Add support for **Gemini Context Caching** for the stable part of the system prompt to reduce token costs.
+            </requirements>
+        </step>
+
+        <step id="3.2" name="Backend Intelligence">
+            <file>supabase/functions/extract-workout-data/index.ts</file>
+            <requirements>
+                - Update the existing function to detect `audio/*` mime types.
+                - Construct a Gemini Prompt specific for audio: 
+                  "Listen to this workout log. The user may be out of breath or using slang. Extract the exercises, sets, reps, and weights into this JSON structure..."
+                - Ensure the `inlineData` part of the generative AI payload handles the audio bytes correctly.
+            </requirements>
+        </step>
+
+        <step id="4" name="UI Integration">
+            <file>app/(tabs)/index.tsx</file> 
+            <or_file>app/program/import-review.tsx</or_file>
+            <requirements>
+                - Add a floating action button (FAB) or prominent mic icon to trigger recording.
+                - On success, navigate to the existing `ImportReviewScreen` with the parsed data.
+            </requirements>
+        </step>
+    </execution_plan>
+
+    <output_format>
+        Provide the complete type-safe code for each step. 
+        Ensure error handling is robust (e.g., "Microphone access denied", "Transcription failed").
+        Add comments explaining the "Direct Multimodal" approach for future maintainers.
+    </output_format>
+</instruction_block>

@@ -1,222 +1,155 @@
-// Exercise Matching Service
-// Adapted for Expo/React Native
-
-import { ExerciseDatabaseEntry, searchExercises, getExerciseDatabase } from './database';
-
-export interface MatchResult {
-  exercise: ExerciseDatabaseEntry;
-  confidence: number;
-  matchedName: string;
-}
+import { getExerciseDatabase } from '@/lib/services/exercise/database';
+import { findBestMatch, findTopMatches, type MatchResult } from '@/lib/utils/fuzzy';
 
 /**
- * Calculate Levenshtein distance between two strings
- * Optimized with early exit for large differences
+ * Exercise Matcher Service
+ * 
+ * Uses a UFIRE-inspired multi-layer matching approach:
+ * 1. Exact match (normalized) - instant return
+ * 2. Word-based matching - prioritizes "bench press" → "Bench Press" over "French Press"
+ * 3. Alias lookup - matches common gym slang
+ * 4. Fuzzy fallback - only if no good word matches
  */
-function levenshteinDistance(str1: string, str2: string, maxDistance?: number): number {
-  const m = str1.length;
-  const n = str2.length;
 
-  // Early exit if difference in length exceeds max distance
-  if (maxDistance !== undefined && Math.abs(m - n) > maxDistance) {
-    return maxDistance + 1;
-  }
-
-  // Use space-optimized version (only need previous row)
-  let prevRow: number[] = Array(n + 1).fill(0).map((_, i) => i);
-  let currRow: number[] = Array(n + 1).fill(0);
-
-  for (let i = 1; i <= m; i++) {
-    currRow[0] = i;
-    let minInRow = i;
-
-    for (let j = 1; j <= n; j++) {
-      if (str1[i - 1] === str2[j - 1]) {
-        currRow[j] = prevRow[j - 1];
-      } else {
-        currRow[j] = Math.min(
-          prevRow[j] + 1,     // deletion
-          currRow[j - 1] + 1, // insertion
-          prevRow[j - 1] + 1  // substitution
-        );
-      }
-      minInRow = Math.min(minInRow, currRow[j]);
-    }
-
-    // Early exit if all values exceed max distance
-    if (maxDistance !== undefined && minInRow > maxDistance) {
-      return maxDistance + 1;
-    }
-
-    [prevRow, currRow] = [currRow, prevRow];
-  }
-
-  return prevRow[n];
+// In-memory cache for fast matching
+interface IndexEntry {
+    displayName: string;    // Original name from database
+    canonicalName: string;  // The ID to use
+    searchTerms: string[];  // All searchable variations
+    isAlias: boolean;
 }
 
-/**
- * Calculate similarity score between 0 and 100
- * Optimized with early exit for low similarity
- */
-function calculateSimilarity(str1: string, str2: string, minSimilarity: number = 0): number {
-  const lower1 = str1.toLowerCase();
-  const lower2 = str2.toLowerCase();
-
-  // Quick exact match check
-  if (lower1 === lower2) return 100;
-
-  const maxLength = Math.max(str1.length, str2.length);
-  if (maxLength === 0) return 100;
-
-  // Calculate max allowed distance for min similarity
-  const maxDistance = Math.ceil(maxLength * (1 - minSimilarity / 100));
-
-  const distance = levenshteinDistance(lower1, lower2, maxDistance);
-
-  // Early exit if distance exceeds threshold
-  if (distance > maxDistance) {
-    return 0;
-  }
-
-  const similarity = ((maxLength - distance) / maxLength) * 100;
-  return Math.max(0, Math.min(100, similarity));
-}
+let searchIndex: IndexEntry[] | null = null;
 
 /**
- * Match an exercise name to the database
+ * Build the search index from the exercise database
  */
-export async function matchExercise(exerciseName: string): Promise<MatchResult | null> {
-  const lowerName = exerciseName.toLowerCase().trim();
+async function ensureIndex(): Promise<void> {
+    if (searchIndex) return;
 
-  if (!lowerName) {
-    return null;
-  }
+    const db = await getExerciseDatabase();
+    searchIndex = [];
 
-  // Search for exercises
-  const candidates = await searchExercises(exerciseName);
+    for (const ex of db) {
+        // Add canonical name as primary entry
+        searchIndex.push({
+            displayName: ex.name,
+            canonicalName: ex.name,
+            searchTerms: [ex.name.toLowerCase()],
+            isAlias: false,
+        });
 
-  if (candidates.length === 0) {
-    return null;
-  }
-
-  // Calculate confidence scores (only check aliases if name match is below threshold)
-  const matches: MatchResult[] = candidates.map(ex => {
-    let confidence = calculateSimilarity(exerciseName, ex.name, 50);
-    let matchedName = ex.name;
-
-    // Only check aliases if name match is below 80% (optimization)
-    if (confidence < 80) {
-      for (const alias of ex.aliases) {
-        const aliasConfidence = calculateSimilarity(exerciseName, alias, confidence);
-        if (aliasConfidence > confidence) {
-          confidence = aliasConfidence;
-          matchedName = alias;
-          // Early exit if we find a very good match
-          if (confidence >= 90) break;
+        // Add aliases
+        if (ex.aliases) {
+            for (const alias of ex.aliases) {
+                searchIndex.push({
+                    displayName: alias,
+                    canonicalName: ex.name,
+                    searchTerms: [alias.toLowerCase()],
+                    isAlias: true,
+                });
+            }
         }
-      }
     }
 
-    return {
-      exercise: ex,
-      confidence: Math.round(confidence),
-      matchedName,
-    };
-  });
-
-  // Return best match if confidence is above threshold
-  const bestMatch = matches[0];
-  if (bestMatch.confidence >= 50) {
-    return bestMatch;
-  }
-
-  return null;
+    console.log(`[ExerciseMatcher] Indexed ${searchIndex.length} entries`);
 }
 
 /**
- * Match multiple exercises efficiently
- * Loads exercise database once and reuses it for all matches
+ * Get all searchable names for matching
  */
-export async function matchExercises(exerciseNames: string[]): Promise<Map<string, MatchResult | null>> {
-  const results = new Map<string, MatchResult | null>();
+async function getAllSearchableNames(): Promise<string[]> {
+    await ensureIndex();
+    return searchIndex!.map(e => e.displayName);
+}
 
-  if (exerciseNames.length === 0) {
-    return results;
-  }
+/**
+ * Look up the canonical name for a matched display name
+ */
+function getCanonicalName(displayName: string): string {
+    if (!searchIndex) return displayName;
+    const entry = searchIndex.find(e => e.displayName === displayName);
+    return entry ? entry.canonicalName : displayName;
+}
 
-  // Load exercise database once
-  const database = await getExerciseDatabase();
+/**
+ * Match a raw exercise name to a canonical name from the database
+ * 
+ * @param rawName - The name extracted from voice/PDF/image
+ * @param confidenceThreshold - Minimum confidence level ('exact', 'high', 'medium', 'low')
+ * @returns The canonical exercise name if confident match, otherwise the raw name
+ */
+export async function matchExerciseName(
+    rawName: string,
+    confidenceThreshold: 'exact' | 'high' | 'medium' | 'low' = 'high'
+): Promise<string> {
+    await ensureIndex();
 
-  // Process all exercises
-  for (const exerciseName of exerciseNames) {
-    const lowerName = exerciseName.toLowerCase().trim();
-
-    if (!lowerName) {
-      results.set(exerciseName, null);
-      continue;
+    if (!searchIndex || !rawName || rawName.trim().length === 0) {
+        return rawName;
     }
 
-    // Use in-memory search
-    const lowerQuery = lowerName;
-    const scored = database.map(ex => {
-      let score = 0;
-      const lowerName = ex.name.toLowerCase();
+    const candidates = await getAllSearchableNames();
+    const result = findBestMatch(rawName, candidates);
 
-      if (lowerName === lowerQuery) {
-        score = 100;
-      } else if (lowerName.startsWith(lowerQuery)) {
-        score = 80;
-      } else if (lowerName.includes(lowerQuery)) {
-        score = 60;
-      } else if (ex.aliases.some(a => a.toLowerCase().includes(lowerQuery))) {
-        score = 40;
-      }
-
-      return { exercise: ex, score };
-    });
-
-    const candidates = scored
-      .filter(item => item.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
-      .map(item => item.exercise);
-
-    if (candidates.length === 0) {
-      results.set(exerciseName, null);
-      continue;
+    if (!result) {
+        console.log(`[ExerciseMatcher] No match found for "${rawName}"`);
+        return rawName;
     }
 
-    // Calculate best match
-    let bestMatch: MatchResult | null = null;
-    let bestConfidence = 0;
+    // Define confidence hierarchy
+    const confidenceLevels = ['exact', 'high', 'medium', 'low'];
+    const thresholdIndex = confidenceLevels.indexOf(confidenceThreshold);
+    const resultIndex = confidenceLevels.indexOf(result.confidence);
 
-    for (const ex of candidates) {
-      let confidence = calculateSimilarity(exerciseName, ex.name, bestConfidence);
-      let matchedName = ex.name;
-
-      if (confidence < 80) {
-        for (const alias of ex.aliases) {
-          const aliasConfidence = calculateSimilarity(exerciseName, alias, confidence);
-          if (aliasConfidence > confidence) {
-            confidence = aliasConfidence;
-            matchedName = alias;
-            if (confidence >= 90) break;
-          }
-        }
-      }
-
-      if (confidence > bestConfidence) {
-        bestConfidence = confidence;
-        bestMatch = {
-          exercise: ex,
-          confidence: Math.round(confidence),
-          matchedName,
-        };
-      }
+    // Only accept if result confidence meets or exceeds threshold
+    if (resultIndex <= thresholdIndex) {
+        const canonical = getCanonicalName(result.match);
+        console.log(`[ExerciseMatcher] "${rawName}" → "${canonical}" (${result.confidence}, score: ${result.score.toFixed(2)})`);
+        return canonical;
     }
 
-    results.set(exerciseName, bestConfidence >= 50 ? bestMatch : null);
-  }
+    console.log(`[ExerciseMatcher] "${rawName}" → keeping raw (${result.confidence} < ${confidenceThreshold})`);
+    return rawName;
+}
 
-  return results;
+/**
+ * Get multiple match suggestions for disambiguation UI
+ * 
+ * @param rawName - The name to match
+ * @param limit - Maximum number of suggestions
+ * @returns Array of match results with canonical names
+ */
+export async function getMatchSuggestions(
+    rawName: string,
+    limit: number = 3
+): Promise<Array<{ name: string; confidence: MatchResult['confidence']; score: number }>> {
+    await ensureIndex();
+
+    if (!searchIndex || !rawName) {
+        return [];
+    }
+
+    const candidates = await getAllSearchableNames();
+    const results = findTopMatches(rawName, candidates, limit);
+
+    return results.map(r => ({
+        name: getCanonicalName(r.match),
+        confidence: r.confidence,
+        score: r.score,
+    }));
+}
+
+/**
+ * Match multiple exercise names in batch (more efficient)
+ */
+export async function matchExerciseNames(
+    rawNames: string[],
+    confidenceThreshold: 'exact' | 'high' | 'medium' | 'low' = 'high'
+): Promise<string[]> {
+    await ensureIndex();
+
+    return Promise.all(
+        rawNames.map(name => matchExerciseName(name, confidenceThreshold))
+    );
 }

@@ -1,0 +1,283 @@
+# Final Script Tweaks
+
+# Update config based on findings
+intents_config = [
+    {
+        "voice_command": "Squat",
+        "aliases": ["Back Squat", "Legs"],
+        "default_exercise": "Barbell High Bar Back Squat",
+        "keywords": ["Squat", "Hack", "Thruster", "Wall Sit", "Sissy"],
+        "excludes": ["Split", "Bulgarian", "Cossack", "Lunge", "Clean", "Snatch", "Jerk", "Press", "Row", "Deadlift"],
+        "clarification_prompt": "Barbell, Goblet, or Front Squat?"
+    },
+    {
+        "voice_command": "Bench Press",
+        "aliases": ["Bench", "Chest Press"],
+        "default_exercise": "Barbell Bench Press",
+        "keywords": ["Bench Press", "Floor Press", "Chest Press", "Board Press", "Svend", "Fly", "Crossover", "Pec Deck"],
+        "excludes": ["Close Grip", "Spider", "Row", "Curl", "Rear", "Reverse"], 
+        "clarification_prompt": "Flat, Incline, or Dumbbell?"
+    },
+    {
+        "voice_command": "Deadlift",
+        "aliases": ["Pull"],
+        "default_exercise": "Barbell Conventional Deadlift",
+        "keywords": ["Deadlift", "Rack Pull", "Good Morning"],
+        "excludes": ["Romanian", "Stiff", "Clean", "High Pull", "Row"], # Removed Snatch from excludes
+        "clarification_prompt": "Conventional, Sumo, or Rack Pull?"
+    },
+    {
+        "voice_command": "RDL",
+        "aliases": ["Romanian Deadlift", "Stiff Leg"],
+        "default_exercise": "Barbell Romanian Deadlift",
+        "keywords": ["Romanian Deadlift", "Stiff Legged Deadlift", "Stiff Leg Deadlift"],
+        "excludes": [],
+        "clarification_prompt": "Barbell or Dumbbell?"
+    },
+    {
+        "voice_command": "Overhead Press",
+        "aliases": ["Military Press", "Shoulder Press", "OHP"],
+        "default_exercise": "Barbell Overhead Press",
+        "keywords": ["Overhead Press", "Military Press", "Shoulder Press", "Push Press", "Z Press", "Arnold Press", "Viking Press", "Bradford", "Cuban"],
+        "excludes": ["Squat", "Lunge"],
+        "clarification_prompt": "Barbell, Dumbbell, or Seated?"
+    },
+    {
+        "voice_command": "Row",
+        "aliases": ["Back Row"],
+        "default_exercise": "Barbell Bent Over Row",
+        "keywords": ["Row", "Shrug", "Kelso"],
+        "excludes": ["Upright", "Rear Delt"], # Removed Renegade from excludes
+        "clarification_prompt": "Barbell, Dumbbell, or Cable?"
+    },
+    {
+        "voice_command": "Pull Up",
+        "aliases": ["Chin Up"],
+        "default_exercise": "Pull Up",
+        "keywords": ["Pull Up", "Chin Up", "Muscle Up"],
+        "excludes": ["Lat Pulldown"],
+        "clarification_prompt": "Bodyweight, Weighted, or Assisted?"
+    },
+    {
+        "voice_command": "Lat Pulldown",
+        "aliases": ["Pulldown"],
+        "default_exercise": "Cable Lat Pulldown",
+        "keywords": ["Lat Pulldown", "Pulldown", "Pullover"], # Added Pullover
+        "excludes": ["Tricep"],
+        "clarification_prompt": "Wide, Close, or Reverse Grip?"
+    },
+    {
+        "voice_command": "Lunge",
+        "aliases": ["Walking Lunge", "Split Squat"],
+        "default_exercise": "Bodyweight Walking Lunge",
+        "keywords": ["Lunge", "Split Squat", "Bulgarian", "Cossack", "Step Up"],
+        "excludes": [],
+        "clarification_prompt": "Walking, Reverse, or Split Squat?"
+    },
+    {
+        "voice_command": "Hip Thrust",
+        "aliases": ["Bridge", "Glutes"],
+        "default_exercise": "Barbell Hip Thrust",
+        "keywords": ["Hip Thrust", "Glute Bridge", "Frog Pump", "Abduction", "Kickback", "Clam", "Tibialis"], # Added Tibialis (Misc item)
+        "excludes": ["Tricep"],
+        "clarification_prompt": "Barbell, Single Leg, or Machine?"
+    },
+    {
+        "voice_command": "Push Up",
+        "aliases": ["Press Up"],
+        "default_exercise": "Bodyweight Push Up",
+        "keywords": ["Push Up"],
+        "excludes": [],
+        "clarification_prompt": "Standard, Kneeling, or Diamond?"
+    },
+    {
+        "voice_command": "Dip",
+        "aliases": ["Dips"],
+        "default_exercise": "Bodyweight Dip",
+        "keywords": ["Dip"],
+        "excludes": [],
+        "clarification_prompt": "Bar, Ring, or Machine?"
+    },
+    {
+        "voice_command": "Lateral Raise",
+        "aliases": ["Side Raise"],
+        "default_exercise": "Double Dumbbell Standing Lateral Raise",
+        "keywords": ["Lateral Raise", "Side Raise", "Lu Raise", "Upright Row"],
+        "excludes": [],
+        "clarification_prompt": "Dumbbell or Cable?"
+    },
+    {
+        "voice_command": "Front Raise",
+        "aliases": [],
+        "default_exercise": "Double Dumbbell Front Raise",
+        "keywords": ["Front Raise"],
+        "excludes": [],
+        "clarification_prompt": "Dumbbell, Plate, or Cable?"
+    },
+    {
+        "voice_command": "Rear Delt",
+        "aliases": ["Reverse Fly"],
+        "default_exercise": "Double Dumbbell Rear Delt Fly",
+        "keywords": ["Rear Delt", "Reverse Fly", "Face Pull", "Band Pull Apart", "Y-Raise", "W-Raise"],
+        "excludes": [],
+        "clarification_prompt": "Fly or Face Pull?"
+    },
+    {
+        "voice_command": "Bicep Curl",
+        "aliases": ["Curls", "Guns"],
+        "default_exercise": "Barbell Bicep Curl",
+        "keywords": ["Curl"],
+        "excludes": ["Leg", "Hamstring", "Nordic", "Jefferson", "Good Morning", "Upright"],
+        "clarification_prompt": "Barbell, Dumbbell, or Hammer?"
+    },
+    {
+        "voice_command": "Tricep Extension",
+        "aliases": ["Skullcrusher", "Pushdown"],
+        "default_exercise": "Cable Rope Tricep Pushdown",
+        "keywords": ["Tricep", "Skull Crusher", "Skullcrusher", "French Press", "Tate Press", "JM Press", "Kickback"],
+        "excludes": ["Glute"],
+        "clarification_prompt": "Pushdown, Skullcrusher, or Overhead?"
+    },
+    {
+        "voice_command": "Leg Curl",
+        "aliases": ["Hamstring Curl"],
+        "default_exercise": "Machine Seated Leg Curl",
+        "keywords": ["Leg Curl", "Hamstring Curl", "Nordic", "Glute Ham Raise", "GHR"],
+        "excludes": [],
+        "clarification_prompt": "Seated, Lying, or Nordic?"
+    },
+    {
+        "voice_command": "Leg Extension",
+        "aliases": ["Quads"],
+        "default_exercise": "Machine Leg Extension",
+        "keywords": ["Leg Extension"],
+        "excludes": [],
+        "clarification_prompt": "Machine or Band?"
+    },
+    {
+        "voice_command": "Leg Press",
+        "aliases": [],
+        "default_exercise": "Leg Press",
+        "keywords": ["Leg Press"],
+        "excludes": ["Calf"],
+        "clarification_prompt": "Standard, Horizontal, or Single Leg?"
+    },
+    {
+        "voice_command": "Calf Raise",
+        "aliases": ["Calves"],
+        "default_exercise": "Machine Standing Calf Raise",
+        "keywords": ["Calf Raise", "Calf Press"],
+        "excludes": [],
+        "clarification_prompt": "Standing, Seated, or Donkey?"
+    },
+    {
+        "voice_command": "Plank",
+        "aliases": ["Core Hold"],
+        "default_exercise": "Bodyweight Plank",
+        "keywords": ["Plank"],
+        "excludes": [],
+        "clarification_prompt": "Front or Side?"
+    },
+    {
+        "voice_command": "Abs/Core",
+        "aliases": ["Crunch", "Sit Up"],
+        "default_exercise": "Bodyweight Crunch",
+        "keywords": ["Crunch", "Sit Up", "Leg Raise", "Dead Bug", "Hollow Body", "V Up", "Russian Twist", "Ab Wheel", "Toe Touch", "Woodchop", "Pallof", "Bird Dog", "Knee Raise", "Heel Tap", "Flutter Kick", "Stir the Pot", "Kick Through", "Oblique", "Mountain Climber", "Scissor", "Bicycle", "Vacuum"],
+        "excludes": ["Plank"],
+        "clarification_prompt": "Crunch, Leg Raise, or Twist?"
+    },
+    {
+        "voice_command": "Carry",
+        "aliases": ["Walk"],
+        "default_exercise": "Double Dumbbell Farmer Carry",
+        "keywords": ["Carry", "Walk", "March"],
+        "excludes": ["Lunge", "Crab", "Wall"],
+        "clarification_prompt": "Farmers or Suitcase?"
+    },
+    {
+        "voice_command": "Olympic/Power",
+        "aliases": ["Clean", "Snatch"],
+        "default_exercise": "Barbell Power Clean",
+        "keywords": ["Clean", "Snatch", "Jerk", "Swing", "High Pull"],
+        "excludes": ["Press", "Deadlift"],
+        "clarification_prompt": "Clean, Snatch, or Jerk?"
+    },
+    {
+        "voice_command": "Cardio",
+        "aliases": [],
+        "default_exercise": "Treadmill Run",
+        "keywords": ["Run", "Sprint", "Jog", "Rowing", "Bike", "Cycle", "Elliptical", "SkiErg", "Jump Rope", "Burpee", "Jack", "Battle Rope", "Sled", "Prowler", "Box Jump"],
+        "excludes": ["Renegade"],
+        "clarification_prompt": "Run, Bike, or Row?"
+    }
+]
+
+# Run Mapping again
+output_intents = {intent['voice_command']: {**intent, "database_mapping": []} for intent in intents_config}
+assigned_exercises = set()
+
+# Same target group map and miscellaneous fallback
+output_intents["Miscellaneous"] = {
+    "voice_command": "Miscellaneous",
+    "aliases": ["Other"],
+    "default_exercise": None,
+    "keywords": [],
+    "excludes": [],
+    "clarification_prompt": "I'm not sure.",
+    "database_mapping": []
+}
+
+for exercise in exercises:
+    name = exercise['name']
+    match_found = False
+    
+    # 1. Keyword Matching
+    for intent in intents_config:
+        if any(ex.lower() in name.lower() for ex in intent['excludes']):
+            continue
+        if any(kw.lower() in name.lower() for kw in intent['keywords']):
+            output_intents[intent['voice_command']]["database_mapping"].append(name)
+            assigned_exercises.add(name)
+            match_found = True
+            break 
+            
+    # 2. Fallback: Muscle Group
+    if not match_found:
+        target = exercise.get('muscles', {}).get('targetGroup')
+        if target and target in target_group_map:
+            mapped_intent_key = target_group_map[target]
+            if mapped_intent_key in intent_lookup:
+                final_key = intent_lookup[mapped_intent_key]
+            else:
+                final_key = mapped_intent_key
+            
+            if final_key in output_intents:
+                output_intents[final_key]["database_mapping"].append(name)
+                assigned_exercises.add(name)
+                match_found = True
+    
+    # 3. Fallback: Miscellaneous
+    if not match_found:
+        output_intents["Miscellaneous"]["database_mapping"].append(name)
+        assigned_exercises.add(name)
+
+# Sort mappings
+for key, data in output_intents.items():
+    default = data['default_exercise'] if data['default_exercise'] else ""
+    data['database_mapping'].sort(key=lambda x: rank_score(x, default), reverse=True)
+
+# Clean and Save
+final_intents = [data for key, data in output_intents.items() if data['database_mapping']]
+final_output = {
+    "meta": {
+        "version": "6.0",
+        "description": "Complete Exercise Intent Map for Voice Logging",
+        "total_exercises_mapped": len(assigned_exercises),
+        "total_intents": len(final_intents)
+    },
+    "intents": final_intents
+}
+with open(output_filename, 'w') as f:
+    json.dump(final_output, f, indent=2)
+
+print(f"Mapped {len(assigned_exercises)} exercises.")

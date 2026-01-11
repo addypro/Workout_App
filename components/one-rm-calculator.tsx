@@ -221,7 +221,7 @@ export function OneRMCalculator() {
 
                 {/* Notes */}
                 <ThemedView style={[styles.noteCard, { backgroundColor: colors.background, borderColor: colors.text + '20' }]}>
-                  <ThemedText style={styles.noteTitle}>💡 Pro Tips</ThemedText>
+                  <ThemedText style={styles.noteTitle}>Pro Tips</ThemedText>
                   <ThemedText style={styles.noteText}>
                     • Most accurate between 3-10 reps{'\n'}
                     • Formulas may overestimate for high reps (&gt;10){'\n'}

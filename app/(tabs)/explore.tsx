@@ -1,161 +1,315 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, FlatList, TextInput, ActivityIndicator } from 'react-native';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { searchExercises, type ExerciseDatabaseEntry } from '@/lib/services/exercise/database';
+/**
+ * History Tab Screen
+ *
+ * Displays workout history in the main tab navigation.
+ * Shows stats summary and completed workouts grouped by time period.
+ */
 
-export default function ExercisesScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [exercises, setExercises] = useState<ExerciseDatabaseEntry[]>([]);
-  const [loading, setLoading] = useState(false);
+import { useState, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+} from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Haptics from 'expo-haptics';
+
+import { Screen } from '@/components/screen';
+import { ThemedText } from '@/components/themed-text';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Card } from '@/components/ui/card';
+import { WorkoutHistoryCard } from '@/components/history/workout-history-card';
+import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import {
+  getUnifiedHistory,
+  getWorkoutStats,
+  groupHistoryByPeriod,
+  type UnifiedWorkoutRecord,
+} from '@/lib/db/storage';
+import { useAuth } from '@/lib/context/auth-context';
+
+export default function HistoryTabScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { user, isGuest } = useAuth();
 
-  useEffect(() => {
-    handleSearch(searchQuery);
-  }, [searchQuery]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [history, setHistory] = useState<UnifiedWorkoutRecord[]>([]);
+  const [groupedHistory, setGroupedHistory] = useState<
+    { period: string; records: UnifiedWorkoutRecord[] }[]
+  >([]);
+  const [stats, setStats] = useState<{
+    totalWorkouts: number;
+    thisWeek: number;
+    thisMonth: number;
+    currentStreak: number;
+    totalDurationMinutes: number;
+  } | null>(null);
 
-  async function handleSearch(query: string) {
-    setLoading(true);
-    try {
-      const results = await searchExercises(query);
-      setExercises(results);
-    } catch (error) {
-      console.error('Error searching exercises:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // Get user ID for storage
+  const userId = isGuest || !user ? 'local' : user.id;
 
-  const renderExercise = ({ item }: { item: ExerciseDatabaseEntry }) => (
-    <ThemedView style={[styles.exerciseCard, { borderColor: colors.text + '20' }]}>
-      <ThemedText type="subtitle">{item.name}</ThemedText>
-      {item.category && (
-        <ThemedView style={[styles.categoryBadge, { backgroundColor: colors.tint + '20' }]}>
-          <ThemedText style={[styles.categoryText, { color: colors.tint }]}>
-            {item.category}
-          </ThemedText>
-        </ThemedView>
-      )}
-      {item.equipment && item.equipment.length > 0 && (
-        <ThemedText style={styles.equipment}>
-          {item.equipment.join(', ')}
-        </ThemedText>
-      )}
-      {item.aliases && item.aliases.length > 0 && (
-        <ThemedText style={styles.aliases}>
-          Also known as: {item.aliases.slice(0, 3).join(', ')}
-        </ThemedText>
-      )}
-    </ThemedView>
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [userId])
   );
 
+  const loadData = async () => {
+    try {
+      const [historyData, statsData] = await Promise.all([
+        getUnifiedHistory(userId),
+        getWorkoutStats(userId),
+      ]);
+      setHistory(historyData);
+      setGroupedHistory(groupHistoryByPeriod(historyData));
+      setStats(statsData);
+    } catch (error) {
+      console.error('Error loading history:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadData();
+  };
+
+  const handleRecordPress = (record: UnifiedWorkoutRecord) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push(`/history/${record.id}`);
+  };
+
+  if (loading) {
+    return (
+      <Screen>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.tint} />
+        </View>
+      </Screen>
+    );
+  }
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title">Exercise Database</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          {exercises.length} exercise{exercises.length !== 1 ? 's' : ''} found
-        </ThemedText>
-      </ThemedView>
-
-      <TextInput
-        style={[
-          styles.searchInput,
-          {
-            backgroundColor: colors.text + '10',
-            color: colors.text,
-            borderColor: colors.text + '20',
-          },
+    <Screen>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 100 },
         ]}
-        placeholder="Search exercises..."
-        placeholderTextColor={colors.text + '60'}
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.tint}
+          />
+        }
+      >
+        {/* Stats Summary */}
+        {stats && stats.totalWorkouts > 0 && (
+          <Card style={styles.statsCard} padding="md">
+            <View style={styles.statsGrid}>
+              <StatItem
+                icon="flame.fill"
+                value={stats.currentStreak}
+                label="Day Streak"
+                color="#FF9500"
+                colors={colors}
+              />
+              <StatItem
+                icon="calendar"
+                value={stats.thisWeek}
+                label="This Week"
+                color={colors.tint}
+                colors={colors}
+              />
+              <StatItem
+                icon="chart.bar.fill"
+                value={stats.thisMonth}
+                label="This Month"
+                color="#30D158"
+                colors={colors}
+              />
+              <StatItem
+                icon="clock.fill"
+                value={Math.round(stats.totalDurationMinutes / 60)}
+                label="Total Hours"
+                color="#5856D6"
+                colors={colors}
+              />
+            </View>
+          </Card>
+        )}
 
-      {loading ? (
-        <ActivityIndicator size="large" color={colors.tint} style={styles.loader} />
-      ) : (
-        <FlatList
-          data={exercises}
-          renderItem={renderExercise}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <ThemedView style={styles.emptyState}>
-              <ThemedText>No exercises found</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Try searching for exercises like &quot;bench press&quot; or &quot;squat&quot;
-              </ThemedText>
-            </ThemedView>
-          }
-        />
-      )}
-    </ThemedView>
+        {/* Empty State */}
+        {history.length === 0 ? (
+          <View style={styles.emptyState}>
+            <View style={[styles.emptyIcon, { backgroundColor: colors.tintMuted }]}>
+              <IconSymbol name="clock.arrow.circlepath" size={40} color={colors.tint} />
+            </View>
+            <ThemedText style={styles.emptyTitle}>No Workouts Yet</ThemedText>
+            <ThemedText style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+              Complete your first workout to start tracking your progress
+            </ThemedText>
+            <Pressable
+              style={({ pressed }) => [
+                styles.startButton,
+                { backgroundColor: colors.tint, opacity: pressed ? 0.9 : 1 },
+              ]}
+              onPress={() => router.push('/(tabs)')}
+            >
+              <ThemedText style={styles.startButtonText}>Start a Workout</ThemedText>
+            </Pressable>
+          </View>
+        ) : (
+          /* History List */
+          <View style={styles.historyList}>
+            {groupedHistory.map((group) => (
+              <View key={group.period} style={styles.periodSection}>
+                <ThemedText style={[styles.periodTitle, { color: colors.textSecondary }]}>
+                  {group.period}
+                </ThemedText>
+                <View style={styles.recordsList}>
+                  {group.records.map((record) => (
+                    <WorkoutHistoryCard
+                      key={record.id}
+                      record={record}
+                      onPress={handleRecordPress}
+                    />
+                  ))}
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </Screen>
+  );
+}
+
+// Stat Item Component
+function StatItem({
+  icon,
+  value,
+  label,
+  color,
+  colors,
+}: {
+  icon: string;
+  value: number;
+  label: string;
+  color: string;
+  colors: typeof Colors['light'];
+}) {
+  return (
+    <View style={styles.statItem}>
+      <View style={[styles.statIcon, { backgroundColor: color + '18' }]}>
+        <IconSymbol name={icon as any} size={18} color={color} />
+      </View>
+      <ThemedText style={styles.statValue}>{value}</ThemedText>
+      <ThemedText style={[styles.statLabel, { color: colors.textSecondary }]}>
+        {label}
+      </ThemedText>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  header: {
-    marginBottom: 16,
-    paddingTop: 50,
+  scrollView: {
+    flex: 1,
   },
-  subtitle: {
-    opacity: 0.6,
-    marginTop: 4,
+  scrollContent: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
   },
-  searchInput: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    fontSize: 16,
-    marginBottom: 16,
+  statsCard: {
+    marginBottom: Spacing.lg,
   },
-  list: {
-    gap: 12,
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  exerciseCard: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 8,
+  statItem: {
+    alignItems: 'center',
+    gap: 6,
   },
-  categoryBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
+  statIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  categoryText: {
-    fontSize: 12,
-    fontWeight: '600',
+  statValue: {
+    ...Typography.title2,
+    fontWeight: '700',
   },
-  equipment: {
-    opacity: 0.7,
-    fontSize: 14,
-  },
-  aliases: {
-    opacity: 0.5,
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-  loader: {
-    marginTop: 32,
+  statLabel: {
+    ...Typography.caption2,
   },
   emptyState: {
-    padding: 32,
     alignItems: 'center',
-    gap: 8,
+    paddingVertical: Spacing.xxl * 2,
+    gap: Spacing.md,
   },
-  emptyText: {
-    opacity: 0.6,
+  emptyIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.sm,
+  },
+  emptyTitle: {
+    ...Typography.title3,
+    fontWeight: '600',
+  },
+  emptySubtitle: {
+    ...Typography.body,
     textAlign: 'center',
+    maxWidth: 280,
+  },
+  startButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: Radius.lg,
+    marginTop: Spacing.md,
+  },
+  startButtonText: {
+    color: '#fff',
+    ...Typography.headline,
+    fontWeight: '600',
+  },
+  historyList: {
+    gap: Spacing.lg,
+  },
+  periodSection: {
+    gap: Spacing.sm,
+  },
+  periodTitle: {
+    ...Typography.subhead,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  recordsList: {
+    gap: Spacing.sm,
   },
 });

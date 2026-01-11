@@ -1,62 +1,86 @@
+/**
+ * Supabase Client Configuration
+ *
+ * Sets up the Supabase client with secure storage for auth tokens.
+ * Uses expo-secure-store for secure token persistence.
+ */
+
 import 'react-native-url-polyfill/auto';
-import { createClient } from '@supabase/supabase-js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-// Supabase configuration from environment variables
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Custom storage adapter for Expo
-// Uses SecureStore for sensitive auth data on native, AsyncStorage for web
+// Custom storage adapter using SecureStore for native, localStorage for web
 const ExpoSecureStoreAdapter = {
   getItem: async (key: string): Promise<string | null> => {
-    if (Platform.OS === 'web') {
-      return AsyncStorage.getItem(key);
-    }
     try {
+      if (Platform.OS === 'web') {
+        if (typeof localStorage !== 'undefined') {
+          return localStorage.getItem(key);
+        }
+        return null;
+      }
       return await SecureStore.getItemAsync(key);
-    } catch {
-      // SecureStore can fail on some devices, fallback to AsyncStorage
-      return AsyncStorage.getItem(key);
+    } catch (error) {
+      console.warn('SecureStore getItem error:', error);
+      return null;
     }
   },
   setItem: async (key: string, value: string): Promise<void> => {
-    if (Platform.OS === 'web') {
-      await AsyncStorage.setItem(key, value);
-      return;
-    }
     try {
+      if (Platform.OS === 'web') {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(key, value);
+        }
+        return;
+      }
       await SecureStore.setItemAsync(key, value);
-    } catch {
-      // SecureStore can fail on some devices, fallback to AsyncStorage
-      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.warn('SecureStore setItem error:', error);
     }
   },
   removeItem: async (key: string): Promise<void> => {
-    if (Platform.OS === 'web') {
-      await AsyncStorage.removeItem(key);
-      return;
-    }
     try {
+      if (Platform.OS === 'web') {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem(key);
+        }
+        return;
+      }
       await SecureStore.deleteItemAsync(key);
-    } catch {
-      // SecureStore can fail on some devices, fallback to AsyncStorage
-      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.warn('SecureStore removeItem error:', error);
     }
   },
 };
 
-// Create and export the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: ExpoSecureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false, // Required for React Native
-  },
-});
+// Only create client if we have valid credentials
+let supabase: SupabaseClient;
 
-// Export types for convenience
-export type { User, Session } from '@supabase/supabase-js';
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      storage: ExpoSecureStoreAdapter,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
+  });
+} else {
+  console.warn('Supabase credentials not found. Auth features will be disabled.');
+  // Create a mock client that won't crash but won't work either
+  supabase = {
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      signInWithIdToken: async () => ({ data: null, error: new Error('Supabase not configured') }),
+      signInWithOtp: async () => ({ error: new Error('Supabase not configured') }),
+      signOut: async () => ({}),
+    },
+  } as unknown as SupabaseClient;
+}
+
+export { supabase };
