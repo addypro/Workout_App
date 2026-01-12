@@ -130,6 +130,16 @@ export function toProgramDisplayItem(
   program: WorkoutProgram,
   source: 'builtin' | 'uploaded' | 'saved' = 'builtin'
 ): ProgramDisplayItem {
+  // Use metadata duration as base, then check if workouts array has more weeks
+  // This handles cases where workouts array only has week 1 samples
+  const workoutsMaxWeek = program.workouts.length > 0
+    ? Math.max(...program.workouts.map(w => w.week || 1), 1)
+    : 1;
+
+  // Use the larger of program.duration or calculated max week
+  // This ensures we show correct duration even if workouts array is incomplete
+  const actualDuration = Math.max(program.duration || 1, workoutsMaxWeek);
+
   return {
     id: program.id,
     name: program.name,
@@ -137,7 +147,7 @@ export function toProgramDisplayItem(
     type: program.type,
     difficulty: program.difficulty,
     category: program.category,
-    duration: program.duration,
+    duration: actualDuration,
     daysPerWeek: program.daysPerWeek,
     workoutCount: program.workouts.length,
     muscleGroups: program.muscleGroups,

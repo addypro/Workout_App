@@ -7,22 +7,10 @@
  * - 3-pathway navigation (equipment, movement, muscle)
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  Pressable,
-  ScrollView,
-  TextInput,
-  ActivityIndicator,
-} from 'react-native';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CreateCustomModal } from '@/components/exercise/create-custom-modal';
+import { ExerciseCard } from '@/components/exercise/exercise-card';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { ExerciseCard } from '@/components/exercise/exercise-card';
-import { CreateCustomModal } from '@/components/exercise/create-custom-modal';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
@@ -31,13 +19,25 @@ import {
   type ExerciseDatabaseEntry,
 } from '@/lib/services/exercise/database';
 import {
-  searchExercisesEnhanced,
   getPopularExercises,
-  type SearchResult,
+  searchExercisesEnhanced,
   type EnhancedSearchResults,
+  type SearchResult,
   type TaxonomyExercise,
 } from '@/lib/services/exercise/search';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
 
@@ -135,7 +135,7 @@ export default function ExercisePickerScreen() {
           setLoading(false);
         }
       }
-    }, 350);
+    }, 100); // Reduced from 350ms for faster response
   };
 
   // Custom search query handler - triggers search directly
@@ -179,17 +179,17 @@ export default function ExercisePickerScreen() {
       // Normalize exercise data (taxonomy exercises have different structure)
       const exerciseData = 'canonical_name' in exercise
         ? {
-            name: exercise.canonical_name,
-            muscles: exercise.muscles?.primary || [],
-            equipment: exercise.constraints?.equipment || [],
-            difficulty: exercise.constraints?.difficulty || 'intermediate',
-          }
+          name: exercise.canonical_name,
+          muscles: exercise.muscles?.primary || [],
+          equipment: exercise.constraints?.equipment || [],
+          difficulty: exercise.constraints?.difficulty || 'intermediate',
+        }
         : {
-            name: exercise.name,
-            muscles: exercise.muscles,
-            equipment: exercise.equipment,
-            difficulty: exercise.difficulty,
-          };
+          name: exercise.name,
+          muscles: exercise.muscles,
+          equipment: exercise.equipment,
+          difficulty: exercise.difficulty,
+        };
 
       // Store selected exercise temporarily
       await AsyncStorage.setItem(SELECTED_EXERCISE_KEY, JSON.stringify({
@@ -310,8 +310,9 @@ export default function ExercisePickerScreen() {
     </View>
   );
 
-  const renderExerciseCard = (exercise: SearchResult, showScore = false) => (
-    <View key={exercise.id} style={{ marginBottom: Spacing.sm }}>
+  // Add db- prefix to key to avoid duplicate key conflicts with taxonomy results
+  const renderExerciseCard = (exercise: SearchResult, showScore = false, keyPrefix = '') => (
+    <View key={`${keyPrefix}${exercise.id}`} style={{ marginBottom: Spacing.sm }}>
       <ExerciseCard
         exercise={exercise}
         expanded={expandedId === exercise.id}
@@ -574,7 +575,7 @@ export default function ExercisePickerScreen() {
           </View>
         </View>
         {allResults.map(result => renderTaxonomyExercise(result))}
-        {databaseResults.slice(0, 15).map(ex => renderExerciseCard(ex))}
+        {databaseResults.slice(0, 15).map(ex => renderExerciseCard(ex, false, 'db-'))}
         {databaseResults.length > 15 && (
           <ThemedText style={[styles.moreText, { color: colors.textTertiary }]}>
             +{databaseResults.length - 15} more exercises
@@ -668,7 +669,7 @@ export default function ExercisePickerScreen() {
             </ThemedText>
           </View>
         </View>
-        {searchResults.databaseMatches.slice(0, 10).map(ex => renderExerciseCard(ex))}
+        {searchResults.databaseMatches.slice(0, 10).map(ex => renderExerciseCard(ex, false, 'db-'))}
         {searchResults.databaseMatches.length > 10 && (
           <ThemedText style={[styles.moreText, { color: colors.textTertiary }]}>
             +{searchResults.databaseMatches.length - 10} more exercises

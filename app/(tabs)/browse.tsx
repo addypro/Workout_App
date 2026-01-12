@@ -11,7 +11,7 @@
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -106,13 +106,141 @@ const FILTER_OPTIONS = {
   ],
 };
 
-// Difficulty badge colors
 const DIFFICULTY_COLORS: Record<string, string> = {
   'BEGINNER': '#4CAF50',
   'INTERMEDIATE': '#FF9800',
   'ADVANCED': '#F44336',
   'ELITE': '#9C27B0',
 };
+
+// ============================================
+// MEMOIZED PROGRAM CARD (List Stability)
+// ============================================
+// Custom comparison only checks id and name to prevent
+// unnecessary re-renders from function prop changes
+
+interface ProgramCardProps {
+  program: CatalogListItem;
+  featured?: boolean;
+  isSelected: boolean;
+  isDark: boolean;
+  colors: typeof Colors['light'];
+  categoryConfig: { icon: string; gradient: [string, string]; label: string; description: string };
+  difficultyColor: string;
+  onPress: (program: CatalogListItem) => void;
+  onCheckboxPress: (program: CatalogListItem, e: any) => void;
+}
+
+const ProgramCard = React.memo(function ProgramCard({
+  program,
+  featured = false,
+  isSelected,
+  isDark,
+  colors,
+  categoryConfig,
+  difficultyColor,
+  onPress,
+  onCheckboxPress,
+}: ProgramCardProps) {
+  return (
+    <Pressable
+      onPress={() => onPress(program)}
+      style={({ pressed }) => [
+        styles.programCard,
+        featured ? styles.featuredCard : styles.regularCard,
+        {
+          backgroundColor: isDark ? colors.elevated : colors.card,
+          borderColor: isSelected ? colors.tint : colors.separator,
+          borderWidth: isSelected ? 2 : StyleSheet.hairlineWidth,
+          opacity: pressed ? 0.9 : 1,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        },
+      ]}
+    >
+      {/* Gradient accent bar */}
+      <LinearGradient
+        colors={categoryConfig.gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.cardAccent}
+      />
+
+      <View style={styles.cardContent}>
+        {/* Absolute Top-Right Checkbox */}
+        <Pressable
+          onPress={(e) => onCheckboxPress(program, e)}
+          hitSlop={12}
+          style={[
+            styles.checkboxContainer,
+            {
+              backgroundColor: isSelected ? colors.tint : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+              borderColor: isSelected ? colors.tint : colors.separator,
+            },
+          ]}
+        >
+          {isSelected && <IconSymbol name="checkmark" size={14} color="#fff" />}
+        </Pressable>
+
+        {/* Header row */}
+        <View style={styles.cardHeader}>
+          <View style={[styles.typeIcon, { backgroundColor: categoryConfig.gradient[0] + '20' }]}>
+            <IconSymbol name={categoryConfig.icon as any} size={16} color={categoryConfig.gradient[0]} />
+          </View>
+
+          {/* Installed badge */}
+          {program.installed && (
+            <View style={[styles.installedBadge, { backgroundColor: colors.success + '20' }]}>
+              <IconSymbol name="checkmark.circle.fill" size={12} color={colors.success} />
+              <ThemedText style={[styles.installedText, { color: colors.success }]}>Added</ThemedText>
+            </View>
+          )}
+        </View>
+
+        {/* Title */}
+        <ThemedText style={styles.cardTitle} numberOfLines={2}>
+          {program.name}
+        </ThemedText>
+
+        {/* Description */}
+        <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]} numberOfLines={2}>
+          {program.description}
+        </ThemedText>
+
+        {/* Meta row */}
+        <View style={styles.cardMeta}>
+          <View style={[styles.difficultyBadge, { backgroundColor: difficultyColor + '20' }]}>
+            <ThemedText style={[styles.difficultyText, { color: difficultyColor }]}>
+              {program.difficulty?.charAt(0) + program.difficulty?.slice(1).toLowerCase()}
+            </ThemedText>
+          </View>
+
+          <View style={styles.metaInfo}>
+            <IconSymbol name="calendar" size={12} color={colors.textTertiary} />
+            <ThemedText style={[styles.metaText, { color: colors.textTertiary }]}>
+              {program.duration} weeks
+            </ThemedText>
+          </View>
+
+          <View style={styles.metaInfo}>
+            <IconSymbol name="flame.fill" size={12} color={colors.textTertiary} />
+            <ThemedText style={[styles.metaText, { color: colors.textTertiary }]}>
+              {program.daysPerWeek}x/week
+            </ThemedText>
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+}, (prevProps: ProgramCardProps, nextProps: ProgramCardProps) => {
+  // Custom comparison: ONLY check id, name, and isSelected
+  // Ignore function prop changes to prevent re-renders
+  return (
+    prevProps.program.id === nextProps.program.id &&
+    prevProps.program.name === nextProps.program.name &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.isDark === nextProps.isDark
+  );
+});
 
 export default function BrowseScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -240,17 +368,17 @@ export default function BrowseScreen() {
   };
 
   // Tap card = open detail modal
-  const handleProgramPress = (program: CatalogListItem) => {
+  const handleProgramPress = useCallback((program: CatalogListItem) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setDetailProgram(program);
-  };
+  }, []);
 
   // Tap checkbox = toggle selection
-  const handleCheckboxPress = (program: CatalogListItem, e: any) => {
+  const handleCheckboxPress = useCallback((program: CatalogListItem, e: any) => {
     e.stopPropagation();
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     selection.toggle(program);
-  };
+  }, [selection]);
 
   // Add single program from detail modal
   const handleAddSingleProgram = async (program: CatalogListItem) => {
@@ -274,102 +402,27 @@ export default function BrowseScreen() {
     }
   };
 
-  // Program Card Component
-  const ProgramCard = ({ program, featured = false }: { program: CatalogListItem; featured?: boolean }) => {
+  // Render a program card using the memoized component
+  const renderProgramCard = useCallback((program: CatalogListItem, featured = false) => {
     const isSelected = selection.isSelected(program);
     const categoryConfig = CATEGORY_CONFIG[program.type] || CATEGORY_CONFIG['FULL_BODY'];
     const difficultyColor = DIFFICULTY_COLORS[program.difficulty] || colors.textSecondary;
 
     return (
-      <Pressable
-        onPress={() => handleProgramPress(program)}
-        style={({ pressed }) => [
-          styles.programCard,
-          featured ? styles.featuredCard : styles.regularCard,
-          {
-            backgroundColor: isDark ? colors.elevated : colors.card,
-            borderColor: isSelected ? colors.tint : colors.separator,
-            borderWidth: isSelected ? 2 : StyleSheet.hairlineWidth,
-            opacity: pressed ? 0.9 : 1,
-            transform: [{ scale: pressed ? 0.98 : 1 }],
-          },
-        ]}
-      >
-        {/* Gradient accent bar */}
-        <LinearGradient
-          colors={categoryConfig.gradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.cardAccent}
-        />
-
-        <View style={styles.cardContent}>
-          {/* Absolute Top-Right Checkbox */}
-          <Pressable
-            onPress={(e) => handleCheckboxPress(program, e)}
-            hitSlop={12}
-            style={[
-              styles.checkboxContainer,
-              {
-                backgroundColor: isSelected ? colors.tint : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-                borderColor: isSelected ? colors.tint : colors.separator,
-              },
-            ]}
-          >
-            {isSelected && <IconSymbol name="checkmark" size={14} color="#fff" />}
-          </Pressable>
-
-          {/* Header row */}
-          <View style={styles.cardHeader}>
-            <View style={[styles.typeIcon, { backgroundColor: categoryConfig.gradient[0] + '20' }]}>
-              <IconSymbol name={categoryConfig.icon as any} size={16} color={categoryConfig.gradient[0]} />
-            </View>
-
-            {/* Installed badge */}
-            {program.installed && (
-              <View style={[styles.installedBadge, { backgroundColor: colors.success + '20' }]}>
-                <IconSymbol name="checkmark.circle.fill" size={12} color={colors.success} />
-                <ThemedText style={[styles.installedText, { color: colors.success }]}>Added</ThemedText>
-              </View>
-            )}
-          </View>
-
-          {/* Title */}
-          <ThemedText style={styles.cardTitle} numberOfLines={2}>
-            {program.name}
-          </ThemedText>
-
-          {/* Description */}
-          <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]} numberOfLines={2}>
-            {program.description}
-          </ThemedText>
-
-          {/* Meta row */}
-          <View style={styles.cardMeta}>
-            <View style={[styles.difficultyBadge, { backgroundColor: difficultyColor + '20' }]}>
-              <ThemedText style={[styles.difficultyText, { color: difficultyColor }]}>
-                {program.difficulty?.charAt(0) + program.difficulty?.slice(1).toLowerCase()}
-              </ThemedText>
-            </View>
-
-            <View style={styles.metaInfo}>
-              <IconSymbol name="calendar" size={12} color={colors.textTertiary} />
-              <ThemedText style={[styles.metaText, { color: colors.textTertiary }]}>
-                {program.duration} weeks
-              </ThemedText>
-            </View>
-
-            <View style={styles.metaInfo}>
-              <IconSymbol name="flame.fill" size={12} color={colors.textTertiary} />
-              <ThemedText style={[styles.metaText, { color: colors.textTertiary }]}>
-                {program.daysPerWeek}x/week
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-      </Pressable>
+      <ProgramCard
+        key={program.id}
+        program={program}
+        featured={featured}
+        isSelected={isSelected}
+        isDark={isDark}
+        colors={colors}
+        categoryConfig={categoryConfig}
+        difficultyColor={difficultyColor}
+        onPress={handleProgramPress}
+        onCheckboxPress={handleCheckboxPress}
+      />
     );
-  };
+  }, [selection, colors, isDark, handleProgramPress, handleCheckboxPress]);
 
   // Category Section Component
   const CategorySection = ({ type, programs }: { type: string; programs: CatalogListItem[] }) => {
@@ -416,7 +469,7 @@ export default function BrowseScreen() {
               key={program.id}
               entering={FadeInRight.duration(300).delay(index * 50)}
             >
-              <ProgramCard program={program} />
+              {renderProgramCard(program)}
             </Animated.View>
           ))}
         </ScrollView>
@@ -606,7 +659,7 @@ export default function BrowseScreen() {
                       key={program.id}
                       entering={FadeInRight.duration(300).delay(index * 80)}
                     >
-                      <ProgramCard program={program} featured />
+                      {renderProgramCard(program, true)}
                     </Animated.View>
                   ))}
                 </ScrollView>

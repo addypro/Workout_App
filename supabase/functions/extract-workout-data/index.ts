@@ -184,14 +184,46 @@ User: "Squats 135, 185, 225, 275, 315 for 5 reps each"
 User: "Did some pull ups, 3 sets"
 → perSetDetails: [{"reps":"10","weight":null},{"reps":"10","weight":null},{"reps":"10","weight":null}]
 
+===== COMPLEX PER-SET EXAMPLES =====
+
+User: "Deadlift: first set 135 for 10, second set 225 for 8, third set 315 for 5, fourth set 365 for 3"
+→ sets: 4, perSetDetails: [{"reps":"10","weight":135},{"reps":"8","weight":225},{"reps":"5","weight":315},{"reps":"3","weight":365}]
+
+User: "Squats: 135 for 12, 185 for 10, 225 for 8, 275 for 6, 315 for 4, 365 for 2"
+→ sets: 6, perSetDetails: [{"reps":"12","weight":135},{"reps":"10","weight":185},{"reps":"8","weight":225},{"reps":"6","weight":275},{"reps":"4","weight":315},{"reps":"2","weight":365}]
+
+User: "Bench: 135 times 10, 155 times 8, 175 times 6, 185 times 4"
+→ sets: 4, perSetDetails: [{"reps":"10","weight":135},{"reps":"8","weight":155},{"reps":"6","weight":175},{"reps":"4","weight":185}]
+
+User: "I did 5 sets of squats. 135 for 8, then 185 for 8, 225 for 6, 275 for 4, and 315 for 2"
+→ sets: 5, perSetDetails: [{"reps":"8","weight":135},{"reps":"8","weight":185},{"reps":"6","weight":225},{"reps":"4","weight":275},{"reps":"2","weight":315}]
+
+User: "Leg press: 4 plates for 15, 6 plates for 12, 8 plates for 10, back down to 4 plates for 20"
+→ sets: 4, perSetDetails: [{"reps":"15","weight":180},{"reps":"12","weight":270},{"reps":"10","weight":360},{"reps":"20","weight":180}]
+(Note: Convert plate count to weight: 1 plate = 45lbs per side = 90lbs total, so "4 plates" = 180lbs)
+
+User: "Rows: 95 for 12, 115 for 10, 135 for 8"
+→ sets: 3, perSetDetails: [{"reps":"12","weight":95},{"reps":"10","weight":115},{"reps":"8","weight":135}]
+
+===== KEY PARSING PATTERNS =====
+
+Pattern 1 - "WEIGHT for REPS": "135 for 10" → {"reps":"10","weight":135}
+Pattern 2 - "WEIGHT times REPS": "185 times 8" → {"reps":"8","weight":185}
+Pattern 3 - "REPS at WEIGHT": "10 reps at 135" → {"reps":"10","weight":135}
+Pattern 4 - "REPS WEIGHT": "8 at 225" → {"reps":"8","weight":225}
+Pattern 5 - Ordinal: "first set 135 for 10, second set 185 for 8" → two entries
+
 ===== FINAL CHECKLIST =====
 ✓ perSetDetails has exactly "sets" entries
 ✓ Each entry has reps and weight (weight can be null)
+✓ Listen for EACH set described - don't collapse to single weight
+✓ Count the number of weight/rep pairs mentioned to determine sets
 ✓ Missing data is autofilled using last known value
 ✓ Exercise names are normalized to full names
 ✓ Weight unit defaults to "lbs"
 ✓ Supersets array populated when exercises are grouped together
 ✓ Return valid JSON only`;
+
 
 // ============================================
 // CACHING
@@ -386,7 +418,30 @@ async function extractWithGroqLlama(
     .replace(/```\s*/g, '')
     .trim();
 
-  return JSON.parse(cleanJson);
+  const parsed = JSON.parse(cleanJson);
+
+  // Detailed logging for debugging
+  console.log('=== EXTRACTION RESULT ===');
+  console.log('Exercises found:', parsed.exercises?.length || 0);
+  if (parsed.exercises) {
+    parsed.exercises.forEach((ex: any, i: number) => {
+      console.log(`  [${i + 1}] ${ex.nameRaw}: ${ex.sets} sets`);
+      if (ex.perSetDetails) {
+        console.log(`      perSetDetails (${ex.perSetDetails.length} entries):`);
+        ex.perSetDetails.forEach((sd: any, j: number) => {
+          console.log(`        Set ${j + 1}: ${sd.reps} reps @ ${sd.weight ?? 'bodyweight'}`);
+        });
+      } else {
+        console.log(`      weight: ${ex.weight}, reps: ${ex.reps}`);
+      }
+    });
+  }
+  if (parsed.supersets?.length) {
+    console.log('Supersets:', JSON.stringify(parsed.supersets));
+  }
+  console.log('=========================');
+
+  return parsed;
 }
 
 // ============================================

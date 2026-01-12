@@ -1,20 +1,33 @@
 /**
  * Preferences Context
  *
- * User preferences for app behavior, including weight units.
+ * User preferences for app behavior, including weight units and home gym.
  * Persisted via AsyncStorage.
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 const WEIGHT_UNIT_KEY = '@weight_unit';
+const HOME_GYM_KEY = '@home_gym';
 
 export type WeightUnit = 'kg' | 'lbs';
+
+export interface GymInfo {
+  id: string;           // Unique ID (OSM ID or custom UUID)
+  name: string;         // Display name
+  osmId?: string;       // OpenStreetMap ID for cross-user matching
+  latitude?: number;    // GPS latitude
+  longitude?: number;   // GPS longitude
+  address?: string;     // Optional address
+}
 
 interface PreferencesContextType {
   weightUnit: WeightUnit;
   setWeightUnit: (unit: WeightUnit) => void;
+  // Gym preferences
+  homeGym: GymInfo | null;
+  setHomeGym: (gym: GymInfo | null) => void;
   // Conversion helpers
   formatWeight: (kg: number) => string;
   parseWeight: (value: number) => number;
@@ -33,12 +46,22 @@ interface PreferencesProviderProps {
 
 export function PreferencesProvider({ children }: PreferencesProviderProps) {
   const [weightUnit, setWeightUnitState] = useState<WeightUnit>('lbs');
+  const [homeGym, setHomeGymState] = useState<GymInfo | null>(null);
 
   useEffect(() => {
-    // Load saved preference
+    // Load saved preferences
     AsyncStorage.getItem(WEIGHT_UNIT_KEY).then((saved) => {
       if (saved === 'kg' || saved === 'lbs') {
         setWeightUnitState(saved);
+      }
+    });
+    AsyncStorage.getItem(HOME_GYM_KEY).then((saved) => {
+      if (saved) {
+        try {
+          setHomeGymState(JSON.parse(saved));
+        } catch (e) {
+          console.warn('Failed to parse saved gym:', e);
+        }
       }
     });
   }, []);
@@ -46,6 +69,15 @@ export function PreferencesProvider({ children }: PreferencesProviderProps) {
   const setWeightUnit = useCallback((unit: WeightUnit) => {
     setWeightUnitState(unit);
     AsyncStorage.setItem(WEIGHT_UNIT_KEY, unit);
+  }, []);
+
+  const setHomeGym = useCallback((gym: GymInfo | null) => {
+    setHomeGymState(gym);
+    if (gym) {
+      AsyncStorage.setItem(HOME_GYM_KEY, JSON.stringify(gym));
+    } else {
+      AsyncStorage.removeItem(HOME_GYM_KEY);
+    }
   }, []);
 
   /**
@@ -90,6 +122,8 @@ export function PreferencesProvider({ children }: PreferencesProviderProps) {
   const value: PreferencesContextType = {
     weightUnit,
     setWeightUnit,
+    homeGym,
+    setHomeGym,
     formatWeight,
     parseWeight,
     convertToKg,

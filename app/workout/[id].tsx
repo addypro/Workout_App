@@ -27,6 +27,12 @@ import {
 import { preloadExerciseDatabase } from '@/lib/services/exercise/database';
 import { setWorkoutContext } from '@/lib/services/voice';
 import {
+  unsafeCoerceSetId,
+  unsafeCoerceSupersetGroupId,
+  unsafeCoerceWorkoutExerciseId,
+  unsafeCoerceWorkoutSessionId,
+} from '@/lib/types/brands';
+import {
   calculateWorkoutProgress,
   formatDuration,
   getSupersetExercises,
@@ -305,31 +311,63 @@ export default function ActiveWorkoutScreen() {
     equipment?: string[];
     setsCount?: number;  // Voice input can specify number of sets
     reps?: number | string;  // Voice input can specify reps
+    weight?: number;  // Voice input can specify weight
+    perSetDetails?: Array<{ reps: string; weight?: number }>; // Per-set weight/reps
   }) => {
     const timestamp = Date.now();
+
+    // CRITICAL DEBUG: Log what we receive
+    console.log('[addExerciseToSession] Called with:', {
+      name: exerciseData.name,
+      setsCount: exerciseData.setsCount,
+      reps: exerciseData.reps,
+      weight: exerciseData.weight,
+      perSetDetails: exerciseData.perSetDetails,
+      hasPerSetDetails: !!exerciseData.perSetDetails,
+      perSetDetailsLength: exerciseData.perSetDetails?.length,
+    });
 
     // Look up previous workout data for this exercise
     const prevDataRecord = await getPreviousExerciseData([exerciseData.name]);
     const prevData = prevDataRecord[exerciseData.name];
 
     // Determine number of sets: voice input > previous data > default 3
-    const numSets = exerciseData.setsCount || (prevData?.sets?.length) || 3;
+    const numSets = exerciseData.perSetDetails?.length || exerciseData.setsCount || (prevData?.sets?.length) || 3;
     const defaultReps = exerciseData.reps ? String(exerciseData.reps) : '10';
+    const voiceWeight = exerciseData.weight; // Weight from voice (already converted)
 
-    // Create sets based on previous data or voice input
+    // Create sets based on perSetDetails > previous data > defaults
     let sets: WorkoutSet[];
-    if (prevData && prevData.sets && prevData.sets.length > 0 && !exerciseData.setsCount) {
-      // Use previous workout data if no voice-specified sets
+    if (exerciseData.perSetDetails && exerciseData.perSetDetails.length > 0) {
+      // Use per-set details from voice (each set has different weight/reps)
+      sets = exerciseData.perSetDetails.map((setDetail, i) => ({
+        id: unsafeCoerceSetId(`s${timestamp}-${i}`),
+        reps: setDetail.reps || defaultReps,
+        weight: setDetail.weight ?? voiceWeight,
+        isCompleted: false,
+      }));
+      console.log('[Voice] Applied perSetDetails:', exerciseData.perSetDetails);
+    } else if (voiceWeight !== undefined) {
+      // Voice specified a single weight for all sets
+      sets = Array.from({ length: numSets }, (_, i) => ({
+        id: unsafeCoerceSetId(`s${timestamp}-${i}`),
+        reps: defaultReps,
+        weight: voiceWeight,
+        isCompleted: false,
+      }));
+      console.log('[Voice] Applied weight to all sets:', voiceWeight);
+    } else if (prevData && prevData.sets && prevData.sets.length > 0 && !exerciseData.setsCount) {
+      // Use previous workout data if no voice-specified sets/weight
       sets = prevData.sets.map((prevSet, i) => ({
-        id: `s${timestamp}-${i}`,
+        id: unsafeCoerceSetId(`s${timestamp}-${i}`),
         reps: prevSet.reps ? String(prevSet.reps) : defaultReps,
         weight: prevSet.weight ?? undefined,
         isCompleted: false,
       }));
     } else {
-      // Create specified number of sets
+      // Create specified number of sets with no weight
       sets = Array.from({ length: numSets }, (_, i) => ({
-        id: `s${timestamp}-${i}`,
+        id: unsafeCoerceSetId(`s${timestamp}-${i}`),
         reps: defaultReps,
         isCompleted: false,
       }));
@@ -339,7 +377,7 @@ export default function ActiveWorkoutScreen() {
       if (!prev) return prev;
       const exerciseCount = prev.exercises.length;
       const newExercise: WorkoutExercise = {
-        id: `ex${timestamp}-${exerciseCount}`,
+        id: unsafeCoerceWorkoutExerciseId(`ex${timestamp}-${exerciseCount}`),
         name: exerciseData.name,
         sets,
         restTime: 60,
@@ -418,8 +456,8 @@ export default function ActiveWorkoutScreen() {
     }
 
     try {
-      // Import search functions lazily
-      const { searchExercisesEnhanced, lookupExerciseByAlias } = await import('@/lib/services/exercise/search');
+      // Import alias lookup function (instant, no fuzzy search needed)
+      const { lookupExerciseByAlias } = await import('@/lib/services/exercise/search');
 
       // Weight conversion helper - converts from voice unit to user preference
       const convertWeight = (w: number | undefined, fromUnit?: 'lbs' | 'kg'): number | undefined => {
@@ -457,32 +495,11 @@ export default function ActiveWorkoutScreen() {
           matchSource = 'alias';
           console.log('[Voice] Alias match:', rawName, '→', matchedName);
         } else {
-          // Fall back to fuzzy search
-          try {
-            const searchResults = await searchExercisesEnhanced(rawName, {});
-            if (searchResults.taxonomyMatches && searchResults.taxonomyMatches.length > 0) {
-              const topMatch = searchResults.taxonomyMatches[0];
-              // Only use match if score is reasonable (> 40)
-              if (topMatch.score > 40) {
-                matchedName = topMatch.taxonomyExercise.canonical_name;
-                matchSource = `search(${topMatch.score})`;
-                console.log('[Voice] Search match:', rawName, '→', matchedName, 'score:', topMatch.score);
-              } else {
-                // Score too low, use the normalized name or raw name
-                matchedName = ex.nameNormalized || rawName;
-                matchSource = 'fallback';
-                console.log('[Voice] Low score, using:', matchedName);
-              }
-            } else {
-              matchedName = ex.nameNormalized || rawName;
-              matchSource = 'fallback';
-              console.log('[Voice] No matches, using:', matchedName);
-            }
-          } catch (searchError) {
-            console.error('[Voice] Search error, using raw name:', searchError);
-            matchedName = ex.nameNormalized || rawName;
-            matchSource = 'error-fallback';
-          }
+          // No alias match - trust the LLM's normalized name (instant, no fuzzy search)
+          // The LLM (Gemini 1.5 Flash) has already normalized the exercise name
+          matchedName = ex.nameNormalized || rawName;
+          matchSource = 'llm-normalized';
+          console.log('[Voice] Using LLM normalized:', rawName, '→', matchedName);
         }
 
         // ============================================
@@ -491,12 +508,35 @@ export default function ActiveWorkoutScreen() {
         const numSets = ex.sets || 3;
         const repsValue = ex.reps || '10';
 
-        console.log(`[Voice] Adding: ${matchedName} (${matchSource}) - ${numSets} sets x ${repsValue}`);
+        // Convert weight from voice unit to user preference
+        const convertedWeight = convertWeight(ex.weight, ex.weightUnit);
 
-        await addExerciseToSession({
+        // Convert perSetDetails weights if present
+        const convertedPerSetDetails = ex.perSetDetails?.map(sd => ({
+          reps: sd.reps,
+          weight: convertWeight(sd.weight, ex.weightUnit),
+        }));
+
+        // CRITICAL DEBUG: Log what we're about to send
+        console.log('[handleVoiceExercisesExtracted] About to call addExerciseToSession with:', {
+          name: matchedName,
+          numSets,
+          repsValue,
+          convertedWeight,
+          hasPerSetDetails: !!convertedPerSetDetails,
+          perSetDetailsLength: convertedPerSetDetails?.length,
+          perSetDetails: convertedPerSetDetails ? JSON.stringify(convertedPerSetDetails) : 'undefined',
+        });
+
+        console.log(`[Voice] Adding: ${matchedName} (${matchSource}) - ${numSets} sets x ${repsValue}${convertedWeight ? ` @ ${convertedWeight}${weightUnit}` : ''}`);
+
+        // Add immediately without waiting for search (latency fix)
+        addExerciseToSession({
           name: matchedName,
           setsCount: numSets,
           reps: repsValue,
+          weight: convertedWeight,
+          perSetDetails: convertedPerSetDetails,
         });
 
         // ============================================
@@ -584,7 +624,7 @@ export default function ActiveWorkoutScreen() {
               console.log(`[Voice] Linking ${exerciseIds.length} exercises as ${superset.type}:`, exerciseIds);
               setSession(prev => {
                 if (!prev) return prev;
-                return linkMultipleExercisesAsSuperset(prev, exerciseIds);
+                return linkMultipleExercisesAsSuperset(prev, exerciseIds.map(id => unsafeCoerceWorkoutExerciseId(id)));
               });
             }
           }
@@ -734,22 +774,48 @@ export default function ActiveWorkoutScreen() {
       setWorkoutWeek(targetWeek);
       setWorkoutDay(targetDay);
 
-      const exercises: WorkoutExercise[] = targetWorkout.exercises.map((ex: any, index: number) => ({
-        id: `ex${index}`,
-        name: ex.name || 'Unknown Exercise',
-        sets: Array.from({ length: ex.sets || 3 }, (_, setIndex) => ({
-          id: `s${index}-${setIndex}`,
-          reps: ex.reps || 10,
-          weight: ex.weight ? parseFloat(ex.weight) : undefined,
-          isCompleted: false,
-        })),
-        restTime: ex.restTime || 60,
-        currentSetIndex: 0,
-        muscleGroups: [],
-      }));
+      const exercises: WorkoutExercise[] = targetWorkout.exercises.map((ex: any, index: number) => {
+        // CRITICAL: Use perSetDetails if available, otherwise use default weight/reps for all sets
+        const numSets = ex.perSetDetails?.length || ex.sets || 3;
+        const defaultReps = ex.reps || 10;
+        const defaultWeight = ex.weight != null
+          ? (typeof ex.weight === 'number' ? ex.weight : parseFloat(ex.weight))
+          : undefined;
+
+        let sets: WorkoutSet[];
+        if (ex.perSetDetails && ex.perSetDetails.length > 0) {
+          // Use per-set details for variable weights/reps
+          sets = ex.perSetDetails.map((sd: any, setIndex: number) => ({
+            id: unsafeCoerceSetId(`s${index}-${setIndex}`),
+            reps: sd.reps || defaultReps,
+            weight: sd.weight != null
+              ? (typeof sd.weight === 'number' ? sd.weight : parseFloat(sd.weight))
+              : defaultWeight,
+            isCompleted: false,
+          }));
+          console.log(`[loadWorkout] Exercise "${ex.name}" using perSetDetails:`, ex.perSetDetails);
+        } else {
+          // Use same weight/reps for all sets
+          sets = Array.from({ length: numSets }, (_, setIndex) => ({
+            id: unsafeCoerceSetId(`s${index}-${setIndex}`),
+            reps: defaultReps,
+            weight: defaultWeight,
+            isCompleted: false,
+          }));
+        }
+
+        return {
+          id: unsafeCoerceWorkoutExerciseId(`ex${index}`),
+          name: ex.name || 'Unknown Exercise',
+          sets,
+          restTime: ex.restTime || 60,
+          currentSetIndex: 0,
+          muscleGroups: [],
+        };
+      });
 
       const newSession: WorkoutSession = {
-        id: id as string,
+        id: unsafeCoerceWorkoutSessionId(id as string),
         workoutName: targetWorkout.name || program.name,
         exercises,
         startTime: new Date(),
@@ -1089,8 +1155,8 @@ export default function ActiveWorkoutScreen() {
       const next = { ...prev, exercises: [...prev.exercises] };
       const ex = next.exercises[exerciseIndex];
       const lastSet = ex.sets[ex.sets.length - 1];
-      const newSet = {
-        id: `s${exerciseIndex}-${ex.sets.length}`,
+      const newSet: WorkoutSet = {
+        id: unsafeCoerceSetId(`s${exerciseIndex}-${ex.sets.length}`),
         reps: lastSet?.reps ?? '10',
         weight: lastSet?.weight,
         isCompleted: false,
@@ -1179,7 +1245,7 @@ export default function ActiveWorkoutScreen() {
       const parentSet = ex.sets[afterSetIndex];
 
       const dropSet: WorkoutSet = {
-        id: `s${exerciseIndex}-${ex.sets.length}-drop`,
+        id: unsafeCoerceSetId(`s${exerciseIndex}-${ex.sets.length}-drop`),
         reps: parentSet.reps,
         weight: parentSet.weight ? Math.round(parentSet.weight * 0.7) : undefined, // 70% of parent weight
         isCompleted: false,
@@ -1252,7 +1318,7 @@ export default function ActiveWorkoutScreen() {
     setHasLiveEdits(true);
     const updatedSession = linkMultipleExercisesAsSuperset(
       session,
-      supersetSelectedIds,
+      supersetSelectedIds.map(id => unsafeCoerceWorkoutExerciseId(id)),
       45, // Short rest between exercises
       90  // Full rest after round
     );
@@ -1286,7 +1352,7 @@ export default function ActiveWorkoutScreen() {
 
     const doUnlink = () => {
       setHasLiveEdits(true);
-      const updatedSession = unlinkSuperset(session, groupId);
+      const updatedSession = unlinkSuperset(session, unsafeCoerceSupersetGroupId(groupId));
       setSession(updatedSession);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
@@ -1932,13 +1998,25 @@ export default function ActiveWorkoutScreen() {
                                   </ThemedText>
                                 </View>
 
-                                {/* Previous Workout Data Column */}
+                                {/* Ghost Mode - Previous Workout Data Column */}
                                 <View style={styles.setPrevCol}>
-                                  {prevSet ? (
-                                    <ThemedText style={[styles.prevDataText, { color: colors.textSecondary }]}>
-                                      {prevSet.weight ? `${prevSet.weight} × ${prevSet.reps || '—'}` : `— × ${prevSet.reps || '—'}`}
-                                    </ThemedText>
-                                  ) : (
+                                  {prevSet ? (() => {
+                                    const currentWeight = set.weight || 0;
+                                    const ghostWeight = prevSet.weight || 0;
+                                    const currentReps = typeof set.reps === 'string' ? parseInt(set.reps) || 0 : (set.reps || 0);
+                                    const ghostReps = prevSet.reps || 0;
+                                    const isBeatingWeight = currentWeight > ghostWeight && ghostWeight > 0;
+                                    const isBeatingReps = currentWeight === ghostWeight && currentReps > ghostReps && ghostReps > 0;
+                                    const isBeating = isBeatingWeight || isBeatingReps;
+                                    const ghostColor = isBeating ? '#30D158' : colors.textSecondary;
+                                    const ghostIcon = isBeating ? '↑' : '👻';
+
+                                    return (
+                                      <ThemedText style={[styles.prevDataText, { color: ghostColor }]}>
+                                        {ghostIcon} {ghostWeight ? `${ghostWeight}×${ghostReps || '—'}` : `—×${ghostReps || '—'}`}
+                                      </ThemedText>
+                                    );
+                                  })() : (
                                     <ThemedText style={[styles.prevDataText, { color: colors.textTertiary }]}>—</ThemedText>
                                   )}
                                 </View>

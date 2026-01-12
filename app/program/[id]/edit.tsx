@@ -10,6 +10,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -92,6 +93,7 @@ export default function EditProgramScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
+  const navigation = useNavigation();
 
   const programId = String(id);
   const [loading, setLoading] = useState(true);
@@ -101,6 +103,57 @@ export default function EditProgramScreen() {
   const [data, setData] = useState<EditableParsedData>({ workouts: [] });
   const [pendingWorkoutIndex, setPendingWorkoutIndex] = useState<number | null>(null);
   const [expandedWorkout, setExpandedWorkout] = useState<number | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Track changes when user edits anything
+  const markChanged = () => setHasChanges(true);
+
+  // Intercept back navigation for unsaved changes
+  useEffect(() => {
+    const beforeRemoveListener = (e: any) => {
+      // If saved or no changes, allow navigation
+      if (isSaved || !hasChanges) return;
+
+      // Prevent default back action
+      e.preventDefault();
+
+      // Show save/discard prompt
+      if (Platform.OS === 'web') {
+        const shouldDiscard = window.confirm('You have unsaved changes. Discard them?');
+        if (shouldDiscard) {
+          router.back();
+        }
+      } else {
+        Alert.alert(
+          'Unsaved Changes',
+          'You have unsaved changes. What would you like to do?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Discard',
+              style: 'destructive',
+              onPress: () => {
+                setHasChanges(false);
+                router.back();
+              }
+            },
+            {
+              text: 'Save',
+              style: 'default',
+              onPress: () => handleSave()
+            },
+          ]
+        );
+      }
+    };
+
+    // Add listener when screen has changes
+    if (hasChanges && !isSaved) {
+      const unsubscribe = navigation.addListener('beforeRemove', beforeRemoveListener);
+      return () => unsubscribe();
+    }
+  }, [hasChanges, isSaved, navigation, router]);
 
   // Load program data
   const load = useCallback(async () => {
@@ -120,6 +173,7 @@ export default function EditProgramScreen() {
       if ((prog.parsedData?.workouts?.length ?? 0) > 0) {
         setExpandedWorkout(0);
       }
+      setHasChanges(false); // Reset after loading
     } catch (e) {
       console.error(e);
       Alert.alert('Error', 'Failed to load program.');
@@ -311,6 +365,8 @@ export default function EditProgramScreen() {
     });
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setIsSaved(true);
+    setHasChanges(false);
 
     if (Platform.OS === 'web') {
       window.alert('Your program was saved!');
@@ -364,6 +420,7 @@ export default function EditProgramScreen() {
       <Stack.Screen
         options={{
           title: 'Edit Program',
+          headerBackTitle: 'My Programs',
           headerShadowVisible: false,
           headerStyle: { backgroundColor: colors.groupedBackground },
           headerRight,

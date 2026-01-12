@@ -26,7 +26,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { VoiceLoggingModal } from '@/components/voice';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { createProgram, updateProgram } from '@/lib/db/storage';
+import { createProgram, saveWorkoutTemplate, updateProgram } from '@/lib/db/storage';
 import type { ExtractedExercise } from '@/lib/services/voice/direct-intent-types';
 
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
@@ -37,7 +37,7 @@ interface QuickExercise {
   rawName?: string; // Original name from voice/input
   sets: number;
   reps: string;
-  weight?: number; // Weight if specified
+  weight?: number; // Weight if specified (default for all sets)
   weightUnit?: 'lbs' | 'kg'; // Weight unit
   restTime: number;
   muscles?: string[];
@@ -49,6 +49,11 @@ interface QuickExercise {
     name: string;
     confidence: 'exact' | 'high' | 'medium' | 'low';
     score: number;
+  }>;
+  // Per-set details for variable weights/reps across sets
+  perSetDetails?: Array<{
+    reps: string;
+    weight?: number;
   }>;
 }
 
@@ -211,7 +216,9 @@ export default function QuickWorkoutScreen() {
             equipment: directMatch?.constraints?.equipment || [],
             lowConfidence: isLowConfidence,
             confidenceScore: confidenceScore,
-            alternatives: isLowConfidence ? alternatives : alternatives.slice(0, 3), // More alternatives for low confidence
+            alternatives: isLowConfidence ? alternatives : alternatives.slice(0, 3),
+            // Include per-set details for variable weights/reps
+            perSetDetails: ex.perSetDetails,
           };
         })
       );
@@ -292,9 +299,13 @@ export default function QuickWorkoutScreen() {
               name: ex.name,
               sets: ex.sets,
               reps: ex.reps,
+              weight: ex.weight,
+              weightUnit: ex.weightUnit || 'lbs',
               restTime: ex.restTime,
               notes: '',
               order: idx,
+              // Include per-set details for variable weights/reps
+              perSetDetails: ex.perSetDetails,
             })),
             order: 0,
           },
@@ -349,6 +360,62 @@ export default function QuickWorkoutScreen() {
     }
   };
 
+  const handleSaveAsTemplate = () => {
+    if (exercises.length === 0) {
+      Alert.alert('No Exercises', 'Add some exercises before saving as a template.');
+      return;
+    }
+
+    if (Platform.OS === 'web') {
+      const name = window.prompt('Enter a name for this template:');
+      if (name && name.trim()) {
+        saveWorkoutTemplate({
+          name: name.trim(),
+          exercises: exercises.map(e => ({
+            name: e.name,
+            sets: e.sets,
+            reps: e.reps,
+            weight: e.weight ? String(e.weight) : undefined,
+          })),
+          userId: 'local',
+        }).then(() => {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Alert.alert('Saved!', 'Template saved to Quick Workouts.');
+        });
+      }
+    } else {
+      Alert.prompt(
+        'Save as Template',
+        'Enter a name for this workout template:',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Save',
+            onPress: async (name: string | undefined) => {
+              if (name && name.trim()) {
+                await saveWorkoutTemplate({
+                  name: name.trim(),
+                  exercises: exercises.map(e => ({
+                    name: e.name,
+                    sets: e.sets,
+                    reps: e.reps,
+                    weight: e.weight ? String(e.weight) : undefined,
+                  })),
+                  userId: 'local',
+                });
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                Alert.alert('Saved!', 'Template saved to Quick Workouts.');
+              }
+            },
+          },
+        ],
+        'plain-text',
+        '',
+        'default'
+      );
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <Stack.Screen
@@ -362,9 +429,14 @@ export default function QuickWorkoutScreen() {
             </Pressable>
           ),
           headerRight: exercises.length > 0 ? () => (
-            <Pressable onPress={handleClearAll} hitSlop={12}>
-              <ThemedText style={{ color: colors.tint }}>Clear</ThemedText>
-            </Pressable>
+            <View style={{ flexDirection: 'row', gap: 16 }}>
+              <Pressable onPress={handleSaveAsTemplate} hitSlop={12}>
+                <ThemedText style={{ color: '#30D158' }}>Save</ThemedText>
+              </Pressable>
+              <Pressable onPress={handleClearAll} hitSlop={12}>
+                <ThemedText style={{ color: colors.tint }}>Clear</ThemedText>
+              </Pressable>
+            </View>
           ) : undefined,
         }}
       />

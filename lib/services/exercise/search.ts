@@ -236,6 +236,63 @@ function getExercisesInPatterns(patternIds: string[]): TaxonomyExercise[] {
   return exercises;
 }
 
+// ============================================
+// PRE-COMPUTED FILTER CACHE (INSTANT FILTER RESULTS)
+// ============================================
+// Maps filter key -> sorted exercises for O(1) filter lookup
+// Key format: "bodyRegion:equipment" (e.g., "upper:dumbbells", "lower:", ":barbell")
+const filterCache = new Map<string, TaxonomyExercise[]>();
+
+function buildFilterCacheKey(bodyRegion?: string, equipment?: string): string {
+  return `${bodyRegion || ''}:${equipment || ''}`;
+}
+
+// Pre-compute filter results at module load for instant filtering
+function initFilterCache() {
+  if (filterCache.size > 0) return; // Already initialized
+
+  const allExercises: TaxonomyExercise[] = [];
+  for (const pattern of (taxonomyData as any).movement_patterns || []) {
+    for (const exercise of pattern.exercises || []) {
+      allExercises.push(exercise);
+    }
+  }
+
+  // Body regions from categories
+  const bodyRegions = ['upper', 'lower', 'core', 'full', ''];
+  const equipmentCategories = ['bodyweight', 'dumbbells', 'barbell', 'kettlebell', 'cables', 'bands', ''];
+
+  // Build cache for each combination
+  for (const bodyRegion of bodyRegions) {
+    for (const equipment of equipmentCategories) {
+      const key = buildFilterCacheKey(bodyRegion || undefined, equipment || undefined);
+
+      // Skip empty key (no filters)
+      if (key === ':') continue;
+
+      const matched = allExercises.filter(ex =>
+        taxonomyMatchesFilter(ex, {
+          bodyRegion: bodyRegion || undefined,
+          equipment: equipment || undefined
+        })
+      );
+
+      // Sort by popularity
+      matched.sort((a, b) => (b.popularity_score || 50) - (a.popularity_score || 50));
+
+      filterCache.set(key, matched.slice(0, 40)); // Cache top 40
+    }
+  }
+
+  console.log(`[FilterCache] Pre-computed ${filterCache.size} filter combinations`);
+}
+
+// Get cached filter results (O(1) lookup!)
+function getCachedFilterResults(bodyRegion?: string, equipment?: string): TaxonomyExercise[] | null {
+  const key = buildFilterCacheKey(bodyRegion, equipment);
+  return filterCache.get(key) || null;
+}
+
 // Build lookup maps for fast access
 const taxonomyExerciseMap = new Map<string, TaxonomyExercise>();
 const aliasToExerciseMap = new Map<string, TaxonomyExercise>();
@@ -278,6 +335,56 @@ function initTaxonomyMaps() {
 
 // Initialize on module load
 initTaxonomyMaps();
+
+// ============================================
+// TAXONOMY FILTER HELPER
+// ============================================
+
+/**
+ * Filter taxonomy exercise by bodyRegion and/or equipment
+ * Used to apply UI filters to taxonomy search results
+ */
+function taxonomyMatchesFilter(
+  exercise: TaxonomyExercise,
+  filters: { bodyRegion?: string; equipment?: string }
+): boolean {
+  // If no filters, match everything
+  if (!filters.bodyRegion && !filters.equipment) return true;
+
+  // Check body region filter
+  if (filters.bodyRegion) {
+    const region = Object.values(BODY_REGIONS).find(r => r.id === filters.bodyRegion);
+    if (region) {
+      const primaryMuscles = exercise.muscles?.primary || [];
+      const hasMatchingMuscle = primaryMuscles.some(muscle =>
+        region.muscleGroups.some(m => muscle.toLowerCase().includes(m.toLowerCase()))
+      );
+      if (!hasMatchingMuscle) return false;
+    }
+  }
+
+  // Check equipment filter
+  if (filters.equipment) {
+    const category = Object.values(EQUIPMENT_CATEGORIES).find(c => c.id === filters.equipment);
+    if (category) {
+      const exerciseEquipment = exercise.constraints?.equipment || [];
+      // If no equipment specified, check if bodyweight filter and exercise has no equipment
+      if (exerciseEquipment.length === 0) {
+        if (filters.equipment === 'bodyweight') return true;
+        return false;
+      }
+      const hasMatchingEquipment = exerciseEquipment.some(equip =>
+        category.items.some(item =>
+          equip.toLowerCase().includes(item.toLowerCase()) ||
+          item.toLowerCase().includes(equip.toLowerCase())
+        )
+      );
+      if (!hasMatchingEquipment) return false;
+    }
+  }
+
+  return true;
+}
 
 /**
  * Look up exercise by alias, slang term, or canonical name
@@ -1005,15 +1112,38 @@ export async function searchExercisesAdvanced(
 }
 
 /**
- * Get popular exercises (no query, just show most common)
+ * Get popular exercises personalized by user history
+ * 
+ * Scoring formula:
+ * - Base: catalog/database popularity (0-100)
+ * - Boost: user frequency * 5 (capped at 50)
+ * 
+ * New users see catalog-based popular exercises.
+ * Active users see their frequently-used exercises ranked higher.
  */
-export async function getPopularExercises(limit = 20): Promise<SearchResult[]> {
+export async function getPopularExercises(
+  limit = 20,
+  userId = 'local'
+): Promise<SearchResult[]> {
   const database = await getExerciseDatabase();
 
-  const scored = database.map(exercise => ({
-    ...exercise,
-    score: getPopularityScore(exercise),
-  }));
+  // Get user exercise frequency from workout history
+  const { getUserExerciseFrequency } = await import('@/lib/db/storage');
+  const userFrequency = await getUserExerciseFrequency(userId);
+
+  const scored = database.map(exercise => {
+    const basePop = getPopularityScore(exercise); // 0-100
+    const exerciseNameLower = exercise.name.toLowerCase().trim();
+    const userCount = userFrequency[exerciseNameLower] || 0;
+
+    // User frequency boost: each workout adds 5 points, capped at 50
+    const userBoost = Math.min(userCount * 5, 50);
+
+    return {
+      ...exercise,
+      score: basePop + userBoost,
+    };
+  });
 
   scored.sort((a, b) => b.score - a.score);
 
@@ -1177,6 +1307,72 @@ export async function searchExercisesEnhanced(
     query,
   };
 
+  const hasFilters = !!(filters.bodyRegion || filters.equipment);
+  const hasQuery = normalizedQuery.length > 0;
+
+  // FILTER-ONLY MODE: No search query but filters are active
+  // OPTIMIZED: Use pre-computed cache for INSTANT (O(1)) filter results
+  if (!hasQuery && hasFilters) {
+    // Initialize cache on first use (lazy initialization)
+    initFilterCache();
+
+    // Try cache first (O(1) lookup!)
+    const cachedExercises = getCachedFilterResults(filters.bodyRegion, filters.equipment);
+
+    if (cachedExercises && cachedExercises.length > 0) {
+      // Use cached results - instant!
+      for (const exercise of cachedExercises.slice(0, 30)) {
+        result.taxonomyMatches.push({
+          taxonomyExercise: exercise,
+          databaseMatch: null, // Skip expensive lookup
+          score: exercise.popularity_score || 50,
+          matchType: 'exact',
+          suggestions: undefined, // Skip expensive suggestions
+        });
+      }
+    } else {
+      // Cache miss - fall back to computation (rare)
+      const seenIds = new Set<string>();
+      const matched: TaxonomyExercise[] = [];
+
+      for (const pattern of (taxonomyData as any).movement_patterns || []) {
+        for (const exercise of pattern.exercises || []) {
+          if (seenIds.has(exercise.id)) continue;
+          if (taxonomyMatchesFilter(exercise, { bodyRegion: filters.bodyRegion, equipment: filters.equipment })) {
+            seenIds.add(exercise.id);
+            matched.push(exercise);
+          }
+        }
+      }
+
+      matched.sort((a, b) => (b.popularity_score || 50) - (a.popularity_score || 50));
+      for (const exercise of matched.slice(0, 30)) {
+        result.taxonomyMatches.push({
+          taxonomyExercise: exercise,
+          databaseMatch: null,
+          score: exercise.popularity_score || 50,
+          matchType: 'exact',
+          suggestions: undefined,
+        });
+      }
+    }
+
+    // Get database matches (already optimized with filters)
+    const { popular, byCategory } = await searchExercisesAdvanced('', filters);
+    const taxonomyNames = new Set(
+      result.taxonomyMatches.map(m => m.taxonomyExercise.canonical_name.toLowerCase())
+    );
+
+    for (const dbExercise of [...popular, ...byCategory.flatMap(c => c.exercises)]) {
+      if (!taxonomyNames.has(dbExercise.name.toLowerCase())) {
+        result.databaseMatches.push(dbExercise);
+      }
+    }
+
+    result.total = result.taxonomyMatches.length + result.databaseMatches.length;
+    return result;
+  }
+
   // 1. Check for slang terms first
   const slangResult = lookupSlang(normalizedQuery);
   if (slangResult) {
@@ -1186,8 +1382,12 @@ export async function searchExercisesEnhanced(
       suggestedPatterns: slangResult.patterns,
     };
 
-    // Add taxonomy exercises from slang match
-    for (const exercise of slangResult.exercises.slice(0, 10)) {
+    // Add taxonomy exercises from slang match (filtered by bodyRegion/equipment)
+    for (const exercise of slangResult.exercises.slice(0, 20)) {
+      // Apply filter - skip if doesn't match bodyRegion/equipment
+      if (!taxonomyMatchesFilter(exercise, { bodyRegion: filters.bodyRegion, equipment: filters.equipment })) {
+        continue;
+      }
       const dbMatch = findDatabaseMatch(exercise, database);
       result.taxonomyMatches.push({
         taxonomyExercise: exercise,
@@ -1214,11 +1414,16 @@ export async function searchExercisesEnhanced(
     }
   }
 
-  // 2. Match against taxonomy using NLP metadata
+  // 2. Match against taxonomy using NLP metadata (filtered by bodyRegion/equipment)
   const taxonomyMatches = matchTaxonomyExercises(normalizedQuery);
   for (const exercise of taxonomyMatches) {
     // Skip if already added via slang
     if (result.taxonomyMatches.some(m => m.taxonomyExercise.id === exercise.id)) {
+      continue;
+    }
+
+    // Apply filter - skip if doesn't match bodyRegion/equipment
+    if (!taxonomyMatchesFilter(exercise, { bodyRegion: filters.bodyRegion, equipment: filters.equipment })) {
       continue;
     }
 

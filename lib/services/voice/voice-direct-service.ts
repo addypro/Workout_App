@@ -343,8 +343,23 @@ export class VoiceDirectService {
 
       const result = await response.json();
 
-      // DEBUG: Log the raw LLM response to see what we received
-      console.log('[VoiceDirectService] Raw LLM response:', JSON.stringify(result, null, 2));
+      // DEBUG: Log the transcription and extraction results
+      console.log('=== VOICE EXTRACTION DEBUG ===');
+      if (result.transcription) {
+        console.log('[Transcription]:', result.transcription);
+      }
+      console.log('[Exercises found]:', result.exercises?.length || 0);
+      result.exercises?.forEach((ex: any, i: number) => {
+        console.log(`  [${i + 1}] ${ex.nameRaw}: ${ex.sets} sets`);
+        if (ex.perSetDetails && ex.perSetDetails.length > 0) {
+          ex.perSetDetails.forEach((sd: any, j: number) => {
+            console.log(`      Set ${j + 1}: ${sd.reps} reps @ ${sd.weight ?? 'bodyweight'}`);
+          });
+        } else {
+          console.log(`      weight: ${ex.weight}, reps: ${ex.reps}`);
+        }
+      });
+      console.log('==============================');
 
       // Check for extraction errors
       if (result.error) {

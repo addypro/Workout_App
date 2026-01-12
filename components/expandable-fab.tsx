@@ -11,17 +11,17 @@
  * - Smooth spring animations
  */
 
+import * as Haptics from 'expo-haptics';
 import React, { useCallback } from 'react';
-import { StyleSheet, Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
   interpolate,
   runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import * as Haptics from 'expo-haptics';
 
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -71,23 +71,18 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
     translateY.value = 0;
   }, []);
 
+  // When expanded, tap gesture just closes (inner Pressables handle selection)
+  // When collapsed, tap expands
   const handleSelect = useCallback(() => {
     'worklet';
     if (expanded.value > 0.5) {
-      runOnJS(triggerHaptic)(Haptics.ImpactFeedbackStyle.Light);
-      if (selectedIndex.value < 0.5) {
-        if (onVoiceLog) runOnJS(onVoiceLog)();
-      } else if (selectedIndex.value < 1.5) {
-        runOnJS(onQuickWorkout)();
-      } else {
-        runOnJS(onNewProgram)();
-      }
+      // Just collapse - inner Pressables handle the action
       expanded.value = withSpring(0, SPRING_CONFIG);
       selectedIndex.value = 0;
     } else {
       handleExpand();
     }
-  }, [onQuickWorkout, onNewProgram, onVoiceLog]);
+  }, []);
 
   // Pan gesture for swiping between options (3 options now)
   const panGesture = Gesture.Pan()
@@ -219,14 +214,15 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
               <>
                 <Animated.View style={[styles.option, voiceLogStyle]}>
                   <Pressable
-                    style={styles.optionPressable}
+                    style={({ pressed }) => [
+                      styles.optionPressable,
+                      pressed && styles.optionPressed,
+                    ]}
+                    hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
                     onPress={() => {
-                      selectedIndex.value = withSpring(0, SPRING_CONFIG);
-                      setTimeout(() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        onVoiceLog();
-                        expanded.value = withSpring(0, SPRING_CONFIG);
-                      }, 100);
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      expanded.value = withSpring(0, SPRING_CONFIG);
+                      onVoiceLog();
                     }}
                   >
                     <View style={[styles.optionIcon, { backgroundColor: 'rgba(255,59,48,0.3)' }]}>
@@ -245,14 +241,15 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
             {/* Quick Workout Option */}
             <Animated.View style={[styles.option, quickWorkoutStyle]}>
               <Pressable
-                style={styles.optionPressable}
+                style={({ pressed }) => [
+                  styles.optionPressable,
+                  pressed && styles.optionPressed,
+                ]}
+                hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
                 onPress={() => {
-                  selectedIndex.value = withSpring(onVoiceLog ? 1 : 0, SPRING_CONFIG);
-                  setTimeout(() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    onQuickWorkout();
-                    expanded.value = withSpring(0, SPRING_CONFIG);
-                  }, 100);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  expanded.value = withSpring(0, SPRING_CONFIG);
+                  onQuickWorkout();
                 }}
               >
                 <View style={styles.optionIcon}>
@@ -271,14 +268,15 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
             {/* New Program Option */}
             <Animated.View style={[styles.option, newProgramStyle]}>
               <Pressable
-                style={styles.optionPressable}
+                style={({ pressed }) => [
+                  styles.optionPressable,
+                  pressed && styles.optionPressed,
+                ]}
+                hitSlop={{ top: 8, bottom: 8, left: 12, right: 12 }}
                 onPress={() => {
-                  selectedIndex.value = withSpring(onVoiceLog ? 2 : 1, SPRING_CONFIG);
-                  setTimeout(() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    onNewProgram();
-                    expanded.value = withSpring(0, SPRING_CONFIG);
-                  }, 100);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  expanded.value = withSpring(0, SPRING_CONFIG);
+                  onNewProgram();
                 }}
               >
                 <View style={styles.optionIcon}>
@@ -336,6 +334,10 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 8,
     paddingHorizontal: 4,
+    borderRadius: 8,
+  },
+  optionPressed: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
   optionIcon: {
     width: 36,

@@ -3,6 +3,19 @@
  * Data models for live workout execution and tracking
  */
 
+import type {
+  ProgramId,
+  SetId,
+  SupersetGroupId,
+  WorkoutExerciseId,
+  WorkoutSessionId
+} from './brands';
+import {
+  createSetId,
+  createSupersetGroupId,
+  createWorkoutExerciseId,
+} from './brands';
+
 /**
  * Set types based on "The Invisible Spotter" framework:
  * - warmup: Light preparation sets (no RPE tracking needed)
@@ -31,8 +44,8 @@ export type SupersetPhase =
  * Superset group links 2+ exercises together
  */
 export interface SupersetGroup {
-  id: string;
-  exerciseIds: string[]; // Ordered list of exercise IDs in the superset
+  id: SupersetGroupId;
+  exerciseIds: WorkoutExerciseId[]; // Ordered list of exercise IDs in the superset
   restBetween: number; // Short rest between exercises (default 30-60s)
   restAfterRound: number; // Full rest after completing all exercises (default 90-120s)
   currentPhase: SupersetPhase;
@@ -40,7 +53,7 @@ export interface SupersetGroup {
 }
 
 export interface WorkoutSet {
-  id: string;
+  id: SetId;
   reps: number | string; // Can be "8-10" or just "10"
   weight?: number; // in lbs or kg
   isCompleted: boolean;
@@ -50,11 +63,11 @@ export interface WorkoutSet {
   actualRestTime?: number; // Actual rest time taken before this set (in seconds)
   rpe?: number; // Rate of Perceived Exertion (1-10)
   setType?: SetType; // Type of set for visual hierarchy and RPE context
-  parentSetId?: string; // For drop sets, references the parent set
+  parentSetId?: SetId; // For drop sets, references the parent set
 }
 
 export interface WorkoutExercise {
-  id: string;
+  id: WorkoutExerciseId;
   name: string;
   sets: WorkoutSet[];
   restTime: number; // seconds between sets
@@ -64,13 +77,13 @@ export interface WorkoutExercise {
   equipment?: string[];
   currentSetIndex: number;
   // Superset linking
-  supersetGroupId?: string; // ID of the superset group this exercise belongs to
+  supersetGroupId?: SupersetGroupId; // ID of the superset group this exercise belongs to
   supersetOrder?: number; // Position within the superset (1, 2, 3...)
 }
 
 export interface WorkoutSession {
-  id: string;
-  programId?: string;
+  id: WorkoutSessionId;
+  programId?: ProgramId;
   workoutName: string;
   exercises: WorkoutExercise[];
   startTime: Date;
@@ -87,11 +100,11 @@ export interface WorkoutSession {
   status: 'in_progress' | 'paused' | 'completed' | 'cancelled';
   // Superset state
   supersetGroups?: SupersetGroup[];
-  activeSupersetId?: string; // Currently executing superset group
+  activeSupersetId?: SupersetGroupId; // Currently executing superset group
 }
 
 export interface WorkoutSummary {
-  sessionId: string;
+  sessionId: WorkoutSessionId;
   workoutName: string;
   duration: number; // seconds
   totalSets: number;
@@ -119,7 +132,7 @@ export function createWorkoutSet(
   weight?: number
 ): WorkoutSet {
   return {
-    id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: createSetId(),
     reps,
     weight,
     isCompleted: false,
@@ -133,7 +146,7 @@ export function createWorkoutExercise(
   restTime: number = 60
 ): WorkoutExercise {
   return {
-    id: `ex-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: createWorkoutExerciseId(),
     name,
     sets: Array.from({ length: sets }, () => createWorkoutSet(reps)),
     restTime,
@@ -222,12 +235,12 @@ export const SUPERSET_COLORS = {
  * Create a new superset group linking exercises
  */
 export function createSupersetGroup(
-  exerciseIds: string[],
+  exerciseIds: WorkoutExerciseId[],
   restBetween: number = 45,
   restAfterRound: number = 90
 ): SupersetGroup {
   return {
-    id: `ss-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: createSupersetGroupId(),
     exerciseIds,
     restBetween,
     restAfterRound,
@@ -314,7 +327,7 @@ export function isActiveSupersetPhase(phase: SupersetPhase): boolean {
  */
 export function linkMultipleExercisesAsSuperset(
   session: WorkoutSession,
-  exerciseIds: string[],
+  exerciseIds: WorkoutExerciseId[],
   restBetween: number = 45,
   restAfterRound: number = 90
 ): WorkoutSession {
@@ -355,8 +368,8 @@ export function linkMultipleExercisesAsSuperset(
  */
 export function linkExercisesAsSuperset(
   session: WorkoutSession,
-  exerciseAId: string,
-  exerciseBId: string,
+  exerciseAId: WorkoutExerciseId,
+  exerciseBId: WorkoutExerciseId,
   restBetween: number = 45,
   restAfterRound: number = 90
 ): WorkoutSession {
@@ -368,7 +381,7 @@ export function linkExercisesAsSuperset(
  */
 export function unlinkSuperset(
   session: WorkoutSession,
-  groupId: string
+  groupId: SupersetGroupId
 ): WorkoutSession {
   const updatedExercises = session.exercises.map(ex => {
     if (ex.supersetGroupId === groupId) {

@@ -1,25 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  TextInput,
-  View,
-  Animated,
-  Modal,
-  TouchableWithoutFeedback,
-  Alert,
-  Platform,
-} from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ThemedText } from '@/components/themed-text';
 import { Screen } from '@/components/screen';
-import { Colors, Radius, Spacing, Shadows, Typography } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { PRCelebration } from '@/components/workout/pr-celebration';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { usePreferences } from '@/lib/context/preferences-context';
 import {
   clearActiveWorkoutState,
   clearPendingWorkoutEdits,
@@ -30,9 +15,26 @@ import {
   getProgram,
   markWorkoutCompleted,
   saveWorkoutToHistory,
-  upsertProgramTemplate,
-  type UnifiedWorkoutRecord,
+  upsertProgramTemplate
 } from '@/lib/db/storage';
+import { detectPRsLocal, type DetectedPR } from '@/lib/services/workout/pr-detector-local';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Alert,
+  Animated,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Difficulty = 'easy' | 'moderate' | 'challenging' | 'very_hard';
 
@@ -52,6 +54,7 @@ export default function WorkoutSummaryScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { homeGym } = usePreferences();
 
   const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
   const [notes, setNotes] = useState('');
@@ -62,6 +65,7 @@ export default function WorkoutSummaryScreen() {
   const [isQuickWorkout, setIsQuickWorkout] = useState(false);
   const [workoutExercises, setWorkoutExercises] = useState<any[]>([]);
   const [actualSessionData, setActualSessionData] = useState<any | null>(null);
+  const [detectedPRs, setDetectedPRs] = useState<DetectedPR[]>([]);
 
   // Animations
   const checkScale = useRef(new Animated.Value(0)).current;
@@ -71,7 +75,7 @@ export default function WorkoutSummaryScreen() {
   useEffect(() => {
     // Celebratory animation sequence
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    
+
     Animated.sequence([
       Animated.spring(checkScale, {
         toValue: 1,
@@ -107,6 +111,16 @@ export default function WorkoutSummaryScreen() {
       const activeState = await getActiveWorkoutState(program.userId, program.id);
       if (activeState?.session) {
         setActualSessionData(activeState.session);
+
+        // Detect PRs from this workout
+        try {
+          const prs = await detectPRsLocal(activeState.session, program.userId);
+          if (prs.length > 0) {
+            setDetectedPRs(prs);
+          }
+        } catch (prError) {
+          console.log('[Summary] PR detection error:', prError);
+        }
       }
 
       // Get the workout exercises (template data as fallback)
@@ -211,6 +225,8 @@ export default function WorkoutSummaryScreen() {
           difficulty: difficulty || undefined,
           notes: notes.trim() || undefined,
           totalVolume: totalVolume > 0 ? totalVolume : undefined,
+          gymId: homeGym?.id,
+          gymName: homeGym?.name,
         });
       } catch (historyError) {
         console.error('Error saving to history:', historyError);
@@ -341,19 +357,26 @@ export default function WorkoutSummaryScreen() {
           </ThemedText>
         </View>
 
+        {/* PR Celebration */}
+        {detectedPRs.length > 0 && (
+          <View style={styles.section}>
+            <PRCelebration prs={detectedPRs} />
+          </View>
+        )}
+
         {/* Stats Cards */}
         <Animated.View style={[styles.statsRow, { opacity: statsOpacity }]}>
-          <StatCard 
-            icon="timer" 
-            value={formatDuration(workoutDuration)} 
-            label="Duration" 
+          <StatCard
+            icon="timer"
+            value={formatDuration(workoutDuration)}
+            label="Duration"
             color="#0A84FF"
             colors={colors}
           />
-          <StatCard 
-            icon="flame.fill" 
-            value={`~${Math.round(workoutDuration * 0.1)}`} 
-            label="Calories" 
+          <StatCard
+            icon="flame.fill"
+            value={`~${Math.round(workoutDuration * 0.1)}`}
+            label="Calories"
             color="#FF9F0A"
             colors={colors}
           />
@@ -372,7 +395,7 @@ export default function WorkoutSummaryScreen() {
                     key={key}
                     style={[
                       styles.difficultyChip,
-                      { 
+                      {
                         backgroundColor: isSelected ? config.color + '20' : colors.card,
                         borderColor: isSelected ? config.color : colors.separator,
                       },

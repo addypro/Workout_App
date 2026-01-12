@@ -1,6 +1,6 @@
 // Storage utilities using AsyncStorage for React Native
+import type { SyncableWorkout } from '@/lib/services/sync/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { SyncableWorkout, SyncableExercise } from '@/lib/services/sync/types';
 
 const PROGRAMS_KEY = '@workout_programs';
 
@@ -393,7 +393,7 @@ export async function markWorkoutCompleted(
 ): Promise<void> {
   try {
     const history = await getWorkoutHistory(programId);
-    
+
     // Add completion (allow multiple completions of same workout)
     history.completions.push({
       week,
@@ -401,7 +401,7 @@ export async function markWorkoutCompleted(
       completedAt: new Date().toISOString(),
       durationSeconds,
     });
-    
+
     await AsyncStorage.setItem(workoutHistoryKey(programId), JSON.stringify(history));
   } catch (error) {
     console.error('Error marking workout completed:', error);
@@ -455,10 +455,11 @@ export type UnifiedWorkoutRecord = {
     sets?: { reps: number; weight?: number; isCompleted: boolean }[];
   }[];
   userId: string;
-  // Optional metadata
   difficulty?: 'easy' | 'moderate' | 'challenging' | 'very_hard';
   notes?: string;
-  totalVolume?: number; // total weight lifted (sum of weight * reps for all sets)
+  totalVolume?: number;
+  gymId?: string;
+  gymName?: string;
 };
 
 export async function getUnifiedHistory(userId: string = 'local'): Promise<UnifiedWorkoutRecord[]> {
@@ -473,6 +474,31 @@ export async function getUnifiedHistory(userId: string = 'local'): Promise<Unifi
   } catch (error) {
     console.error('Error loading unified history:', error);
     return [];
+  }
+}
+
+/**
+ * Count how many times user has performed each exercise
+ * Returns: { "bench press": 15, "squats": 12, ... }
+ */
+export async function getUserExerciseFrequency(
+  userId: string = 'local'
+): Promise<Record<string, number>> {
+  try {
+    const history = await getUnifiedHistory(userId);
+    const frequency: Record<string, number> = {};
+
+    for (const workout of history) {
+      for (const exercise of workout.exercises) {
+        const name = exercise.name.toLowerCase().trim();
+        frequency[name] = (frequency[name] || 0) + 1;
+      }
+    }
+
+    return frequency;
+  } catch (error) {
+    console.error('Error getting user exercise frequency:', error);
+    return {};
   }
 }
 
@@ -736,5 +762,91 @@ export async function getWorkoutStats(userId: string = 'local'): Promise<{
       currentStreak: 0,
       totalDurationMinutes: 0,
     };
+  }
+}
+
+// ============================================
+// SAVED WORKOUT TEMPLATES
+// Reusable single-session workout templates
+// ============================================
+
+const SAVED_WORKOUT_TEMPLATES_KEY = '@saved_workout_templates';
+
+export interface SavedWorkoutTemplate {
+  id: string;
+  name: string;
+  exercises: {
+    name: string;
+    sets: number;
+    reps?: string;
+    weight?: string;
+  }[];
+  createdAt: string;
+  userId: string;
+}
+
+/**
+ * Get all saved workout templates for a user
+ */
+export async function getSavedWorkoutTemplates(
+  userId: string = 'local'
+): Promise<SavedWorkoutTemplate[]> {
+  try {
+    const data = await AsyncStorage.getItem(SAVED_WORKOUT_TEMPLATES_KEY);
+    if (!data) return [];
+    const allTemplates: SavedWorkoutTemplate[] = JSON.parse(data);
+    return allTemplates
+      .filter(t => t.userId === userId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (error) {
+    console.error('Error getting workout templates:', error);
+    return [];
+  }
+}
+
+/**
+ * Save a new workout template
+ */
+export async function saveWorkoutTemplate(
+  template: Omit<SavedWorkoutTemplate, 'id' | 'createdAt'>
+): Promise<SavedWorkoutTemplate> {
+  try {
+    const existing = await AsyncStorage.getItem(SAVED_WORKOUT_TEMPLATES_KEY);
+    const templates: SavedWorkoutTemplate[] = existing ? JSON.parse(existing) : [];
+
+    const newTemplate: SavedWorkoutTemplate = {
+      ...template,
+      id: `wt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    templates.push(newTemplate);
+    await AsyncStorage.setItem(SAVED_WORKOUT_TEMPLATES_KEY, JSON.stringify(templates));
+
+    return newTemplate;
+  } catch (error) {
+    console.error('Error saving workout template:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a saved workout template
+ */
+export async function deleteWorkoutTemplate(templateId: string): Promise<boolean> {
+  try {
+    const existing = await AsyncStorage.getItem(SAVED_WORKOUT_TEMPLATES_KEY);
+    if (!existing) return false;
+
+    const templates: SavedWorkoutTemplate[] = JSON.parse(existing);
+    const filtered = templates.filter(t => t.id !== templateId);
+
+    if (filtered.length === templates.length) return false;
+
+    await AsyncStorage.setItem(SAVED_WORKOUT_TEMPLATES_KEY, JSON.stringify(filtered));
+    return true;
+  } catch (error) {
+    console.error('Error deleting workout template:', error);
+    return false;
   }
 }

@@ -5,33 +5,35 @@
  * Shows stats summary and completed workouts grouped by time period.
  */
 
-import { useState, useCallback } from 'react';
+import * as Haptics from 'expo-haptics';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  ScrollView,
   ActivityIndicator,
   Pressable,
   RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View
 } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
 
+import { GymPickerModal } from '@/components/gym/gym-picker-modal';
+import { WorkoutHistoryCard } from '@/components/history/workout-history-card';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Card } from '@/components/ui/card';
-import { WorkoutHistoryCard } from '@/components/history/workout-history-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '@/lib/context/auth-context';
+import { usePreferences } from '@/lib/context/preferences-context';
 import {
   getUnifiedHistory,
   getWorkoutStats,
   groupHistoryByPeriod,
   type UnifiedWorkoutRecord,
 } from '@/lib/db/storage';
-import { useAuth } from '@/lib/context/auth-context';
 
 export default function HistoryTabScreen() {
   const router = useRouter();
@@ -39,6 +41,10 @@ export default function HistoryTabScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { user, isGuest } = useAuth();
+  const { homeGym, setHomeGym } = usePreferences();
+
+  // Gym picker modal state
+  const [showGymPicker, setShowGymPicker] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -117,6 +123,40 @@ export default function HistoryTabScreen() {
           />
         }
       >
+        {/* My Gym Card */}
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setShowGymPicker(true);
+          }}
+        >
+          <Card style={styles.gymCard} padding="md">
+            <View style={styles.gymHeader}>
+              <View style={styles.gymInfo}>
+                <IconSymbol name="star" size={20} color={colors.tint} />
+                <ThemedText style={styles.gymLabel}>My Gym</ThemedText>
+              </View>
+              <IconSymbol name="chevron.right" size={16} color={colors.textTertiary} />
+            </View>
+            <ThemedText style={[styles.gymName, { color: homeGym ? colors.text : colors.textTertiary }]}>
+              {homeGym?.name || 'Tap to select your gym'}
+            </ThemedText>
+            {homeGym?.address && (
+              <ThemedText style={[styles.gymAddress, { color: colors.textSecondary }]} numberOfLines={1}>
+                {homeGym.address}
+              </ThemedText>
+            )}
+          </Card>
+        </Pressable>
+
+        {/* Gym Picker Modal */}
+        <GymPickerModal
+          visible={showGymPicker}
+          onClose={() => setShowGymPicker(false)}
+          onSelectGym={setHomeGym}
+          currentGym={homeGym}
+        />
+
         {/* Stats Summary */}
         {stats && stats.totalWorkouts > 0 && (
           <Card style={styles.statsCard} padding="md">
@@ -311,5 +351,54 @@ const styles = StyleSheet.create({
   },
   recordsList: {
     gap: Spacing.sm,
+  },
+  // Gym card styles
+  gymCard: {
+    marginBottom: Spacing.md,
+  },
+  gymHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  gymInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  gymLabel: {
+    ...Typography.subhead,
+    fontWeight: '600',
+  },
+  gymName: {
+    ...Typography.body,
+  },
+  gymEditRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  gymInput: {
+    flex: 1,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    ...Typography.body,
+  },
+  gymSaveBtn: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: Radius.sm,
+    justifyContent: 'center',
+  },
+  gymSaveBtnText: {
+    color: '#fff',
+    ...Typography.subhead,
+    fontWeight: '600',
+  },
+  gymAddress: {
+    ...Typography.caption1,
+    marginTop: 2,
   },
 });

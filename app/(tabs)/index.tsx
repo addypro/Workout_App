@@ -18,10 +18,14 @@ import {
   createProgram,
   deleteProgram,
   deleteProgramTemplate,
+  deleteWorkoutTemplate,
   getCompletedWorkouts,
   getEffectiveProgramData,
   getPrograms,
+  getSavedWorkoutTemplates,
+  type SavedWorkoutTemplate,
 } from '@/lib/db/storage';
+import { safeNavigate } from '@/lib/navigation/types';
 import {
   AssignmentStatus,
   getAthleteAssignments,
@@ -126,6 +130,7 @@ const swipeStyles = StyleSheet.create({
 export default function ProgramsScreen() {
   const [programs, setPrograms] = useState<ProgramWithProgress[]>([]);
   const [assignedPrograms, setAssignedPrograms] = useState<ProgramAssignment[]>([]);
+  const [workoutTemplates, setWorkoutTemplates] = useState<SavedWorkoutTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<ProgramWithProgress | null>(null);
@@ -177,6 +182,10 @@ export default function ProgramsScreen() {
           console.log('[MyPrograms] No coach assignments found');
         }
       }
+
+      // Load saved workout templates
+      const templates = await getSavedWorkoutTemplates();
+      setWorkoutTemplates(templates);
     } catch (error) {
       console.error('Error loading programs:', error);
     } finally {
@@ -199,7 +208,7 @@ export default function ProgramsScreen() {
   function handleWorkoutSelect(week: number, day: number) {
     if (selectedProgram) {
       setPickerVisible(false);
-      router.push(`/workout/${selectedProgram.id}?week=${week}&day=${day}`);
+      safeNavigate(router, '/workout/[id]', { id: selectedProgram.id, week, day });
     }
   }
 
@@ -251,6 +260,25 @@ export default function ProgramsScreen() {
     }
   };
 
+  const handleDeleteTemplate = async (template: SavedWorkoutTemplate) => {
+    try {
+      await deleteWorkoutTemplate(template.id);
+      setWorkoutTemplates(prev => prev.filter(t => t.id !== template.id));
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (e) {
+      console.error('Delete template error:', e);
+      Alert.alert('Error', 'Failed to delete template.');
+    }
+  };
+
+  const handleStartTemplate = async (template: SavedWorkoutTemplate) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Save template exercises to AsyncStorage for quick.tsx to pick up
+    const QUICK_WORKOUT_KEY = '@quick_workout_exercises';
+    await AsyncStorage.setItem(QUICK_WORKOUT_KEY, JSON.stringify(template.exercises));
+    safeNavigate(router, '/workout/quick');
+  };
+
   const handleExport = async (program: ProgramWithProgress) => {
     const success = await exportProgramToCSV(program);
     if (success) {
@@ -262,7 +290,7 @@ export default function ProgramsScreen() {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       const newProgram = await createProgram('New Program');
-      router.push(`/program/${newProgram.id}/edit`);
+      safeNavigate(router, '/program/[id]/edit', { id: newProgram.id });
     } catch (e) {
       console.error(e);
       const msg = 'Failed to create program';
@@ -273,7 +301,7 @@ export default function ProgramsScreen() {
   const handleQuickWorkout = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     // Navigate to the Quick Workout builder screen where user can add exercises
-    router.push('/workout/quick');
+    safeNavigate(router, '/workout/quick');
   };
 
   const handleVoiceLog = () => {
@@ -342,11 +370,15 @@ export default function ProgramsScreen() {
             rawName: rawName, // Keep original for reference
             sets: ex.sets || 3,
             reps: ex.reps || '8-12',
+            weight: ex.weight,
+            weightUnit: ex.weightUnit || 'lbs',
             restTime: ex.restSeconds || 90,
             muscles: directMatch?.muscles?.primary || [],
             equipment: directMatch?.constraints?.equipment || [],
             // Include alternatives for disambiguation dropdown
             alternatives,
+            // Include per-set details for variable weights/reps
+            perSetDetails: ex.perSetDetails,
           };
         })
       );
@@ -358,11 +390,11 @@ export default function ProgramsScreen() {
       console.log('Saved exercises to storage:', quickExercises.length);
 
       // Navigate to quick workout - it will auto-load the exercises
-      router.push('/workout/quick');
+      safeNavigate(router, '/workout/quick');
     } catch (error) {
       console.error('Error processing voice exercises:', error);
       // Fallback: just navigate without pre-filled exercises
-      router.push('/workout/quick');
+      safeNavigate(router, '/workout/quick');
     }
   };
 
@@ -406,7 +438,7 @@ export default function ProgramsScreen() {
                     onPress={() => {
                       // Navigate to assigned workout
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      router.push(`/workout/${assignment.programId}?assignmentId=${assignment.id}` as any);
+                      safeNavigate(router, '/workout/[id]', { id: assignment.programId, assignmentId: assignment.id });
                     }}
                     activeOpacity={0.7}
                   >
@@ -436,6 +468,51 @@ export default function ProgramsScreen() {
               </View>
             )}
 
+            {/* Quick Workouts Section */}
+            {workoutTemplates.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <View style={[styles.sectionIcon, { backgroundColor: '#FF9500' + '20' }]}>
+                    <IconSymbol name="bolt.fill" size={16} color="#FF9500" />
+                  </View>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                    Quick Workouts
+                  </ThemedText>
+                </View>
+                <ThemedText style={[styles.listMeta, { color: colors.textSecondary + 'CC' }]}>
+                  {workoutTemplates.length} saved template{workoutTemplates.length !== 1 ? 's' : ''}
+                </ThemedText>
+                {workoutTemplates.map((template) => (
+                  <View key={template.id} style={{ marginBottom: Spacing.sm }}>
+                    <SwipeableProgramCard onDelete={() => handleDeleteTemplate(template)}>
+                      <TouchableOpacity
+                        style={[styles.templateCard, { backgroundColor: colors.groupedBackground }]}
+                        onPress={() => handleStartTemplate(template)}
+                        activeOpacity={0.7}
+                      >
+                        <View style={styles.templateCardContent}>
+                          <View style={[styles.templateIcon, { backgroundColor: '#FF9500' + '15' }]}>
+                            <IconSymbol name="bolt.fill" size={18} color="#FF9500" />
+                          </View>
+                          <View style={styles.templateInfo}>
+                            <ThemedText style={[styles.templateName, { color: colors.text }]}>
+                              {template.name}
+                            </ThemedText>
+                            <ThemedText style={[styles.templateMeta, { color: colors.textSecondary }]}>
+                              {template.exercises.length} exercise{template.exercises.length !== 1 ? 's' : ''}
+                            </ThemedText>
+                          </View>
+                          <View style={[styles.startBadge, { backgroundColor: '#FF9500' }]}>
+                            <ThemedText style={styles.startBadgeText}>Start</ThemedText>
+                          </View>
+                        </View>
+                      </TouchableOpacity>
+                    </SwipeableProgramCard>
+                  </View>
+                ))}
+              </View>
+            )}
+
             {/* My Programs Section */}
             {programs.length > 0 && (
               <View style={styles.section}>
@@ -458,7 +535,7 @@ export default function ProgramsScreen() {
                       <MyProgramCard
                         program={item}
                         onStart={handleStartPress}
-                        onEdit={(p) => router.push(`/program/${p.id}/edit`)}
+                        onEdit={(p) => safeNavigate(router, '/program/[id]/edit', { id: p.id })}
                         onDelete={confirmDeleteProgram}
                         onExport={handleExport}
                       />
@@ -559,7 +636,7 @@ function EmptyState({
             styles.secondaryButton,
             { borderColor: colors.tint, opacity: pressed ? 0.9 : 1 },
           ]}
-          onPress={() => router.push('/(tabs)/browse')}
+          onPress={() => safeNavigate(router, '/(tabs)/browse')}
         >
           <IconSymbol name="sparkles" size={18} color={colors.tint} />
           <ThemedText style={[styles.secondaryButtonText, { color: colors.tint }]}>Discover</ThemedText>
@@ -782,6 +859,34 @@ const styles = StyleSheet.create({
   },
   uploadLinkText: {
     fontSize: 14,
+  },
+  // Quick Workout Template Card Styles
+  templateCard: {
+    borderRadius: Radius.md,
+    padding: Spacing.md,
+  },
+  templateCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  templateIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  templateInfo: {
+    flex: 1,
+    gap: 2,
+  },
+  templateName: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  templateMeta: {
+    fontSize: 13,
   },
   fabContainer: {
     position: 'absolute',

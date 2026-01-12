@@ -37,7 +37,8 @@ import {
   CoachDashboard,
   CoachProgram,
   getCoachDashboard,
-  getMyAthletes
+  getMyAthletes,
+  getMyPrograms
 } from '@/lib/services/coach';
 
 export default function CoachTabScreen() {
