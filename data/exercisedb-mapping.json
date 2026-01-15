@@ -1,0 +1,3110 @@
+{
+  "generatedAt": "2026-01-13T23:57:41.869Z",
+  "version": "3.0.0",
+  "source": "hevy-primary-database.json (429 exercises)",
+  "stats": {
+    "totalHevy": 429,
+    "matched": 11,
+    "unmatched": 418,
+    "matchRate": "3%",
+    "exerciseDbCacheSize": 100
+  },
+  "mapping": {
+    "21s bicep curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.08888888888888889,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "21s Bicep Curl"
+    },
+    "ab scissors": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ab Scissors"
+    },
+    "ab wheel": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12173913043478263,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ab Wheel"
+    },
+    "aerobics": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11111111111111112,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Aerobics"
+    },
+    "air bike": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Air Bike"
+    },
+    "arnold press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23478260869565218,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Arnold Press (Dumbbell)"
+    },
+    "around the world": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Around The World"
+    },
+    "assisted pistol squats": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Assisted Pistol Squats"
+    },
+    "back extension (hyperextension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4714285714285714,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Back Extension (Hyperextension)"
+    },
+    "back extension (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4714285714285714,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Back Extension (Machine)"
+    },
+    "back extension (weighted hyperextension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4714285714285714,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Back Extension (Weighted Hyperextension)"
+    },
+    "ball slams": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2685185185185185,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ball Slams"
+    },
+    "band pullaparts": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.21034482758620687,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Band Pullaparts"
+    },
+    "battle ropes": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1523809523809524,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Battle Ropes"
+    },
+    "behind the back bicep wrist curl (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Behind the Back Bicep Wrist Curl (Barbell)"
+    },
+    "behind the back curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.36,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Behind the Back Curl (Cable)"
+    },
+    "belt squat (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Belt Squat (Machine)"
+    },
+    "bench dip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25434782608695655,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Dip"
+    },
+    "bench press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.27368421052631575,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press (Barbell)"
+    },
+    "bench press (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3869565217391304,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press (Cable)"
+    },
+    "bench press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23695652173913043,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press (Dumbbell)"
+    },
+    "bench press (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24545454545454548,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press (Smith Machine)"
+    },
+    "bench press - close grip (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.39473684210526316,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press - Close Grip (Barbell)"
+    },
+    "bench press - wide grip (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.39473684210526316,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bench Press - Wide Grip (Barbell)"
+    },
+    "bent over row (band)": {
+      "exerciseDbId": "ZX9UZmj",
+      "gifUrl": "https://static.exercisedb.dev/media/ZX9UZmj.gif",
+      "matchScore": 0.72,
+      "matchedOn": "Bent Over Row",
+      "hevyName": "Bent Over Row (Band)",
+      "instructions": [
+        "Step:1 Set up the smith machine with the bar at hip height.",
+        "Step:2 Stand facing the bar with your feet shoulder-width apart.",
+        "Step:3 Bend your knees slightly and hinge forward at the hips, keeping your back straight.",
+        "Step:4 Grasp the bar with an overhand grip, hands slightly wider than shoulder-width apart.",
+        "Step:5 Pull the bar towards your lower chest, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the top, then slowly lower the bar back down to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "bent over row (barbell)": {
+      "exerciseDbId": "ZX9UZmj",
+      "gifUrl": "https://static.exercisedb.dev/media/ZX9UZmj.gif",
+      "matchScore": 0.72,
+      "matchedOn": "Bent Over Row",
+      "hevyName": "Bent Over Row (Barbell)",
+      "instructions": [
+        "Step:1 Set up the smith machine with the bar at hip height.",
+        "Step:2 Stand facing the bar with your feet shoulder-width apart.",
+        "Step:3 Bend your knees slightly and hinge forward at the hips, keeping your back straight.",
+        "Step:4 Grasp the bar with an overhand grip, hands slightly wider than shoulder-width apart.",
+        "Step:5 Pull the bar towards your lower chest, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the top, then slowly lower the bar back down to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "bent over row (dumbbell)": {
+      "exerciseDbId": "ZX9UZmj",
+      "gifUrl": "https://static.exercisedb.dev/media/ZX9UZmj.gif",
+      "matchScore": 0.72,
+      "matchedOn": "Bent Over Row",
+      "hevyName": "Bent Over Row (Dumbbell)",
+      "instructions": [
+        "Step:1 Set up the smith machine with the bar at hip height.",
+        "Step:2 Stand facing the bar with your feet shoulder-width apart.",
+        "Step:3 Bend your knees slightly and hinge forward at the hips, keeping your back straight.",
+        "Step:4 Grasp the bar with an overhand grip, hands slightly wider than shoulder-width apart.",
+        "Step:5 Pull the bar towards your lower chest, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the top, then slowly lower the bar back down to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "bicep curl (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicep Curl (Barbell)"
+    },
+    "bicep curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicep Curl (Cable)"
+    },
+    "bicep curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25217391304347825,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicep Curl (Dumbbell)"
+    },
+    "bicep curl (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicep Curl (Machine)"
+    },
+    "bicep curl (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicep Curl (Suspension)"
+    },
+    "bicycle crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.14285714285714285,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicycle Crunch"
+    },
+    "bicycle crunch raised legs": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13846153846153847,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bicycle Crunch Raised Legs"
+    },
+    "bird dog": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bird Dog"
+    },
+    "box jump": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Box Jump"
+    },
+    "box squat (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Box Squat (Barbell)"
+    },
+    "boxing": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.0923076923076923,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Boxing"
+    },
+    "bulgarian split squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Bulgarian Split Squat"
+    },
+    "burpee": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Burpee"
+    },
+    "burpee over the bar": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2833333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Burpee Over the Bar"
+    },
+    "butterfly (pec deck)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12857142857142856,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Butterfly (Pec Deck)"
+    },
+    "cable core palloff press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33333333333333337,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Core Palloff Press"
+    },
+    "cable crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.38666666666666666,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Crunch"
+    },
+    "cable fly crossovers": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.36,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Fly Crossovers"
+    },
+    "cable pull through": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Pull Through"
+    },
+    "cable twist (down to up)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4193103448275862,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Twist (Down to up)"
+    },
+    "cable twist (up to down)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.40551724137931033,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cable Twist (Up to down)"
+    },
+    "calf extension (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2894736842105263,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Calf Extension (Machine)"
+    },
+    "calf press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Calf Press (Machine)"
+    },
+    "chest dip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12799999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Dip"
+    },
+    "chest dip (assisted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1466666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Dip (Assisted)"
+    },
+    "chest dip (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12941176470588234,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Dip (Weighted)"
+    },
+    "chest fly (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18484848484848487,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Fly (Band)"
+    },
+    "chest fly (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.28484848484848485,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Fly (Dumbbell)"
+    },
+    "chest fly (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18484848484848487,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Fly (Machine)"
+    },
+    "chest fly (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18484848484848487,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Fly (Suspension)"
+    },
+    "chest press (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Press (Band)"
+    },
+    "chest press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Press (Machine)"
+    },
+    "chest supported incline row (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5044444444444445,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Supported Incline Row (Dumbbell)"
+    },
+    "chest supported reverse fly (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3511111111111111,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Supported Reverse Fly (Dumbbell)"
+    },
+    "chest supported y raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20750000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chest Supported Y Raise (Dumbbell)"
+    },
+    "chin up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chin Up"
+    },
+    "chin up (assisted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12903225806451615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chin Up (Assisted)"
+    },
+    "chin up (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Chin Up (Weighted)"
+    },
+    "clamshell": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clamshell"
+    },
+    "clap push ups": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clap Push Ups"
+    },
+    "clean": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clean"
+    },
+    "clean pull": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clean Pull"
+    },
+    "clean and jerk": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.14814814814814814,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clean and Jerk"
+    },
+    "clean and press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Clean and Press"
+    },
+    "climbing": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10434782608695654,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Climbing"
+    },
+    "concentration curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.144,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Concentration Curl"
+    },
+    "cross body hammer curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11612903225806451,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cross Body Hammer Curl"
+    },
+    "crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.08888888888888889,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Crunch"
+    },
+    "crunch (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Crunch (Machine)"
+    },
+    "crunch (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Crunch (Weighted)"
+    },
+    "curtsy lunge (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Curtsy Lunge (Dumbbell)"
+    },
+    "cycling": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Cycling"
+    },
+    "dead bug": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dead Bug"
+    },
+    "dead hang": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10909090909090909,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dead Hang"
+    },
+    "deadlift (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift (Band)"
+    },
+    "deadlift (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift (Barbell)"
+    },
+    "deadlift (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift (Dumbbell)"
+    },
+    "deadlift (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2727272727272727,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift (Smith Machine)"
+    },
+    "deadlift (trap bar)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2676470588235294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift (Trap bar)"
+    },
+    "deadlift high pull": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3555555555555555,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Deadlift High Pull"
+    },
+    "decline bench press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3586956521739131,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Bench Press (Barbell)"
+    },
+    "decline bench press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3586956521739131,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Bench Press (Dumbbell)"
+    },
+    "decline bench press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3586956521739131,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Bench Press (Machine)"
+    },
+    "decline bench press (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3586956521739131,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Bench Press (Smith Machine)"
+    },
+    "decline chest fly (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3090909090909091,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Chest Fly (Dumbbell)"
+    },
+    "decline crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22909090909090907,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Crunch"
+    },
+    "decline crunch (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2654545454545455,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Crunch (Weighted)"
+    },
+    "decline push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2412121212121212,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Decline Push Up"
+    },
+    "diamond push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10769230769230771,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Diamond Push Up"
+    },
+    "downward dog": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Downward Dog"
+    },
+    "drag curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Drag Curl"
+    },
+    "dragon flag": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dragon Flag"
+    },
+    "dragonfly": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.08571428571428573,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dragonfly"
+    },
+    "dumbbell row": {
+      "exerciseDbId": "7vG5o25",
+      "gifUrl": "https://static.exercisedb.dev/media/7vG5o25.gif",
+      "matchScore": 0.64,
+      "matchedOn": "Dumbbell Row",
+      "hevyName": "Dumbbell Row",
+      "instructions": [
+        "Step:1 Set up an incline bench at a 45-degree angle.",
+        "Step:2 Grab a dumbbell in each hand and sit on the bench with your chest against the incline.",
+        "Step:3 Extend your arms fully, allowing the dumbbells to hang straight down from your shoulders.",
+        "Step:4 Pull the dumbbells up towards your chest, squeezing your shoulder blades together.",
+        "Step:5 Pause for a moment at the top, then slowly lower the dumbbells back to the starting position.",
+        "Step:6 Repeat for the desired number of repetitions."
+      ]
+    },
+    "dumbbell snatch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dumbbell Snatch"
+    },
+    "dumbbell squeeze press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4260869565217391,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dumbbell Squeeze Press"
+    },
+    "dumbbell step up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Dumbbell Step Up"
+    },
+    "ez bar biceps curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3047619047619048,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "EZ Bar Biceps Curl"
+    },
+    "elbow to knee": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3038461538461539,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Elbow to Knee"
+    },
+    "elliptical trainer": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1391304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Elliptical Trainer"
+    },
+    "face pull": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Face Pull"
+    },
+    "farmers walk": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10909090909090909,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Farmers Walk"
+    },
+    "feet up bench press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2717391304347826,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Feet Up Bench Press (Barbell)"
+    },
+    "fire hydrants": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10526315789473686,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Fire Hydrants"
+    },
+    "floor press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Floor Press (Barbell)"
+    },
+    "floor press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22322580645161288,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Floor Press (Dumbbell)"
+    },
+    "floor triceps dip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24903225806451615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Floor Triceps Dip"
+    },
+    "flutter kicks": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Flutter Kicks"
+    },
+    "frog jumps": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Frog Jumps"
+    },
+    "frog pumps (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.21739130434782605,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Frog Pumps (Dumbbell)"
+    },
+    "front lever hold": {
+      "exerciseDbId": "hbY9wqG",
+      "gifUrl": "https://static.exercisedb.dev/media/hbY9wqG.gif",
+      "matchScore": 0.7,
+      "matchedOn": "Front Lever Hold",
+      "hevyName": "Front Lever Hold",
+      "instructions": [
+        "Step:1 Hang from a pull-up bar with an overhand grip, palms facing away from you.",
+        "Step:2 Engage your core and pull your shoulder blades down and back.",
+        "Step:3 Keeping your body straight, lift your legs up until they are parallel to the ground.",
+        "Step:4 Hold this position for as long as you can, aiming for 10-20 seconds.",
+        "Step:5 Slowly lower your legs back down to the starting position.",
+        "Step:6 Repeat for the desired number of repetitions."
+      ]
+    },
+    "front lever raise": {
+      "exerciseDbId": "hbY9wqG",
+      "gifUrl": "https://static.exercisedb.dev/media/hbY9wqG.gif",
+      "matchScore": 0.73,
+      "matchedOn": "Front Lever Raise",
+      "hevyName": "Front Lever Raise",
+      "instructions": [
+        "Step:1 Hang from a pull-up bar with an overhand grip, palms facing away from you.",
+        "Step:2 Engage your core and pull your shoulder blades down and back.",
+        "Step:3 Keeping your body straight, lift your legs up until they are parallel to the ground.",
+        "Step:4 Hold this position for as long as you can, aiming for 10-20 seconds.",
+        "Step:5 Slowly lower your legs back down to the starting position.",
+        "Step:6 Repeat for the desired number of repetitions."
+      ]
+    },
+    "front raise (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.375,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Raise (Band)"
+    },
+    "front raise (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3894736842105263,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Raise (Barbell)"
+    },
+    "front raise (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.375,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Raise (Cable)"
+    },
+    "front raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.375,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Raise (Dumbbell)"
+    },
+    "front raise (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.375,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Raise (Suspension)"
+    },
+    "front squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Front Squat"
+    },
+    "full squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Full Squat"
+    },
+    "glute bridge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5153846153846153,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Glute Bridge"
+    },
+    "glute ham raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1391304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Glute Ham Raise"
+    },
+    "glute kickback (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Glute Kickback (Machine)"
+    },
+    "glute kickback on floor": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23695652173913043,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Glute Kickback on Floor"
+    },
+    "goblet squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Goblet Squat"
+    },
+    "good morning (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Good Morning (Barbell)"
+    },
+    "gorilla row (kettlebell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4615384615384615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Gorilla Row (Kettlebell)"
+    },
+    "hiit": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.06666666666666665,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "HIIT"
+    },
+    "hack squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hack Squat"
+    },
+    "hack squat (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hack Squat (Machine)"
+    },
+    "hammer curl (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1875,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hammer Curl (Band)"
+    },
+    "hammer curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29411764705882354,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hammer Curl (Cable)"
+    },
+    "hammer curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hammer Curl (Dumbbell)"
+    },
+    "handstand hold": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.17567567567567566,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Handstand Hold"
+    },
+    "handstand push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12413793103448274,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Handstand Push Up"
+    },
+    "hang clean": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hang Clean"
+    },
+    "hang snatch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hang Snatch"
+    },
+    "hanging knee raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15652173913043477,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hanging Knee Raise"
+    },
+    "hanging leg raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1411764705882353,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hanging Leg Raise"
+    },
+    "heel taps": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Heel Taps"
+    },
+    "hex press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hex Press (Dumbbell)"
+    },
+    "high knee skips": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2891304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "High Knee Skips"
+    },
+    "high knees": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3065217391304348,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "High Knees"
+    },
+    "hiking": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10434782608695654,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hiking"
+    },
+    "hip abduction (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12857142857142856,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Abduction (Machine)"
+    },
+    "hip adduction (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Adduction (Machine)"
+    },
+    "hip thrust": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16666666666666666,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Thrust"
+    },
+    "hip thrust (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2210526315789474,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Thrust (Barbell)"
+    },
+    "hip thrust (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16666666666666666,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Thrust (Machine)"
+    },
+    "hip thrust (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24545454545454548,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hip Thrust (Smith Machine)"
+    },
+    "hollow rock": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Hollow Rock"
+    },
+    "incline bench press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5260869565217392,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Bench Press (Barbell)"
+    },
+    "incline bench press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5260869565217392,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Bench Press (Dumbbell)"
+    },
+    "incline bench press (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5260869565217392,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Bench Press (Smith Machine)"
+    },
+    "incline chest fly (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.34615384615384615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Chest Fly (Dumbbell)"
+    },
+    "incline chest press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2891304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Chest Press (Machine)"
+    },
+    "incline push ups": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3239130434782609,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Incline Push Ups"
+    },
+    "inverted row": {
+      "exerciseDbId": "bZGHsAZ",
+      "gifUrl": "https://static.exercisedb.dev/media/bZGHsAZ.gif",
+      "matchScore": 1,
+      "matchedOn": "Inverted Row",
+      "hevyName": "Inverted Row",
+      "instructions": [
+        "Step:1 Set up a bar at waist height or use a suspension trainer.",
+        "Step:2 Stand facing the bar or suspension trainer, with your feet shoulder-width apart.",
+        "Step:3 Grab the bar or handles with an overhand grip, slightly wider than shoulder-width apart.",
+        "Step:4 Lean back, keeping your body straight and your heels on the ground.",
+        "Step:5 Pull your chest towards the bar or handles, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the top, then slowly lower yourself back to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "iso-lateral chest press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15652173913043477,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Iso-Lateral Chest Press (Machine)"
+    },
+    "iso-lateral high row (machine)": {
+      "exerciseDbId": "nZZZy9m",
+      "gifUrl": "https://static.exercisedb.dev/media/nZZZy9m.gif",
+      "matchScore": 0.65,
+      "matchedOn": "Iso-Lateral High Row",
+      "hevyName": "Iso-Lateral High Row (Machine)",
+      "instructions": [
+        "Step:1 Adjust the seat height and foot platform to a comfortable position.",
+        "Step:2 Sit on the machine with your chest against the pad and your feet flat on the foot platform.",
+        "Step:3 Grasp the handles with an overhand grip, slightly wider than shoulder-width apart.",
+        "Step:4 Keep your back straight and engage your core.",
+        "Step:5 Pull the handles towards your body, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "iso-lateral low row": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Iso-Lateral Low Row"
+    },
+    "iso-lateral row (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Iso-Lateral Row (Machine)"
+    },
+    "jm press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "JM Press (Barbell)"
+    },
+    "jack knife (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jack Knife (Suspension)"
+    },
+    "jackknife sit up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jackknife Sit Up"
+    },
+    "jump rope": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33999999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jump Rope"
+    },
+    "jump shrug": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.0923076923076923,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jump Shrug"
+    },
+    "jump squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jump Squat"
+    },
+    "jumping jack": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jumping Jack"
+    },
+    "jumping lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Jumping Lunge"
+    },
+    "kettlebell around the world": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.38703703703703707,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Around the World"
+    },
+    "kettlebell clean": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43076923076923074,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Clean"
+    },
+    "kettlebell curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Curl"
+    },
+    "kettlebell goblet squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Goblet Squat"
+    },
+    "kettlebell halo": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Halo"
+    },
+    "kettlebell high pull": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell High Pull"
+    },
+    "kettlebell shoulder press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.374,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Shoulder Press"
+    },
+    "kettlebell snatch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.41538461538461535,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Snatch"
+    },
+    "kettlebell swing": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.41538461538461535,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Swing"
+    },
+    "kettlebell turkish get up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.358,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kettlebell Turkish Get Up"
+    },
+    "kipping pull up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12857142857142856,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kipping Pull Up"
+    },
+    "knee raise parallel bars": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33571428571428574,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Knee Raise Parallel Bars"
+    },
+    "kneeling pulldown (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.21956521739130436,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kneeling Pulldown (band)"
+    },
+    "kneeling push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20217391304347826,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Kneeling Push Up"
+    },
+    "l-sit hold": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18648648648648647,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "L-Sit Hold"
+    },
+    "landmine 180": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Landmine 180"
+    },
+    "landmine row": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Landmine Row"
+    },
+    "landmine squat and press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Landmine Squat and Press"
+    },
+    "lat pulldown (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1875,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lat Pulldown (Band)"
+    },
+    "lat pulldown (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.246,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lat Pulldown (Cable)"
+    },
+    "lat pulldown (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lat Pulldown (Machine)"
+    },
+    "lat pulldown - close grip (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2785714285714286,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lat Pulldown - Close Grip (Cable)"
+    },
+    "lateral band walks": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24166666666666664,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Band Walks"
+    },
+    "lateral box jump": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Box Jump"
+    },
+    "lateral leg raises": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Leg Raises"
+    },
+    "lateral lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Lunge"
+    },
+    "lateral raise (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23333333333333334,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Raise (Band)"
+    },
+    "lateral raise (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.27799999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Raise (Cable)"
+    },
+    "lateral raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Raise (Dumbbell)"
+    },
+    "lateral raise (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Raise (Machine)"
+    },
+    "lateral squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.20666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lateral Squat"
+    },
+    "leg extension (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2789473684210526,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Leg Extension (Machine)"
+    },
+    "leg press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1272727272727273,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Leg Press (Machine)"
+    },
+    "leg press horizontal (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12903225806451615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Leg Press Horizontal (Machine)"
+    },
+    "leg raise parallel bars": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.32142857142857145,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Leg Raise Parallel Bars"
+    },
+    "low cable fly crossovers": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.41666666666666663,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Low Cable Fly Crossovers"
+    },
+    "low row (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43999999999999995,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Low Row (Suspension)"
+    },
+    "lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lunge"
+    },
+    "lunge (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lunge (Barbell)"
+    },
+    "lunge (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.27999999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lunge (Dumbbell)"
+    },
+    "lying knee raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Knee Raise"
+    },
+    "lying leg curl (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24857142857142855,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Leg Curl (Machine)"
+    },
+    "lying leg raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23428571428571426,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Leg Raise"
+    },
+    "lying neck curls": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24857142857142855,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Neck Curls"
+    },
+    "lying neck curls (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24857142857142855,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Neck Curls (Weighted)"
+    },
+    "lying neck extension": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24857142857142855,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Neck Extension"
+    },
+    "lying neck extension (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24857142857142855,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Lying Neck Extension (Weighted)"
+    },
+    "meadows rows (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Meadows Rows (Barbell)"
+    },
+    "mountain climber": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.17500000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Mountain Climber"
+    },
+    "muscle up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Muscle Up"
+    },
+    "negative pull up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Negative Pull Up"
+    },
+    "nordic hamstrings curls": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12413793103448274,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Nordic Hamstrings Curls"
+    },
+    "oblique crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12173913043478263,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Oblique Crunch"
+    },
+    "one arm push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5117647058823529,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "One Arm Push Up"
+    },
+    "overhead curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2833333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Curl (Cable)"
+    },
+    "overhead dumbbell lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.28695652173913044,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Dumbbell Lunge"
+    },
+    "overhead plate raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2240740740740741,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Plate Raise"
+    },
+    "overhead press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3090909090909091,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Press (Barbell)"
+    },
+    "overhead press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2685185185185185,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Press (Dumbbell)"
+    },
+    "overhead press (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2685185185185185,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Press (Smith Machine)"
+    },
+    "overhead squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29814814814814816,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Squat"
+    },
+    "overhead triceps extension (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3157894736842105,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Overhead Triceps Extension (Cable)"
+    },
+    "partial glute bridge (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.36,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Partial Glute Bridge (Barbell)"
+    },
+    "pause squat (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pause Squat (Barbell)"
+    },
+    "pendlay row (barbell)": {
+      "exerciseDbId": "r0z6xzQ",
+      "gifUrl": "https://static.exercisedb.dev/media/r0z6xzQ.gif",
+      "matchScore": 0.66,
+      "matchedOn": "Pendlay Row (Barbell)",
+      "hevyName": "Pendlay Row (Barbell)",
+      "instructions": [
+        "Step:1 Stand with your feet shoulder-width apart and your knees slightly bent.",
+        "Step:2 Bend forward at the hips, keeping your back straight and your chest up.",
+        "Step:3 Grasp the barbell with an overhand grip, slightly wider than shoulder-width apart.",
+        "Step:4 Pull the barbell towards your upper abdomen, squeezing your shoulder blades together.",
+        "Step:5 Lower the barbell back down to the starting position.",
+        "Step:6 Repeat for the desired number of repetitions."
+      ]
+    },
+    "pendulum squat (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12444444444444445,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pendulum Squat (Machine)"
+    },
+    "pike pushup": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.28846153846153844,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pike Pushup"
+    },
+    "pilates": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pilates"
+    },
+    "pinwheel curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2727272727272727,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pinwheel Curl (Dumbbell)"
+    },
+    "pistol squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pistol Squat"
+    },
+    "plank": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16060606060606059,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plank"
+    },
+    "plank pushup": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2730769230769231,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plank Pushup"
+    },
+    "plate curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1032258064516129,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plate Curl"
+    },
+    "plate front raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29411764705882354,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plate Front Raise"
+    },
+    "plate press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plate Press"
+    },
+    "plate squeeze (svend press)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12799999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Plate Squeeze (Svend Press)"
+    },
+    "power clean": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.18181818181818185,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Power Clean"
+    },
+    "power snatch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15555555555555556,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Power Snatch"
+    },
+    "preacher curl (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2571428571428571,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Preacher Curl (Barbell)"
+    },
+    "preacher curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23636363636363636,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Preacher Curl (Dumbbell)"
+    },
+    "preacher curl (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Preacher Curl (Machine)"
+    },
+    "press under": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Press Under"
+    },
+    "pull up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pull Up"
+    },
+    "pull up (assisted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12903225806451615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pull Up (Assisted)"
+    },
+    "pull up (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16896551724137931,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pull Up (Band)"
+    },
+    "pull up (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11428571428571428,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pull Up (Weighted)"
+    },
+    "pullover (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pullover (Dumbbell)"
+    },
+    "pullover (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Pullover (Machine)"
+    },
+    "push press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Push Press"
+    },
+    "push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.0923076923076923,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Push Up"
+    },
+    "push up (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10285714285714286,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Push Up (Weighted)"
+    },
+    "push up - close grip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2785714285714286,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Push Up - Close Grip"
+    },
+    "rack pull": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rack Pull"
+    },
+    "rear delt reverse fly (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33999999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rear Delt Reverse Fly (Cable)"
+    },
+    "rear delt reverse fly (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.42666666666666664,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rear Delt Reverse Fly (Dumbbell)"
+    },
+    "rear delt reverse fly (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33999999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rear Delt Reverse Fly (Machine)"
+    },
+    "rear kick (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.19142857142857145,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rear Kick (Machine)"
+    },
+    "renegade row (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Renegade Row (Dumbbell)"
+    },
+    "reverse crunch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3136363636363636,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Crunch"
+    },
+    "reverse curl (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3294117647058823,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Curl (Barbell)"
+    },
+    "reverse curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.32275862068965516,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Curl (Cable)"
+    },
+    "reverse curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3775,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Curl (Dumbbell)"
+    },
+    "reverse fly single arm (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.30896551724137933,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Fly Single Arm (Cable)"
+    },
+    "reverse grip concentration curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.38193548387096776,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Grip Concentration Curl"
+    },
+    "reverse grip lat pulldown (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.44645161290322577,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Grip Lat Pulldown (Cable)"
+    },
+    "reverse hyperextension": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29545454545454547,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Hyperextension"
+    },
+    "reverse lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29545454545454547,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Lunge"
+    },
+    "reverse lunge (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3294117647058823,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Lunge (Barbell)"
+    },
+    "reverse lunge (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.365,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Lunge (Dumbbell)"
+    },
+    "reverse plank": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3136363636363636,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Reverse Plank"
+    },
+    "ring dips": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ring Dips"
+    },
+    "ring pull up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ring Pull Up"
+    },
+    "ring push up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Ring Push Up"
+    },
+    "romanian deadlift (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.296,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Romanian Deadlift (Barbell)"
+    },
+    "romanian deadlift (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29230769230769227,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Romanian Deadlift (Dumbbell)"
+    },
+    "rope cable curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.41428571428571426,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rope Cable Curl"
+    },
+    "rope straight arm pulldown": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.32,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rope Straight Arm Pulldown"
+    },
+    "rowing machine": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.14285714285714285,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Rowing Machine"
+    },
+    "running": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Running"
+    },
+    "russian twist (bodyweight)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25793103448275867,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Russian Twist (Bodyweight)"
+    },
+    "russian twist (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25793103448275867,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Russian Twist (Weighted)"
+    },
+    "scapular pull ups": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1176470588235294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Scapular Pull Ups"
+    },
+    "seated cable row - bar grip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.5138461538461538,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Cable Row - Bar Grip"
+    },
+    "seated cable row - bar wide grip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.46774193548387094,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Cable Row - Bar Wide Grip"
+    },
+    "seated cable row - v grip (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.49333333333333335,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Cable Row - V Grip (Cable)"
+    },
+    "seated calf raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29411764705882354,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Calf Raise"
+    },
+    "seated chest flys (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3869565217391304,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Chest Flys (Cable)"
+    },
+    "seated dip machine": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.27799999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Dip Machine"
+    },
+    "seated incline curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.44285714285714284,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Incline Curl (Dumbbell)"
+    },
+    "seated lateral raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33999999999999997,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Lateral Raise (Dumbbell)"
+    },
+    "seated leg curl (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.31000000000000005,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Leg Curl (Machine)"
+    },
+    "seated overhead press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35238095238095235,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Overhead Press (Barbell)"
+    },
+    "seated overhead press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35238095238095235,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Overhead Press (Dumbbell)"
+    },
+    "seated palms up wrist curl": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22941176470588232,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Palms Up Wrist Curl"
+    },
+    "seated row (machine)": {
+      "exerciseDbId": "fUBheHs",
+      "gifUrl": "https://static.exercisedb.dev/media/fUBheHs.gif",
+      "matchScore": 0.65,
+      "matchedOn": "Seated Row",
+      "hevyName": "Seated Row (Machine)",
+      "instructions": [
+        "Step:1 Sit on the cable row machine with your feet flat on the footrests and your knees slightly bent.",
+        "Step:2 Grasp the handles with an overhand grip, keeping your back straight and your shoulders relaxed.",
+        "Step:3 Pull the handles towards your body, squeezing your shoulder blades together.",
+        "Step:4 Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position.",
+        "Step:5 Repeat for the desired number of repetitions."
+      ]
+    },
+    "seated shoulder press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.33333333333333337,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Shoulder Press (Machine)"
+    },
+    "seated triceps press": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.32,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Triceps Press"
+    },
+    "seated wrist extension (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.34545454545454546,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Seated Wrist Extension (Barbell)"
+    },
+    "shoulder press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.21739130434782605,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shoulder Press (Dumbbell)"
+    },
+    "shoulder press (machine plates)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.17500000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shoulder Press (Machine Plates)"
+    },
+    "shoulder taps": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.17500000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shoulder Taps"
+    },
+    "shrug (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shrug (Barbell)"
+    },
+    "shrug (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shrug (Cable)"
+    },
+    "shrug (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shrug (Dumbbell)"
+    },
+    "shrug (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shrug (Machine)"
+    },
+    "shrug (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.28421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Shrug (Smith Machine)"
+    },
+    "side bend": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23428571428571426,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Side Bend"
+    },
+    "side bend (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3090909090909091,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Side Bend (Dumbbell)"
+    },
+    "side plank": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.32121212121212117,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Side Plank"
+    },
+    "single arm cable crossover": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35612903225806447,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Cable Crossover"
+    },
+    "single arm cable row": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.52,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Cable Row"
+    },
+    "single arm curl (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.31470588235294117,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Curl (Cable)"
+    },
+    "single arm landmine press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Landmine Press (Barbell)"
+    },
+    "single arm lat pulldown": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.341304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Lat Pulldown"
+    },
+    "single arm lateral raise (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.38666666666666666,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Lateral Raise (Cable)"
+    },
+    "single arm tricep extension (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.312962962962963,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Tricep Extension (Dumbbell)"
+    },
+    "single arm triceps pushdown (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3277777777777778,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Arm Triceps Pushdown (Cable)"
+    },
+    "single leg extensions": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1523809523809524,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Extensions"
+    },
+    "single leg glute bridge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2891304347826087,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Glute Bridge"
+    },
+    "single leg hip thrust": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Hip Thrust"
+    },
+    "single leg hip thrust (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.19999999999999998,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Hip Thrust (Dumbbell)"
+    },
+    "single leg press (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.15000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Press (Machine)"
+    },
+    "single leg romanian deadlift (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Romanian Deadlift (Barbell)"
+    },
+    "single leg romanian deadlift (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2172972972972973,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Romanian Deadlift (Dumbbell)"
+    },
+    "single leg standing calf raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29333333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Standing Calf Raise"
+    },
+    "single leg standing calf raise (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29333333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Standing Calf Raise (Barbell)"
+    },
+    "single leg standing calf raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29333333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Standing Calf Raise (Dumbbell)"
+    },
+    "single leg standing calf raise (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29333333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Single Leg Standing Calf Raise (Machine)"
+    },
+    "sissy squat (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.14857142857142858,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sissy Squat (Weighted)"
+    },
+    "sit up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sit Up"
+    },
+    "sit up (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sit Up (Weighted)"
+    },
+    "skating": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Skating"
+    },
+    "skiing": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Skiing"
+    },
+    "skullcrusher (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Skullcrusher (Barbell)"
+    },
+    "skullcrusher (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23478260869565218,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Skullcrusher (Dumbbell)"
+    },
+    "sled push": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10769230769230771,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sled Push"
+    },
+    "snatch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Snatch"
+    },
+    "snowboarding": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1103448275862069,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Snowboarding"
+    },
+    "spider curl (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Spider Curl (Barbell)"
+    },
+    "spider curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25217391304347825,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Spider Curl (Dumbbell)"
+    },
+    "spiderman": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Spiderman"
+    },
+    "spinning": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Spinning"
+    },
+    "split jerk": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1176470588235294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Split Jerk"
+    },
+    "split squat (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.21739130434782605,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Split Squat (Dumbbell)"
+    },
+    "sprints": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sprints"
+    },
+    "squat (band)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.17,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Band)"
+    },
+    "squat (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Barbell)"
+    },
+    "squat (bodyweight)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Bodyweight)"
+    },
+    "squat (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Dumbbell)"
+    },
+    "squat (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10526315789473686,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Machine)"
+    },
+    "squat (smith machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.28421052631578947,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Smith Machine)"
+    },
+    "squat (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat (Suspension)"
+    },
+    "squat row": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Squat Row"
+    },
+    "stair machine (floors)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Stair Machine (Floors)"
+    },
+    "stair machine (steps)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Stair Machine (Steps)"
+    },
+    "standing cable glute kickbacks": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.38,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Cable Glute Kickbacks"
+    },
+    "standing calf raise": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43157894736842106,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Calf Raise"
+    },
+    "standing calf raise (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43157894736842106,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Calf Raise (Barbell)"
+    },
+    "standing calf raise (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43157894736842106,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Calf Raise (Dumbbell)"
+    },
+    "standing calf raise (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43157894736842106,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Calf Raise (Machine)"
+    },
+    "standing calf raise (smith)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.43157894736842106,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Calf Raise (Smith)"
+    },
+    "standing leg curls": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4222222222222222,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Leg Curls"
+    },
+    "standing military press (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.408695652173913,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Standing Military Press (Barbell)"
+    },
+    "step up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Step Up"
+    },
+    "sternum pull up (gironda)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1176470588235294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sternum Pull up (Gironda)"
+    },
+    "straight arm lat pulldown (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.3303225806451613,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Straight Arm Lat Pulldown (Cable)"
+    },
+    "straight leg deadlift": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29333333333333333,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Straight Leg Deadlift"
+    },
+    "stretching": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Stretching"
+    },
+    "sumo deadlift": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sumo Deadlift"
+    },
+    "sumo squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.13333333333333336,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sumo Squat"
+    },
+    "sumo squat (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2210526315789474,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sumo Squat (Barbell)"
+    },
+    "sumo squat (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25217391304347825,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sumo Squat (Dumbbell)"
+    },
+    "sumo squat (kettlebell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.24615384615384617,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Sumo Squat (Kettlebell)"
+    },
+    "superman": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12307692307692308,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Superman"
+    },
+    "swimming": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Swimming"
+    },
+    "t bar row": {
+      "exerciseDbId": "aaXr7ld",
+      "gifUrl": "https://static.exercisedb.dev/media/aaXr7ld.gif",
+      "matchScore": 0.69,
+      "matchedOn": "T Bar Row",
+      "hevyName": "T Bar Row",
+      "instructions": [
+        "Step:1 Adjust the seat height and footplate position to ensure proper alignment.",
+        "Step:2 Sit on the machine with your chest against the pad and your feet flat on the footplate.",
+        "Step:3 Grasp the handles with an overhand grip, slightly wider than shoulder-width apart.",
+        "Step:4 Keep your back straight and engage your core.",
+        "Step:5 Pull the handles towards your torso, squeezing your shoulder blades together.",
+        "Step:6 Pause for a moment at the peak contraction, then slowly release the handles back to the starting position.",
+        "Step:7 Repeat for the desired number of repetitions."
+      ]
+    },
+    "thruster (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2631578947368421,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Thruster (Barbell)"
+    },
+    "thruster (kettlebell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2666666666666667,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Thruster (Kettlebell)"
+    },
+    "toe touch": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Toe Touch"
+    },
+    "toes to bar": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.31000000000000005,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Toes to Bar"
+    },
+    "torso rotation": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.144,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Torso Rotation"
+    },
+    "treadmill": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Treadmill"
+    },
+    "triceps dip": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10370370370370373,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Dip"
+    },
+    "triceps dip (assisted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.12000000000000002,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Dip (Assisted)"
+    },
+    "triceps dip (weighted)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Dip (Weighted)"
+    },
+    "triceps extension (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.296,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Extension (Barbell)"
+    },
+    "triceps extension (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.35789473684210527,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Extension (Cable)"
+    },
+    "triceps extension (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2615384615384615,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Extension (Dumbbell)"
+    },
+    "triceps extension (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2789473684210526,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Extension (Machine)"
+    },
+    "triceps extension (suspension)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26842105263157895,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Extension (Suspension)"
+    },
+    "triceps kickback (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2545454545454545,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Kickback (Cable)"
+    },
+    "triceps kickback (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.264,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Kickback (Dumbbell)"
+    },
+    "triceps pressdown": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.1176470588235294,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Pressdown"
+    },
+    "triceps pushdown": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10769230769230771,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Pushdown"
+    },
+    "triceps rope pushdown": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.29523809523809524,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Triceps Rope Pushdown"
+    },
+    "upright row (barbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Upright Row (Barbell)"
+    },
+    "upright row (cable)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Upright Row (Cable)"
+    },
+    "upright row (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.4846153846153846,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Upright Row (Dumbbell)"
+    },
+    "v up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "V Up"
+    },
+    "vertical traction (machine)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.22322580645161288,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Vertical Traction (Machine)"
+    },
+    "waiter curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.25217391304347825,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Waiter Curl (Dumbbell)"
+    },
+    "walking": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Walking"
+    },
+    "walking lunge": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.16000000000000003,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Walking Lunge"
+    },
+    "walking lunge (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.26956521739130435,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Walking Lunge (Dumbbell)"
+    },
+    "wall ball": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23888888888888887,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Wall Ball"
+    },
+    "wall sit": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.125,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Wall Sit"
+    },
+    "warm up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10666666666666669,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Warm Up"
+    },
+    "wide pull up": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.10769230769230771,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Wide Pull Up"
+    },
+    "wide-elbow triceps press (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.2375,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Wide-Elbow Triceps Press (Dumbbell)"
+    },
+    "wrist roller": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11666666666666665,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Wrist Roller"
+    },
+    "yoga": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.06153846153846154,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Yoga"
+    },
+    "zercher squat": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.11666666666666665,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Zercher Squat"
+    },
+    "zottman curl (dumbbell)": {
+      "exerciseDbId": "",
+      "gifUrl": "",
+      "matchScore": 0.23478260869565218,
+      "matchedOn": "UNMATCHED",
+      "hevyName": "Zottman Curl (Dumbbell)"
+    }
+  }
+}
