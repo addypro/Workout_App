@@ -57,8 +57,16 @@ export function ResumeHeroCard({ pendingWorkout, onDiscard }: ResumeHeroCardProp
 
   const handleResume = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push(`/workout/${pendingWorkout.programId}` as any);
-  }, [pendingWorkout.programId, router]);
+
+    // Route based on workout source
+    if (pendingWorkout.source === 'assigned') {
+      const assignedId = pendingWorkout.assignedWorkoutId ?? pendingWorkout.workoutKey;
+      router.push(`/workout/${assignedId}?source=assigned&assignedWorkoutId=${assignedId}` as any);
+    } else {
+      const programId = pendingWorkout.programId ?? pendingWorkout.workoutKey;
+      router.push(`/workout/${programId}?source=self` as any);
+    }
+  }, [pendingWorkout.source, pendingWorkout.assignedWorkoutId, pendingWorkout.programId, pendingWorkout.workoutKey, router]);
 
   const handleDiscard = useCallback(() => {
     Alert.alert(

@@ -1,0 +1,259 @@
+---
+session: general
+date: 2026-01-16
+status: complete
+outcome: SUCCEEDED
+---
+
+goal: Implement Option 2 storage namespacing for active workout state (collision prevention)
+now: Ready for manual QA testing or commit workflow
+test: npm test -- __tests__/integration/workout-flow.test.tsx && npm test -- __tests__/integration/storage-collision.test.tsx
+
+done_this_session:
+  - task: "Phase 1: Storage layer namespacing with lazy migration"
+    files: [lib/db/storage.ts]
+    details: |
+      - Added WorkoutSource type ('self' | 'assigned')
+      - Updated activeWorkoutKey() to: @active_workout:{userId}:{source}:{workoutKey}
+      - Added legacyActiveWorkoutKey() helper for backward compatibility
+      - Updated activeWorkoutRowId() to include source
+      - Updated 6 storage functions with source parameter:
+        * setActiveWorkoutState(userId, source, workoutKey, state)
+        * getActiveWorkoutState(userId, source, workoutKey)
+        * clearActiveWorkoutState(userId, source, workoutKey)
+        * getLatestActiveWorkoutState(userId) returns {workoutKey, source, state}
+      - Implemented proactive lazy migration (reads legacy → migrates immediately → removes old key)
+      - SQLite program_id now stores composite: "${source}:${workoutKey}"
+      - Applied pre-mortem mitigations:
+        * Mitigation #1: Validate source before casting in AsyncStorage key parsing
+        * Mitigation #2: Validate source before casting in SQLite key parsing
+        * Mitigation #4: Proactive migration on read (not deferred to write)
+        * Mitigation #5: Enhanced source inference (checks assignedWorkoutId, coachId)
+
+  - task: "Phase 2: Update all call sites to pass source parameter"
+    files: [app/workout/[id].tsx, app/workout/[id]/summary.tsx, lib/hooks/use-pending-workout.ts, app/(tabs)/index.tsx, app/(tabs)/_layout.tsx]
+    details: |
+      Updated 13 call sites across 5 files:
+      - app/workout/[id].tsx (4 sites): Lines 805, 914, 1271, 1760
+        * Added ActiveWorkoutState import
+        * Derived source from isAssignedWorkout
+      - app/workout/[id]/summary.tsx (7 sites): Lines 122, 188, 470, 472, 552, 556
+        * Used isAssignedWorkout for source or hardcoded 'self'
+      - lib/hooks/use-pending-workout.ts (1 site): Line 104-107
+        * Used pendingWorkout.source
+      - app/(tabs)/index.tsx (1 site): Line 293
+        * Hardcoded 'self' (only self programs in this context)
+      - app/(tabs)/_layout.tsx (Pre-mortem mitigation #3): Line 171
+        * Self resume now includes ?source=self query param (consistency with ResumeHeroCard)
+
+  - task: "Verification and regression testing"
+    files: [__tests__/integration/storage-collision.test.tsx]
+    details: |
+      Created collision prevention test with 3 test cases:
+      1. Same UUID with different sources doesn't collide (both exist independently)
+      2. Clearing one source doesn't affect the other
+      3. Legacy key migration works without collision with new format
+      All tests passing (16/16 workout-flow + 3/3 collision)
+
+blockers: []
+
+questions: []
+
+decisions:
+  - proactive_migration: |
+      Chose immediate migration on read instead of lazy migration on write.
+      Rationale: Prevents orphaned legacy keys that would never get migrated if user
+      doesn't complete a set after app update. Pre-mortem mitigation #4.
+  - source_validation: |
+      Added explicit source validation before type casting in key parsing.
+      Rationale: Prevents false positives when legacy keys contain colons (e.g. "program:abc:123").
+      Pre-mortem mitigations #1 and #2.
+  - enhanced_inference: |
+      Check assignedWorkoutId and coachId fields when session.source is missing.
+      Rationale: Better heuristics for legacy sessions that predate source field.
+      Pre-mortem mitigation #5.
+  - resume_routing_consistency: |
+      Both ResumeHeroCard and ResumeMiniBar now pass ?source=self for self workouts.
+      Rationale: Consistency across resume locations, easier debugging.
+      Pre-mortem mitigation #3.
+
+findings:
+  - storage_key_format: |
+      New format: @active_workout:{userId}:{source}:{workoutKey}
+      Example self: @active_workout:user-123:self:program-abc
+      Example assigned: @active_workout:user-123:assigned:program-abc
+      Both can coexist with same workoutKey - collision-free.
+  - sqlite_composite_key: |
+      SQLite program_id column stores: "${source}:${workoutKey}"
+      No schema migration needed - just change the value format.
+      UNIQUE index on (user_id, program_id) still works correctly.
+  - legacy_migration_path: |
+      getActiveWorkoutState() flow:
+      1. Try new format (userId, source, workoutKey)
+      2. If not found, try legacy format (userId, workoutKey)
+      3. If found in legacy, migrate immediately:
+         - Write to new format
+         - Remove legacy key
+      4. Return data
+      This prevents orphaned keys and gradual cleanup.
+  - call_site_source_availability: |
+      All 13 call sites had source available:
+      - isAssignedWorkout boolean from query param (8 sites)
+      - pendingWorkout.source from session (1 site)
+      - Hardcoded 'self' for self-only contexts (4 sites)
+      No call site required guessing or unsafe defaults.
+
+worked:
+  - "Pre-mortem analysis prevented 5 major failure modes before implementation"
+  - "YAML handoff format kept context compact and structured"
+  - "Proactive migration eliminated orphaned key problem"
+  - "Source validation prevented key parsing false positives"
+  - "Regression test proved collision prevention works"
+  - "Incremental approach: Phase 1 (storage) → Phase 2 (call sites) → Verification"
+
+failed: []
+
+next:
+  - "Run manual QA checklist (see implementation_plan.md verification steps or handoff summary)"
+  - "Critical: Test collision scenario - same UUID as both self and assigned, verify no collision"
+  - "Test resume hero for both self and assigned workouts"
+  - "Test discard operation doesn't affect the other source"
+  - "Once QA passes, commit changes with message describing Option 2 implementation"
+  - "Consider: Update NAV_FLOW.md if storage key format documentation needs updating"
+
+files:
+  created:
+    - __tests__/integration/storage-collision.test.tsx
+    - thoughts/shared/handoffs/general/2026-01-16_14-29_storage-namespacing-complete.yaml
+  modified:
+    - lib/db/storage.ts
+    - app/workout/[id].tsx
+    - app/workout/[id]/summary.tsx
+    - lib/hooks/use-pending-workout.ts
+    - app/(tabs)/index.tsx
+    - app/(tabs)/_layout.tsx
+
+commands_run:
+  typescript_check: |
+    npx tsc --noEmit
+    Result: No new errors. Phase 1 & 2 call site errors resolved.
+    Remaining: Pre-existing errors only (Supabase Deno functions, icon types)
+
+  integration_tests: |
+    npm test -- __tests__/integration/workout-flow.test.tsx
+    Result: 16/16 tests passing
+
+  collision_tests: |
+    npm test -- __tests__/integration/storage-collision.test.tsx
+    Result: 3/3 tests passing
+    - Same UUID different sources doesn't collide
+    - Clearing one source doesn't affect other
+    - Legacy key migration works without collision
+
+invariants_verified:
+  - storage_key_format: "@active_workout:{userId}:{source}:{workoutKey} at lib/db/storage.ts:866"
+  - sqlite_composite_key: "program_id stores ${source}:${workoutKey} at lib/db/storage.ts:893"
+  - all_get_calls_have_source: "10 call sites verified across app files and tests"
+  - all_set_calls_have_source: "6 call sites verified across app files and tests"
+  - all_clear_calls_have_source: "8 call sites verified across app files and tests"
+  - legacy_key_only_in_fallback: "legacyActiveWorkoutKey used only in migration/cleanup at lib/db/storage.ts:984,1010,1028,1040,1081"
+  - resume_routing_assigned: "Both locations use ?source=assigned&assignedWorkoutId=${id} at resume-hero-card.tsx:64 and _layout.tsx:167"
+  - resume_routing_self: "Both locations use ?source=self at resume-hero-card.tsx:67 and _layout.tsx:171"
+  - backward_compatibility: "Reads try new → fallback legacy → migrate immediately at lib/db/storage.ts:919-1050"
+  - proactive_migration: "Legacy keys removed on read at lib/db/storage.ts:1010,1040"
+  - source_validation: "Key parsing validates source before casting at lib/db/storage.ts:1117,1182"
+  - enhanced_inference: "Checks assignedWorkoutId/coachId for source at lib/db/storage.ts:1124,1189"
+  - collision_prevention: "Same UUID with different sources doesn't collide - proven in storage-collision.test.tsx:58-80"
+  - return_type_updated: "getLatestActiveWorkoutState returns {workoutKey, source, state} at lib/db/storage.ts:1087-1091"
+  - tests_passing: "16/16 integration tests + 3/3 collision tests pass"
+
+remaining_risks:
+  - manual_qa_required: |
+      Automated tests prove logic correctness but manual QA needed for:
+      - Resume hero UI behavior (both sources)
+      - Navigation flow with query params
+      - Edge cases like force-close during set completion
+  - migration_visibility: |
+      Console.log statements show migration happening but no user-facing notification.
+      User doesn't know if their workout was migrated. This is probably fine but worth noting.
+  - sqlite_no_schema_migration: |
+      We changed program_id value format but didn't run ALTER TABLE.
+      This works because it's just a TEXT column, but future devs need to know
+      the format is now "${source}:${workoutKey}" not just "workoutKey".
+      Consider adding a comment in lib/db/sqlite.ts schema definition.
+
+git_status:
+  branch: audit/2026-01-16-workoutkey
+  test_status: "16/16 workout-flow + 3/3 collision tests passing"
+  typescript_status: "No new errors (127 pre-existing Supabase/icon errors remain)"
+  diff_stats: |
+    lib/db/storage.ts                | 340 ++++++++++++++++++++++++++-------
+    app/workout/[id].tsx             | 230 ++++++++++++++++++----
+    app/workout/[id]/summary.tsx     | 405 ++++++++++++++++++++++++++++--------
+    lib/hooks/use-pending-workout.ts |  39 ++--
+    app/(tabs)/index.tsx             | 363 ++++++++++++++++++++++++++++++--
+    app/(tabs)/_layout.tsx           | 166 ++++------------
+    6 files changed, 1210 insertions(+), 333 deletions(-)
+
+manual_qa_checklist:
+  resume_hero_self:
+    - "Start self workout from Programs tab"
+    - "Complete 2-3 sets"
+    - "Force close app"
+    - "Relaunch - resume hero appears"
+    - "Tap Resume → routes to /workout/[id]?source=self"
+    - "Workout state restored correctly"
+    - "Complete more sets"
+    - "Discard - resume hero disappears, key removed"
+
+  resume_hero_assigned:
+    - "Have coach assign workout"
+    - "Start assigned workout"
+    - "Complete 2-3 sets"
+    - "Force close app"
+    - "Relaunch - resume hero appears"
+    - "Tap Resume → routes to /workout/[id]?source=assigned&assignedWorkoutId=[id]"
+    - "Assigned workout state restored (not local program)"
+    - "Discard - key removed, doesn't affect self workouts"
+
+  collision_prevention_critical:
+    - "Start self workout with programId 'test-collision-123'"
+    - "Complete 1-2 sets, force close"
+    - "Have coach assign workout with ID 'test-collision-123'"
+    - "Start assigned workout, complete 1-2 sets, force close"
+    - "Relaunch - resume hero shows MOST RECENT (assigned)"
+    - "Check AsyncStorage - BOTH keys exist (no collision)"
+    - "Discard assigned - only assigned key removed"
+    - "Self workout state still exists and can be resumed"
+
+  resume_mini_bar:
+    - "Same tests as resume hero but from mini-bar (bottom tab bar)"
+    - "Self routes with ?source=self"
+    - "Assigned routes with ?source=assigned&assignedWorkoutId=X"
+
+architecture_notes:
+  option_2_rationale: |
+    Chose Option 2 (namespace storage keys) over Option 1 (prefix workoutKey values).
+    Option 2 advantages:
+    - Less invasive - workoutKey remains pure UUID
+    - Only persistence layer changes
+    - No risk of breaking existing code that reads workoutKey
+    - Storage keys are internal implementation detail
+
+  pre_mortem_mitigations_applied: |
+    All 5 pre-mortem failure modes from planning session were mitigated:
+    1. AsyncStorage key parsing false positives - FIXED with source validation
+    2. SQLite key parsing false positives - FIXED with source validation
+    3. Resume routing inconsistency - FIXED by adding ?source=self to mini-bar
+    4. Orphaned legacy keys - FIXED with proactive migration
+    5. Source inference assumes session.source - FIXED with enhanced heuristics
+
+  backward_compatibility_strategy: |
+    Read path: Try new format → fallback to legacy → migrate immediately
+    Write path: Always use new format
+    Clear path: Clear both formats (no-op if one doesn't exist)
+    This ensures:
+    - Old app versions can't break (they ignore new keys)
+    - New app version migrates on first read
+    - No user action required
+    - No data loss

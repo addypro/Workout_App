@@ -8,6 +8,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { SkeletonCardList } from '@/components/ui/skeleton';
 import { VoiceLoggingModal } from '@/components/voice';
 import { WorkoutPickerModal } from '@/components/workout-picker-modal';
+import { SkipReasonSheet } from '@/components/workout/SkipReasonSheet';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/lib/context/auth-context';
@@ -29,6 +30,11 @@ import { safeNavigate } from '@/lib/navigation/types';
 import {
   AssignmentStatus,
   getAthleteAssignments,
+  getOverdueWorkouts,
+  getTodaysWorkouts,
+  getUpcomingWorkouts,
+  skipWorkout,
+  type AssignedWorkout,
   type ProgramAssignment,
 } from '@/lib/services/coach';
 import type { ExtractedExercise } from '@/lib/services/voice/direct-intent-types';
@@ -130,11 +136,17 @@ const swipeStyles = StyleSheet.create({
 export default function ProgramsScreen() {
   const [programs, setPrograms] = useState<ProgramWithProgress[]>([]);
   const [assignedPrograms, setAssignedPrograms] = useState<ProgramAssignment[]>([]);
+  const [todaysWorkouts, setTodaysWorkouts] = useState<AssignedWorkout[]>([]);
+  const [overdueWorkouts, setOverdueWorkouts] = useState<AssignedWorkout[]>([]);
+  const [upcomingWorkouts, setUpcomingWorkouts] = useState<AssignedWorkout[]>([]);
+  const [inProgressWorkouts, setInProgressWorkouts] = useState<AssignedWorkout[]>([]);
   const [workoutTemplates, setWorkoutTemplates] = useState<SavedWorkoutTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<ProgramWithProgress | null>(null);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
+  const [skipSheetVisible, setSkipSheetVisible] = useState(false);
+  const [skipTarget, setSkipTarget] = useState<AssignedWorkout | null>(null);
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -146,6 +158,28 @@ export default function ProgramsScreen() {
       loadPrograms();
     }, [])
   );
+
+  const getDayStart = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+  const getWorkoutDayStart = (workout: AssignedWorkout) =>
+    getDayStart(workout.scheduledAt ?? workout.scheduledDate);
+
+  const formatWorkoutDate = (workout: AssignedWorkout) => {
+    const scheduled = workout.scheduledAt ?? workout.scheduledDate;
+    if (!scheduled) return 'Scheduled';
+    const dateLabel = scheduled.toLocaleDateString(undefined, {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+    if (!workout.scheduledAt) return dateLabel;
+    const timeLabel = scheduled.toLocaleTimeString(undefined, {
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+    return `${dateLabel} · ${timeLabel}`;
+  };
 
   async function loadPrograms() {
     try {
@@ -170,17 +204,57 @@ export default function ProgramsScreen() {
       );
       setPrograms(programsWithProgress);
 
-      // Load assigned programs (only for logged-in users)
+      // Load assigned workouts and programs (only for logged-in users)
       if (!isGuest) {
         try {
-          const assignResult = await getAthleteAssignments(AssignmentStatus.ACTIVE);
-          if (assignResult.success && assignResult.data) {
-            setAssignedPrograms(assignResult.data);
-          }
+          const [assignResult, todayResult, overdueResult, upcomingResult] = await Promise.all([
+            getAthleteAssignments(AssignmentStatus.ACTIVE),
+            getTodaysWorkouts(),
+            getOverdueWorkouts(),
+            getUpcomingWorkouts(7),
+          ]);
+
+          setAssignedPrograms(assignResult.success && assignResult.data ? assignResult.data : []);
+
+          const todayData = todayResult.success && todayResult.data ? todayResult.data : [];
+          const overdueData = overdueResult.success && overdueResult.data ? overdueResult.data : [];
+          const upcomingData = upcomingResult.success && upcomingResult.data ? upcomingResult.data : [];
+
+          const todayStart = getDayStart(new Date());
+          const uniqueById = (items: AssignedWorkout[]) =>
+            Array.from(new Map(items.map(item => [item.id, item])).values());
+
+          const inProgress = uniqueById(
+            [...todayData, ...overdueData, ...upcomingData].filter(workout => workout.status === 'in_progress')
+          );
+          const inProgressIds = new Set(inProgress.map(workout => workout.id));
+
+          const todays = todayData.filter(workout => !inProgressIds.has(workout.id));
+          const overdue = overdueData.filter(workout => !inProgressIds.has(workout.id));
+          const upcoming = upcomingData.filter(workout => {
+            if (inProgressIds.has(workout.id)) return false;
+            const workoutStart = getWorkoutDayStart(workout);
+            return workoutStart > todayStart;
+          });
+
+          setTodaysWorkouts(todays);
+          setOverdueWorkouts(overdue);
+          setUpcomingWorkouts(upcoming);
+          setInProgressWorkouts(inProgress);
         } catch (err) {
-          // Silently fail - user might not have any coach assignments
-          console.log('[MyPrograms] No coach assignments found');
+          console.log('[MyPrograms] Assigned workout load error:', err);
+          setAssignedPrograms([]);
+          setTodaysWorkouts([]);
+          setOverdueWorkouts([]);
+          setUpcomingWorkouts([]);
+          setInProgressWorkouts([]);
         }
+      } else {
+        setAssignedPrograms([]);
+        setTodaysWorkouts([]);
+        setOverdueWorkouts([]);
+        setUpcomingWorkouts([]);
+        setInProgressWorkouts([]);
       }
 
       // Load saved workout templates
@@ -216,7 +290,7 @@ export default function ProgramsScreen() {
     try {
       const userId = program.userId || 'local';
       // Clear associated data (these don't throw on missing data)
-      await clearActiveWorkoutState(userId, program.id);
+      await clearActiveWorkoutState(userId, 'self', program.id);
       await clearPendingWorkoutEdits(userId, program.id);
       await deleteProgramTemplate(userId, program.id);
       await clearWorkoutHistory(program.id);
@@ -398,6 +472,91 @@ export default function ProgramsScreen() {
     }
   };
 
+  const handleStartAssignedWorkout = (workout: AssignedWorkout) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    safeNavigate(router, '/workout/[id]', {
+      id: workout.id,
+      source: 'assigned',
+      assignedWorkoutId: workout.id,
+    });
+  };
+
+  const handleSkipAssignedWorkout = async (reasonCode: string, reasonText?: string) => {
+    if (!skipTarget) return;
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const result = await skipWorkout(skipTarget.id, reasonCode, reasonText);
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to skip workout');
+      }
+      const removeId = (items: AssignedWorkout[]) => items.filter(item => item.id !== skipTarget.id);
+      setTodaysWorkouts(removeId);
+      setOverdueWorkouts(removeId);
+      setUpcomingWorkouts(removeId);
+      setInProgressWorkouts(removeId);
+    } catch (error) {
+      const msg = 'Unable to skip workout. Please try again.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Error', msg);
+    } finally {
+      setSkipSheetVisible(false);
+      setSkipTarget(null);
+    }
+  };
+
+  const openSkipSheet = (workout: AssignedWorkout) => {
+    setSkipTarget(workout);
+    setSkipSheetVisible(true);
+  };
+
+  const renderAssignedWorkoutCard = (
+    workout: AssignedWorkout,
+    accentColor: string,
+    showSkip: boolean = false,
+    isCompact: boolean = false
+  ) => {
+    const badgeLabel = workout.status === 'in_progress' ? 'Resume' : 'Start';
+    const cardStyle = [
+      styles.assignedWorkoutCard,
+      isCompact && styles.assignedWorkoutCardCompact,
+      { backgroundColor: colors.groupedBackground, borderColor: colors.separator },
+    ];
+
+    return (
+      <TouchableOpacity
+        key={workout.id}
+        style={cardStyle}
+        onPress={() => handleStartAssignedWorkout(workout)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.assignedWorkoutHeader}>
+          <View style={styles.assignedWorkoutInfo}>
+            <ThemedText style={[styles.assignedWorkoutTitle, { color: colors.text }]} numberOfLines={1}>
+              {workout.workoutName || 'Assigned Workout'}
+            </ThemedText>
+            <ThemedText style={[styles.assignedWorkoutMeta, { color: colors.textSecondary }]} numberOfLines={1}>
+              Week {workout.weekNumber} · Day {workout.dayNumber}
+            </ThemedText>
+            <ThemedText style={[styles.assignedWorkoutMeta, { color: colors.textSecondary }]}>
+              {formatWorkoutDate(workout)}
+            </ThemedText>
+          </View>
+          <View style={[styles.startBadge, { backgroundColor: accentColor }]}>
+            <ThemedText style={styles.startBadgeText}>{badgeLabel}</ThemedText>
+          </View>
+        </View>
+        {showSkip && (
+          <Pressable
+            style={styles.skipLink}
+            onPress={() => openSkipSheet(workout)}
+          >
+            <IconSymbol name="xmark.circle.fill" size={14} color={colors.textSecondary} />
+            <ThemedText style={[styles.skipLinkText, { color: colors.textSecondary }]}>Skip</ThemedText>
+          </Pressable>
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   if (loading) {
     return (
       <SwipeTabs current="index">
@@ -408,7 +567,14 @@ export default function ProgramsScreen() {
     );
   }
 
-  const hasContent = programs.length > 0 || assignedPrograms.length > 0;
+  const hasContent =
+    programs.length > 0 ||
+    assignedPrograms.length > 0 ||
+    workoutTemplates.length > 0 ||
+    todaysWorkouts.length > 0 ||
+    overdueWorkouts.length > 0 ||
+    upcomingWorkouts.length > 0 ||
+    inProgressWorkouts.length > 0;
 
   return (
     <SwipeTabs current="index">
@@ -420,6 +586,103 @@ export default function ProgramsScreen() {
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
           >
+            <Pressable
+              style={({ pressed }) => [
+                styles.programLibraryCard,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.separator,
+                  opacity: pressed ? 0.9 : 1,
+                },
+              ]}
+              onPress={() => safeNavigate(router, '/browse')}
+            >
+              <View style={styles.programLibraryContent}>
+                <View style={[styles.programLibraryIcon, { backgroundColor: colors.tint + '15' }]}>
+                  <IconSymbol name="sparkles" size={18} color={colors.tint} />
+                </View>
+                <View style={styles.programLibraryText}>
+                  <ThemedText style={[styles.programLibraryTitle, { color: colors.text }]}>
+                    Browse Available Programs
+                  </ThemedText>
+                  <ThemedText style={[styles.programLibrarySubtitle, { color: colors.textSecondary }]}>
+                    Explore 36 curated plans and add them to My Programs
+                  </ThemedText>
+                </View>
+                <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+              </View>
+            </Pressable>
+
+            {inProgressWorkouts.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <View style={[styles.sectionIcon, { backgroundColor: '#0A84FF' + '20' }]}>
+                    <IconSymbol name="play.circle.fill" size={16} color="#0A84FF" />
+                  </View>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                    In Progress
+                  </ThemedText>
+                </View>
+                {inProgressWorkouts.map((workout) =>
+                  renderAssignedWorkoutCard(workout, '#0A84FF')
+                )}
+              </View>
+            )}
+
+            {todaysWorkouts.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <View style={[styles.sectionIcon, { backgroundColor: '#30D158' + '20' }]}>
+                    <IconSymbol name="calendar" size={16} color="#30D158" />
+                  </View>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                    Today — Coach Assigned
+                  </ThemedText>
+                </View>
+                {todaysWorkouts.map((workout) =>
+                  renderAssignedWorkoutCard(workout, '#30D158')
+                )}
+              </View>
+            )}
+
+            {overdueWorkouts.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <View style={[styles.sectionIcon, { backgroundColor: '#FF9F0A' + '20' }]}>
+                    <IconSymbol name="exclamationmark.triangle.fill" size={16} color="#FF9F0A" />
+                  </View>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                    Overdue
+                  </ThemedText>
+                </View>
+                {overdueWorkouts.map((workout) =>
+                  renderAssignedWorkoutCard(workout, '#FF9F0A', true)
+                )}
+              </View>
+            )}
+
+            {upcomingWorkouts.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <View style={[styles.sectionIcon, { backgroundColor: '#5AC8FA' + '20' }]}>
+                    <IconSymbol name="clock.fill" size={16} color="#5AC8FA" />
+                  </View>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                    Upcoming
+                  </ThemedText>
+                </View>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.upcomingRow}
+                >
+                  {upcomingWorkouts.map((workout) =>
+                    renderAssignedWorkoutCard(workout, '#5AC8FA', false, true)
+                  )}
+                </ScrollView>
+              </View>
+            )}
+
             {/* Assigned by Coach Section */}
             {assignedPrograms.length > 0 && (
               <View style={styles.section}>
@@ -576,6 +839,15 @@ export default function ProgramsScreen() {
         onClose={() => setVoiceModalVisible(false)}
         onExercisesExtracted={handleVoiceExercisesExtracted}
       />
+
+      <SkipReasonSheet
+        visible={skipSheetVisible}
+        onSkip={handleSkipAssignedWorkout}
+        onCancel={() => {
+          setSkipSheetVisible(false);
+          setSkipTarget(null);
+        }}
+      />
     </SwipeTabs>
   );
 }
@@ -636,7 +908,7 @@ function EmptyState({
             styles.secondaryButton,
             { borderColor: colors.tint, opacity: pressed ? 0.9 : 1 },
           ]}
-          onPress={() => safeNavigate(router, '/(tabs)/browse')}
+          onPress={() => safeNavigate(router, '/browse')}
         >
           <IconSymbol name="sparkles" size={18} color={colors.tint} />
           <ThemedText style={[styles.secondaryButtonText, { color: colors.tint }]}>Discover</ThemedText>
@@ -658,7 +930,7 @@ function EmptyState({
 
       <Pressable
         style={styles.uploadLink}
-        onPress={() => router.push('/(tabs)/upload')}
+        onPress={() => router.push('/settings/program-import')}
       >
         <ThemedText style={[styles.uploadLinkText, { color: colors.textSecondary }]}>
           or upload a CSV file
@@ -686,6 +958,35 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
     fontSize: 13,
+  },
+  programLibraryCard: {
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  programLibraryContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  programLibraryIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  programLibraryText: {
+    flex: 1,
+  },
+  programLibraryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  programLibrarySubtitle: {
+    fontSize: 13,
+    marginTop: 2,
   },
   // Section styles
   section: {
@@ -730,6 +1031,46 @@ const styles = StyleSheet.create({
   },
   assignedMeta: {
     fontSize: 13,
+  },
+  assignedWorkoutCard: {
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  assignedWorkoutCardCompact: {
+    width: 260,
+    marginRight: Spacing.sm,
+  },
+  assignedWorkoutHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.sm,
+  },
+  assignedWorkoutInfo: {
+    flex: 1,
+  },
+  assignedWorkoutTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  assignedWorkoutMeta: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  skipLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: Spacing.sm,
+  },
+  skipLinkText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  upcomingRow: {
+    paddingRight: Spacing.sm,
   },
   startBadge: {
     paddingHorizontal: Spacing.md,

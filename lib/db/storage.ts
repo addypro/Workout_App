@@ -1,7 +1,7 @@
 // Storage utilities using AsyncStorage for React Native
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { SyncableWorkout } from '@/lib/services/sync/types';
 import type { SetType } from '@/lib/types/workout-session';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ensureStorageTables, getDatabase } from '@/lib/db/sqlite';
 
@@ -93,6 +93,8 @@ type UnifiedHistoryRow = {
   id: string;
   user_id: string;
   type: string;
+  source: string | null;
+  external_workout_id: string | null;
   program_id: string | null;
   program_name: string | null;
   workout_name: string;
@@ -218,6 +220,9 @@ type StoredWorkoutExercise = {
 export type StoredWorkoutSession = {
   id: string;
   programId?: string;
+  source?: 'self' | 'assigned';
+  assignedWorkoutId?: string;
+  workoutKey?: string;
   workoutName: string;
   exercises: StoredWorkoutExercise[];
   startTime: string;
@@ -659,16 +664,16 @@ export async function upsertProgramTemplate(
 
       const updated: ProgramTemplate = existing
         ? {
-            ...mapProgramTemplateRow(existing),
-            ...template,
-            updatedAt: now,
-          }
+          ...mapProgramTemplateRow(existing),
+          ...template,
+          updatedAt: now,
+        }
         : {
-            ...template,
-            id: `tmpl-${Date.now()}`,
-            createdAt: now,
-            updatedAt: now,
-          };
+          ...template,
+          id: `tmpl-${Date.now()}`,
+          createdAt: now,
+          updatedAt: now,
+        };
 
       await db.runAsync(
         `INSERT OR REPLACE INTO program_templates (
@@ -855,15 +860,26 @@ export async function clearPendingWorkoutEdits(userId: string, programId: string
   }
 }
 
-function activeWorkoutKey(userId: string, programId: string) {
-  return `${ACTIVE_WORKOUT_KEY_PREFIX}${userId}:${programId}`;
+type WorkoutSource = 'self' | 'assigned';
+
+function activeWorkoutKey(userId: string, source: WorkoutSource, workoutKey: string) {
+  return `${ACTIVE_WORKOUT_KEY_PREFIX}${userId}:${source}:${workoutKey}`;
 }
 
-function activeWorkoutRowId(userId: string, programId: string) {
-  return `aws-${userId}-${programId}`;
+function legacyActiveWorkoutKey(userId: string, workoutKey: string) {
+  return `${ACTIVE_WORKOUT_KEY_PREFIX}${userId}:${workoutKey}`;
 }
 
-export async function setActiveWorkoutState(userId: string, programId: string, state: ActiveWorkoutState): Promise<void> {
+function activeWorkoutRowId(userId: string, source: WorkoutSource, workoutKey: string) {
+  return `aws-${userId}-${source}-${workoutKey}`;
+}
+
+export async function setActiveWorkoutState(
+  userId: string,
+  source: WorkoutSource,
+  workoutKey: string,
+  state: ActiveWorkoutState
+): Promise<void> {
   const db = await getStorageDb();
   if (db) {
     try {
@@ -872,9 +888,9 @@ export async function setActiveWorkoutState(userId: string, programId: string, s
           id, user_id, program_id, state_json, updated_at
         ) VALUES (?, ?, ?, ?, ?)`,
         [
-          activeWorkoutRowId(userId, programId),
+          activeWorkoutRowId(userId, source, workoutKey),
           userId,
-          programId,
+          `${source}:${workoutKey}`,
           JSON.stringify(state),
           new Date().toISOString(),
         ]
@@ -886,63 +902,171 @@ export async function setActiveWorkoutState(userId: string, programId: string, s
   }
 
   try {
-    await AsyncStorage.setItem(activeWorkoutKey(userId, programId), JSON.stringify(state));
+    await AsyncStorage.setItem(activeWorkoutKey(userId, source, workoutKey), JSON.stringify(state));
   } catch (error) {
     console.error('Error saving active workout state:', error);
   }
 }
 
-export async function getActiveWorkoutState(userId: string, programId: string): Promise<ActiveWorkoutState | null> {
+export async function getActiveWorkoutState(
+  userId: string,
+  source: WorkoutSource,
+  workoutKey: string
+): Promise<ActiveWorkoutState | null> {
   const db = await getStorageDb();
   if (db) {
     try {
+      // Try new format first
+      const compositeKey = `${source}:${workoutKey}`;
       const row = await db.getFirstAsync<ActiveWorkoutRow>(
         'SELECT state_json FROM active_workout_state WHERE user_id = ? AND program_id = ?',
-        [userId, programId]
+        [userId, compositeKey]
       );
 
       if (row) {
         return JSON.parse(row.state_json);
       }
 
-      const data = await AsyncStorage.getItem(activeWorkoutKey(userId, programId));
-      if (!data) return null;
-      const parsed = JSON.parse(data);
-      await db.runAsync(
-        `INSERT OR REPLACE INTO active_workout_state (
-          id, user_id, program_id, state_json, updated_at
-        ) VALUES (?, ?, ?, ?, ?)`,
-        [
-          activeWorkoutRowId(userId, programId),
-          userId,
-          programId,
-          data,
-          new Date().toISOString(),
-        ]
+      // Fallback to legacy format (backward compat)
+      const legacyRow = await db.getFirstAsync<ActiveWorkoutRow>(
+        'SELECT state_json FROM active_workout_state WHERE user_id = ? AND program_id = ?',
+        [userId, workoutKey]
       );
-      return parsed;
+
+      if (legacyRow) {
+        console.log('[Migration] Found legacy SQLite workout, migrating immediately');
+        const parsed = JSON.parse(legacyRow.state_json);
+
+        // Migrate to new format immediately
+        await db.runAsync(
+          `INSERT OR REPLACE INTO active_workout_state (
+            id, user_id, program_id, state_json, updated_at
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [
+            activeWorkoutRowId(userId, source, workoutKey),
+            userId,
+            compositeKey,
+            legacyRow.state_json,
+            new Date().toISOString(),
+          ]
+        );
+
+        // Remove legacy entry
+        await db.runAsync(
+          'DELETE FROM active_workout_state WHERE user_id = ? AND program_id = ?',
+          [userId, workoutKey]
+        );
+
+        return parsed;
+      }
+
+      // Try AsyncStorage new format
+      const data = await AsyncStorage.getItem(activeWorkoutKey(userId, source, workoutKey));
+      if (data) {
+        const parsed = JSON.parse(data);
+        // Migrate to SQLite
+        await db.runAsync(
+          `INSERT OR REPLACE INTO active_workout_state (
+            id, user_id, program_id, state_json, updated_at
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [
+            activeWorkoutRowId(userId, source, workoutKey),
+            userId,
+            compositeKey,
+            data,
+            new Date().toISOString(),
+          ]
+        );
+        return parsed;
+      }
+
+      // Fallback to AsyncStorage legacy format
+      const legacyData = await AsyncStorage.getItem(legacyActiveWorkoutKey(userId, workoutKey));
+      if (legacyData) {
+        console.log('[Migration] Found legacy AsyncStorage workout, migrating immediately');
+        const parsed = JSON.parse(legacyData);
+
+        // Write to new format
+        await AsyncStorage.setItem(
+          activeWorkoutKey(userId, source, workoutKey),
+          legacyData
+        );
+
+        // Migrate to SQLite
+        await db.runAsync(
+          `INSERT OR REPLACE INTO active_workout_state (
+            id, user_id, program_id, state_json, updated_at
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [
+            activeWorkoutRowId(userId, source, workoutKey),
+            userId,
+            compositeKey,
+            legacyData,
+            new Date().toISOString(),
+          ]
+        );
+
+        // Remove legacy key
+        await AsyncStorage.removeItem(legacyActiveWorkoutKey(userId, workoutKey));
+
+        return parsed;
+      }
+
+      return null;
     } catch (error) {
       console.error('Error loading active workout state:', error);
+      return null;
     }
   }
 
+  // Fallback to AsyncStorage only
   try {
-    const data = await AsyncStorage.getItem(activeWorkoutKey(userId, programId));
-    if (!data) return null;
-    return JSON.parse(data);
+    const data = await AsyncStorage.getItem(activeWorkoutKey(userId, source, workoutKey));
+    if (data) return JSON.parse(data);
+
+    // Try legacy format
+    const legacyData = await AsyncStorage.getItem(legacyActiveWorkoutKey(userId, workoutKey));
+    if (legacyData) {
+      console.log('[Migration] Found legacy AsyncStorage workout, migrating immediately');
+      const parsed = JSON.parse(legacyData);
+
+      // Write to new format
+      await AsyncStorage.setItem(
+        activeWorkoutKey(userId, source, workoutKey),
+        legacyData
+      );
+
+      // Remove legacy key
+      await AsyncStorage.removeItem(legacyActiveWorkoutKey(userId, workoutKey));
+
+      return parsed;
+    }
+
+    return null;
   } catch (error) {
     console.error('Error loading active workout state:', error);
     return null;
   }
 }
 
-export async function clearActiveWorkoutState(userId: string, programId: string): Promise<void> {
+export async function clearActiveWorkoutState(
+  userId: string,
+  source: WorkoutSource,
+  workoutKey: string
+): Promise<void> {
   const db = await getStorageDb();
   if (db) {
     try {
+      // Clear new format
       await db.runAsync(
         'DELETE FROM active_workout_state WHERE user_id = ? AND program_id = ?',
-        [userId, programId]
+        [userId, `${source}:${workoutKey}`]
+      );
+
+      // Clear legacy format (if exists)
+      await db.runAsync(
+        'DELETE FROM active_workout_state WHERE user_id = ? AND program_id = ?',
+        [userId, workoutKey]
       );
     } catch (error) {
       console.error('Error clearing active workout state:', error);
@@ -950,14 +1074,19 @@ export async function clearActiveWorkoutState(userId: string, programId: string)
   }
 
   try {
-    await AsyncStorage.removeItem(activeWorkoutKey(userId, programId));
+    // Clear new format
+    await AsyncStorage.removeItem(activeWorkoutKey(userId, source, workoutKey));
+
+    // Clear legacy format (if exists)
+    await AsyncStorage.removeItem(legacyActiveWorkoutKey(userId, workoutKey));
   } catch (error) {
     console.error('Error clearing active workout state:', error);
   }
 }
 
 export async function getLatestActiveWorkoutState(userId: string): Promise<{
-  programId: string;
+  workoutKey: string;
+  source: WorkoutSource;
   state: ActiveWorkoutState;
 } | null> {
   const db = await getStorageDb();
@@ -972,39 +1101,109 @@ export async function getLatestActiveWorkoutState(userId: string): Promise<{
         try {
           const parsed = JSON.parse(row.state_json) as ActiveWorkoutState;
           const status = parsed?.session?.status;
-          if (status === 'in_progress' || status === 'paused') {
-            return { programId: row.program_id, state: parsed };
+
+          if (status !== 'in_progress' && status !== 'paused') {
+            continue;
           }
-        } catch (error) {
-          console.warn('Invalid active workout state JSON:', error);
+
+          // Parse composite key: "source:workoutKey" or legacy "workoutKey"
+          let source: WorkoutSource;
+          let workoutKey: string;
+
+          if (row.program_id.includes(':')) {
+            const [sourceStr, ...keyParts] = row.program_id.split(':');
+
+            // Pre-mortem mitigation #2: Validate source before casting
+            if (sourceStr === 'self' || sourceStr === 'assigned') {
+              source = sourceStr as WorkoutSource;
+              workoutKey = keyParts.join(':');
+            } else {
+              // Legacy format with colon in workoutKey
+              if (parsed.session?.source) {
+                source = parsed.session.source;
+              } else if (parsed.session?.assignedWorkoutId || (parsed.session as any)?.coachId) {
+                // Pre-mortem mitigation #5: Enhanced heuristic
+                console.warn('[Migration] Inferring source=assigned from metadata');
+                source = 'assigned';
+              } else {
+                source = 'self';
+              }
+              workoutKey = row.program_id;
+            }
+          } else {
+            // Legacy format - infer source from session
+            if (parsed.session?.source) {
+              source = parsed.session.source;
+            } else if (parsed.session?.assignedWorkoutId || (parsed.session as any)?.coachId) {
+              // Pre-mortem mitigation #5: Enhanced heuristic
+              console.warn('[Migration] Inferring source=assigned from metadata');
+              source = 'assigned';
+            } else {
+              source = 'self';
+            }
+            workoutKey = row.program_id;
+          }
+
+          return { workoutKey, source, state: parsed };
+        } catch (parseError) {
+          console.warn('[getLatestActiveWorkoutState] Failed to parse row:', parseError);
+          continue;
         }
       }
     } catch (error) {
-      console.error('Error loading latest active workout state:', error);
+      console.error('[getLatestActiveWorkoutState] DB error:', error);
     }
   }
 
+  // Fallback to AsyncStorage scan
   try {
-    const keys = await AsyncStorage.getAllKeys();
     const prefix = `${ACTIVE_WORKOUT_KEY_PREFIX}${userId}:`;
-    const workoutKeys = keys.filter((key) => key.startsWith(prefix));
+    const keys = await AsyncStorage.getAllKeys();
+    const activeWorkoutKeys = keys.filter(k => k.startsWith(prefix));
 
-    for (const key of workoutKeys) {
+    for (const key of activeWorkoutKeys) {
       const data = await AsyncStorage.getItem(key);
       if (!data) continue;
+
       try {
         const parsed = JSON.parse(data) as ActiveWorkoutState;
         const status = parsed?.session?.status;
-        if (status === 'in_progress' || status === 'paused') {
-          const programId = key.replace(prefix, '');
-          return { programId, state: parsed };
+
+        if (status !== 'in_progress' && status !== 'paused') {
+          continue;
         }
-      } catch (error) {
-        console.warn('Invalid active workout state JSON in AsyncStorage:', error);
+
+        // Parse key: @active_workout:userId:source:workoutKey or legacy @active_workout:userId:workoutKey
+        const parts = key.replace(prefix, '').split(':');
+        let source: WorkoutSource;
+        let workoutKey: string;
+
+        // Pre-mortem mitigation #1: Validate source before casting
+        if (parts.length > 1 && (parts[0] === 'self' || parts[0] === 'assigned')) {
+          source = parts[0] as WorkoutSource;
+          workoutKey = parts.slice(1).join(':');
+        } else {
+          // Legacy format or malformed
+          if (parsed.session?.source) {
+            source = parsed.session.source;
+          } else if (parsed.session?.assignedWorkoutId || (parsed.session as any)?.coachId) {
+            // Pre-mortem mitigation #5: Enhanced heuristic
+            console.warn('[Migration] Inferring source=assigned from metadata');
+            source = 'assigned';
+          } else {
+            source = 'self';
+          }
+          workoutKey = parts.join(':');
+        }
+
+        return { workoutKey, source, state: parsed };
+      } catch (parseError) {
+        console.warn('[getLatestActiveWorkoutState] Failed to parse AsyncStorage:', parseError);
+        continue;
       }
     }
   } catch (error) {
-    console.error('Error loading latest active workout state from AsyncStorage:', error);
+    console.error('[getLatestActiveWorkoutState] AsyncStorage error:', error);
   }
 
   return null;
@@ -1161,6 +1360,8 @@ const UNIFIED_HISTORY_KEY = '@unified_workout_history';
 export type UnifiedWorkoutRecord = {
   id: string;
   type: 'program' | 'quick';
+  source?: 'self' | 'assigned';
+  externalWorkoutId?: string;
   programId?: string;
   programName?: string;
   workoutName: string;
@@ -1187,6 +1388,8 @@ function mapUnifiedHistoryRow(row: UnifiedHistoryRow): UnifiedWorkoutRecord {
   return {
     id: row.id,
     type: row.type === 'quick' ? 'quick' : 'program',
+    source: (row.source as UnifiedWorkoutRecord['source']) ?? 'self',
+    externalWorkoutId: row.external_workout_id ?? undefined,
     programId: row.program_id ?? undefined,
     programName: row.program_name ?? undefined,
     workoutName: row.workout_name,
@@ -1209,7 +1412,7 @@ export async function getUnifiedHistory(userId: string = 'local'): Promise<Unifi
   if (db) {
     try {
       const rows = await db.getAllAsync<UnifiedHistoryRow>(
-        `SELECT id, user_id, type, program_id, program_name, workout_name, week, day, completed_at,
+        `SELECT id, user_id, type, source, external_workout_id, program_id, program_name, workout_name, week, day, completed_at,
             duration_seconds, exercises_json, difficulty, notes, total_volume, gym_id, gym_name
          FROM unified_workout_history
          WHERE user_id = ?
@@ -1232,13 +1435,15 @@ export async function getUnifiedHistory(userId: string = 'local'): Promise<Unifi
           for (const record of filtered) {
             await db.runAsync(
               `INSERT OR REPLACE INTO unified_workout_history (
-                id, user_id, type, program_id, program_name, workout_name, week, day, completed_at,
+                id, user_id, type, source, external_workout_id, program_id, program_name, workout_name, week, day, completed_at,
                 duration_seconds, exercises_json, difficulty, notes, total_volume, gym_id, gym_name
-              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
               [
                 record.id,
                 record.userId,
                 record.type,
+                record.source ?? 'self',
+                record.externalWorkoutId ?? null,
                 record.programId ?? null,
                 record.programName ?? null,
                 record.workoutName,
@@ -1359,6 +1564,7 @@ export async function saveWorkoutToHistory(
 ): Promise<UnifiedWorkoutRecord> {
   const newRecord: UnifiedWorkoutRecord = {
     ...record,
+    source: record.source ?? 'self',
     id: `hist-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
   };
 
@@ -1368,13 +1574,15 @@ export async function saveWorkoutToHistory(
     try {
       await db.runAsync(
         `INSERT OR REPLACE INTO unified_workout_history (
-          id, user_id, type, program_id, program_name, workout_name, week, day, completed_at,
+          id, user_id, type, source, external_workout_id, program_id, program_name, workout_name, week, day, completed_at,
           duration_seconds, exercises_json, difficulty, notes, total_volume, gym_id, gym_name
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           newRecord.id,
           newRecord.userId,
           newRecord.type,
+          newRecord.source ?? 'self',
+          newRecord.externalWorkoutId ?? null,
           newRecord.programId ?? null,
           newRecord.programName ?? null,
           newRecord.workoutName,
@@ -1408,13 +1616,17 @@ export async function saveWorkoutToHistory(
     }
   }
 
-  if (syncCallback) {
+  if (syncCallback && newRecord.source === 'self') {
     try {
+      console.log('[Storage] Sync callback registered, calling with workout:', newRecord.id);
       const syncableWorkout = convertToSyncableWorkout(newRecord);
       await syncCallback(syncableWorkout);
+      console.log('[Storage] Sync callback completed for workout:', newRecord.id);
     } catch (syncError) {
-      console.warn('Sync callback failed:', syncError);
+      console.warn('[Storage] Sync callback failed:', syncError);
     }
+  } else if (newRecord.source === 'self') {
+    console.warn('[Storage] No sync callback registered - workout will not sync to Supabase');
   }
 
   return newRecord;
@@ -1449,7 +1661,7 @@ export async function getWorkoutRecordById(id: string): Promise<UnifiedWorkoutRe
   if (db) {
     try {
       const row = await db.getFirstAsync<UnifiedHistoryRow>(
-        `SELECT id, user_id, type, program_id, program_name, workout_name, week, day, completed_at,
+        `SELECT id, user_id, type, source, external_workout_id, program_id, program_name, workout_name, week, day, completed_at,
             duration_seconds, exercises_json, difficulty, notes, total_volume, gym_id, gym_name
          FROM unified_workout_history
          WHERE id = ?`,

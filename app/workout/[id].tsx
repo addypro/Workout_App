@@ -27,11 +27,16 @@ import {
   getWorkoutRecordById,
   setActiveWorkoutState,
   setPendingWorkoutEdits,
+  type ActiveWorkoutState,
   type PreviousExerciseData,
   type StoredWorkoutSession
 } from '@/lib/db/storage';
+import { getCachedWorkoutById, isOnline, upsertCachedWorkout } from '@/lib/services/offline/workout-cache';
 import { preloadExerciseDatabase } from '@/lib/services/exercise/database';
 import { setWorkoutContext } from '@/lib/services/voice';
+import { startWorkout } from '@/lib/services/coach';
+import type { AssignedWorkout } from '@/lib/services/coach/types';
+import { supabase } from '@/lib/supabase/client';
 import {
   unsafeCoerceSetId,
   unsafeCoerceSupersetGroupId,
@@ -82,10 +87,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
 
 export default function ActiveWorkoutScreen() {
-  const { id, week, day, quick, repeatFrom } = useLocalSearchParams();
+  const { id, week, day, quick, repeatFrom, source, assignedWorkoutId } = useLocalSearchParams();
   const selectedWeek = week ? parseInt(week as string) : undefined;
   const selectedDay = day ? parseInt(day as string) : undefined;
   const isQuickWorkout = quick === 'true';
+  const sourceParam = Array.isArray(source) ? source[0] : source;
+  const assignedIdParam = Array.isArray(assignedWorkoutId) ? assignedWorkoutId[0] : assignedWorkoutId;
+  const resolvedAssignedId = assignedIdParam ?? String(id);
+  const isAssignedWorkout = sourceParam === 'assigned';
+  const workoutKey = isAssignedWorkout ? String(resolvedAssignedId) : String(id);
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -725,8 +735,173 @@ export default function ActiveWorkoutScreen() {
     })();
   }, [repeatFrom]);
 
+  const restoreSessionFromState = (existing: ActiveWorkoutState, storageUserId: string) => {
+    const catchUp = existing.session.status === 'in_progress'
+      ? Math.max(0, Math.floor((Date.now() - existing.lastUpdatedAt) / 1000))
+      : 0;
+    setElapsedSeconds(existing.elapsedSeconds + catchUp);
+
+    const restoredSession: any = {
+      ...existing.session,
+      startTime: new Date(existing.session.startTime),
+      endTime: existing.session.endTime ? new Date(existing.session.endTime) : undefined,
+      exercises: existing.session.exercises.map((ex: any) => ({
+        ...ex,
+        sets: ex.sets.map((s: any) => ({
+          ...s,
+          completedAt: s.completedAt ? new Date(s.completedAt) : undefined,
+        })),
+      })),
+      isResting: false,
+      restTimeRemaining: 0,
+    };
+
+    setProgramUserId(storageUserId);
+    setHasLiveEdits(false);
+    setSession(restoredSession);
+  };
+
+  const mapAssignedWorkoutRow = (row: Record<string, unknown>): AssignedWorkout => {
+    const exercises = row.exercises
+      ? (typeof row.exercises === 'string' ? JSON.parse(row.exercises) : row.exercises)
+      : [];
+
+    return {
+      id: row.id as string,
+      assignmentId: (row.assignment_id as string) || '',
+      athleteUserId: (row.athlete_user_id as string) || userId,
+      scheduledDate: new Date(row.scheduled_date as string),
+      scheduledAt: row.scheduled_at ? new Date(row.scheduled_at as string) : undefined,
+      scheduledTime: row.scheduled_time ? new Date(row.scheduled_time as string) : undefined,
+      weekNumber: (row.week_number as number) || 1,
+      dayNumber: (row.day_number as number) || 1,
+      workoutName: (row.workout_name as string) || 'Assigned Workout',
+      exercises: exercises as any,
+      status: (row.status as any) || 'pending',
+      startedAt: row.started_at ? new Date(row.started_at as string) : undefined,
+      completedAt: row.completed_at ? new Date(row.completed_at as string) : undefined,
+      skippedReasonCode: row.skipped_reason_code as string | undefined,
+      skippedReasonText: row.skipped_reason_text as string | undefined,
+      skippedAt: row.skipped_at ? new Date(row.skipped_at as string) : undefined,
+      actualResults: (row.actual_results as Record<string, unknown>) || {},
+      athleteFeedback: row.athlete_feedback as string | undefined,
+      athleteRating: row.athlete_rating as number | undefined,
+      coachFeedback: row.coach_feedback as string | undefined,
+      reminderSent: row.reminder_sent as boolean | undefined,
+      incompleteNotificationSent: row.incomplete_notification_sent as boolean | undefined,
+      createdAt: row.created_at ? new Date(row.created_at as string) : new Date(),
+      updatedAt: row.updated_at ? new Date(row.updated_at as string) : new Date(),
+    };
+  };
+
+  const loadAssignedWorkout = async () => {
+    if (!resolvedAssignedId) {
+      Alert.alert('Error', 'Missing assigned workout.');
+      router.back();
+      return;
+    }
+
+    const source = isAssignedWorkout ? 'assigned' : 'self';
+    const existing = await getActiveWorkoutState(userId, source, workoutKey);
+    if (existing?.session) {
+      restoreSessionFromState(existing, userId);
+      return;
+    }
+
+    let assignedWorkout = await getCachedWorkoutById(workoutKey);
+    if (!assignedWorkout) {
+      const { data, error } = await supabase
+        .from('assigned_workouts')
+        .select('*')
+        .eq('id', resolvedAssignedId)
+        .single();
+      if (error || !data) {
+        throw error || new Error('Assigned workout not found');
+      }
+      assignedWorkout = mapAssignedWorkoutRow(data as Record<string, unknown>);
+      await upsertCachedWorkout(assignedWorkout);
+    }
+
+    const normalizedExercises = assignedWorkout.exercises.map((ex: any) => ({
+      ...ex,
+      restTime: ex.restTime ?? ex.restSeconds,
+    }));
+
+    const targetWorkout = {
+      name: assignedWorkout.workoutName || 'Assigned Workout',
+      exercises: normalizedExercises,
+    };
+
+    setWorkoutWeek(assignedWorkout.weekNumber);
+    setWorkoutDay(assignedWorkout.dayNumber);
+
+    const exercises: WorkoutExercise[] = targetWorkout.exercises.map((ex: any, index: number) => {
+      const numSets = ex.perSetDetails?.length || ex.sets || 3;
+      const defaultReps = ex.reps || 10;
+      const defaultWeight = ex.weight != null
+        ? (typeof ex.weight === 'number' ? ex.weight : parseFloat(ex.weight))
+        : undefined;
+
+      let sets: WorkoutSet[];
+      if (ex.perSetDetails && ex.perSetDetails.length > 0) {
+        sets = ex.perSetDetails.map((sd: any, setIndex: number) => ({
+          id: unsafeCoerceSetId(`s${index}-${setIndex}`),
+          reps: sd.reps || defaultReps,
+          weight: sd.weight != null
+            ? (typeof sd.weight === 'number' ? sd.weight : parseFloat(sd.weight))
+            : defaultWeight,
+          isCompleted: false,
+        }));
+      } else {
+        sets = Array.from({ length: numSets }, (_, setIndex) => ({
+          id: unsafeCoerceSetId(`s${index}-${setIndex}`),
+          reps: defaultReps,
+          weight: defaultWeight,
+          isCompleted: false,
+        }));
+      }
+
+      return {
+        id: unsafeCoerceWorkoutExerciseId(`ex${index}`),
+        name: ex.name || 'Unknown Exercise',
+        sets,
+        restTime: ex.restTime || 60,
+        currentSetIndex: 0,
+        muscleGroups: [],
+      };
+    });
+
+    const newSession: WorkoutSession = {
+      id: unsafeCoerceWorkoutSessionId(workoutKey),
+      workoutName: targetWorkout.name,
+      exercises,
+      startTime: new Date(),
+      currentExerciseIndex: 0,
+      isResting: false,
+      restTimeRemaining: 0,
+      status: 'in_progress',
+    };
+
+    setProgramUserId(assignedWorkout.athleteUserId || userId);
+    setBaseParsedData(null);
+    setHasLiveEdits(false);
+    setSession(newSession);
+
+    try {
+      if (await isOnline()) {
+        await startWorkout(assignedWorkout.id);
+      }
+    } catch (error) {
+      console.warn('[AssignedWorkout] startWorkout failed:', error);
+    }
+  };
+
   const loadWorkout = async () => {
     try {
+      if (isAssignedWorkout) {
+        await loadAssignedWorkout();
+        return;
+      }
       const program = await getProgram(id as string);
       if (!program || program.status !== 'READY') {
         Alert.alert('Error', 'This program is not ready to start yet.');
@@ -735,31 +910,10 @@ export default function ActiveWorkoutScreen() {
       }
 
       // Restore existing session
-      const existing = await getActiveWorkoutState(program.userId, program.id);
+      const source = isAssignedWorkout ? 'assigned' : 'self';
+      const existing = await getActiveWorkoutState(program.userId, source, workoutKey);
       if (existing?.session) {
-        const catchUp = existing.session.status === 'in_progress'
-          ? Math.max(0, Math.floor((Date.now() - existing.lastUpdatedAt) / 1000))
-          : 0;
-        setElapsedSeconds(existing.elapsedSeconds + catchUp);
-
-        const restoredSession: any = {
-          ...existing.session,
-          startTime: new Date(existing.session.startTime),
-          endTime: existing.session.endTime ? new Date(existing.session.endTime) : undefined,
-          exercises: existing.session.exercises.map((ex: any) => ({
-            ...ex,
-            sets: ex.sets.map((s: any) => ({
-              ...s,
-              completedAt: s.completedAt ? new Date(s.completedAt) : undefined,
-            })),
-          })),
-          isResting: false,
-          restTimeRemaining: 0,
-        };
-
-        setProgramUserId(program.userId);
-        setHasLiveEdits(false);
-        setSession(restoredSession);
+        restoreSessionFromState(existing, program.userId);
         return;
       }
 
@@ -839,7 +993,7 @@ export default function ActiveWorkoutScreen() {
       });
 
       const newSession: WorkoutSession = {
-        id: unsafeCoerceWorkoutSessionId(id as string),
+        id: unsafeCoerceWorkoutSessionId(workoutKey),
         workoutName: targetWorkout.name || program.name,
         exercises,
         startTime: new Date(),
@@ -1099,6 +1253,10 @@ export default function ActiveWorkoutScreen() {
     const t = setTimeout(() => {
       const stored: StoredWorkoutSession = {
         ...session,
+        source: isAssignedWorkout ? 'assigned' : 'self',
+        assignedWorkoutId: isAssignedWorkout ? resolvedAssignedId : undefined,
+        workoutKey,
+        programId: isAssignedWorkout ? undefined : (session as any).programId ?? String(id),
         startTime: session.startTime instanceof Date ? session.startTime.toISOString() : String(session.startTime),
         endTime: (session as any).endTime ? new Date((session as any).endTime).toISOString() : undefined,
         exercises: session.exercises.map((ex: any) => ({
@@ -1109,14 +1267,15 @@ export default function ActiveWorkoutScreen() {
           })),
         })),
       };
-      setActiveWorkoutState(programUserId, String(id), { session: stored, elapsedSeconds, lastUpdatedAt: Date.now() });
+      const source = isAssignedWorkout ? 'assigned' : 'self';
+      setActiveWorkoutState(programUserId, source, workoutKey, { session: stored, elapsedSeconds, lastUpdatedAt: Date.now() });
     }, 250);
     return () => clearTimeout(t);
-  }, [session, elapsedSeconds, programUserId, id]);
+  }, [session, elapsedSeconds, programUserId, workoutKey, isAssignedWorkout, resolvedAssignedId, id]);
 
   // Persist edits
   useEffect(() => {
-    if (!hasLiveEdits || !session || !baseParsedData || !programUserId) return;
+    if (isAssignedWorkout || !hasLiveEdits || !session || !baseParsedData || !programUserId) return;
     const t = setTimeout(() => {
       try {
         const nextParsed = JSON.parse(JSON.stringify(baseParsedData));
@@ -1136,7 +1295,7 @@ export default function ActiveWorkoutScreen() {
       }
     }, 350);
     return () => clearTimeout(t);
-  }, [hasLiveEdits, session, baseParsedData, programUserId, id]);
+  }, [hasLiveEdits, session, baseParsedData, programUserId, id, isAssignedWorkout]);
 
   const updateSetTarget = (updates: { reps?: string; weight?: number | null }) => {
     if (!currentExercise) return;
@@ -1574,6 +1733,10 @@ export default function ActiveWorkoutScreen() {
     if (workoutWeek !== undefined) params.set('week', String(workoutWeek));
     if (workoutDay !== undefined) params.set('day', String(workoutDay));
     params.set('duration', String(elapsedSeconds));
+    if (isAssignedWorkout) {
+      params.set('source', 'assigned');
+      params.set('workoutId', workoutKey);
+    }
     router.push(`/workout/${id}/summary?${params.toString()}`);
   };
 
@@ -1593,8 +1756,11 @@ export default function ActiveWorkoutScreen() {
   const discardWorkout = async () => {
     const doDiscard = async () => {
       if (programUserId) {
-        await clearActiveWorkoutState(programUserId, String(id));
-        await clearPendingWorkoutEdits(programUserId, String(id));
+        const source = isAssignedWorkout ? 'assigned' : 'self';
+        await clearActiveWorkoutState(programUserId, source, workoutKey);
+        if (!isAssignedWorkout) {
+          await clearPendingWorkoutEdits(programUserId, String(id));
+        }
       }
       router.replace('/(tabs)');
     };

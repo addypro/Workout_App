@@ -1,0 +1,156 @@
+---
+session: general
+date: 2026-01-16
+status: partial
+outcome: PENDING
+---
+
+goal: Prevent WorkoutKey storage collisions between self/assigned workouts
+now: Implement Option 2 - namespace AsyncStorage keys by source for collision prevention
+test: npx tsc --noEmit && npm test -- __tests__/integration/workout-flow.test.tsx
+
+done_this_session:
+  - task: "Slice 0: Freeze 'class' source type and align type system"
+    files: [lib/hooks/use-pending-workout.ts, lib/db/storage.ts]
+    details: |
+      Removed 'class' from WorkoutSource unions across 3 locations:
+      - PendingWorkout.source (line 30)
+      - StoredWorkoutSession.source (line 223)
+      - UnifiedWorkoutRecord.source (line 1169)
+      All types now consistent with canonical WorkoutSource = 'assigned' | 'self'
+  - task: "Slice 1: Fix resume hero source-aware routing"
+    files: [components/workout/resume-hero-card.tsx]
+    details: |
+      Fixed handleResume() to route correctly:
+      - Assigned: /workout/[id]?source=assigned&assignedWorkoutId=[id]
+      - Self: /workout/[id]?source=self
+      Prevents assigned workouts from resuming as self workouts
+  - task: "Created comprehensive NAV_FLOW.md documentation"
+    files: [NAV_FLOW.md]
+    details: |
+      Mapped all workout flows with file:line citations:
+      - Entry points (self vs assigned)
+      - Active session storage structure
+      - Resume hero detection and routing
+      - Completion dataflow (self vs assigned paths)
+      - Source discrimination call-sites (12 locations)
+      - Paths progression system
+
+blockers:
+  - "Option 2 implementation requires understanding existing persistence layer collision risks"
+  - "Need to audit SQLite active_workout_state table schema and indexes"
+  - "Backward compatibility strategy needed for existing stored sessions"
+
+questions:
+  - "Should we migrate existing active workout keys immediately or lazy-migrate on read?"
+  - "Do we need to support both old and new key formats during transition period?"
+  - "What happens to in-flight workouts during migration?"
+
+decisions:
+  - architecture_option_2: |
+      Chose Option 2 (namespace storage keys) over Option 1 (prefix workoutKey values).
+      Rationale: Less invasive, keeps workoutKey as pure UUID, only changes persistence layer.
+      Storage keys become: @active_workout:{userId}:{source}:{workoutKey}
+  - type_consistency: |
+      Froze 'class' source type (removed from unions, not in DB schema).
+      All types now align with canonical WorkoutSource = 'assigned' | 'self'.
+      Class workouts deferred to Phase 2.
+  - resume_routing_fix: |
+      Resume hero now passes source + assignedWorkoutId query params.
+      Workout screen expects: source param to discriminate flow.
+
+findings:
+  - double_logging_verified_safe: |
+      Confirmed NO double-logging risk. Assigned and self workouts use separate call sites:
+      - Self: lib/services/sync/workout-sync.ts:142
+      - Assigned: lib/services/coach/programs.ts:847
+      Database constraint UNIQUE(user_id, workout_id, source) prevents duplicates.
+  - storage_key_collision_risk: |
+      Current keys: @active_workout:{userId}:{workoutKey}
+      Problem: Same workoutKey (UUID) could exist as both self and assigned.
+      Example collision:
+        - Self program: workout-123
+        - Assigned workout: workout-123
+        Both write to same key, last write wins.
+  - idempotency_correct: |
+      processed_workouts table has UNIQUE(user_id, workout_id, source).
+      handleWorkoutCompleted() checks insertProcessedWorkout() before processing.
+      Offline queue (PathsSyncPayload) preserves source field.
+  - summary_screen_source_aware: |
+      app/workout/[id]/summary.tsx:263 guards program loading:
+      const program = isAssignedWorkout ? null : await getProgram(String(id));
+      Assigned workouts do NOT attempt to load local programs.
+
+worked:
+  - "Using git diff to verify minimal changes (3 type lines in Slice 0, 1 function in Slice 1)"
+  - "Running npm test after each slice to catch regressions immediately"
+  - "Creating NAV_FLOW.md with file:line citations for all claims"
+  - "Asking user for explicit PROCEED signal between slices"
+
+failed:
+  - "Initially tried to read files directly but hooks suggested tldr for token efficiency (overridden for precision)"
+
+next:
+  - "Audit current persistence layer: AsyncStorage activeWorkoutKey() format (lib/db/storage.ts:863)"
+  - "Check SQLite active_workout_state table schema - does it have source column or index?"
+  - "Find all call sites that use getActiveWorkoutState/setActiveWorkoutState and verify source availability"
+  - "Design backward-compatible migration: read old keys (@active_workout:{userId}:{workoutKey}), write new keys (@active_workout:{userId}:{source}:{workoutKey})"
+  - "Update activeWorkoutKey() to include source parameter: activeWorkoutKey(userId, source, workoutKey)"
+  - "Update all callers of setActiveWorkoutState/getActiveWorkoutState to pass source"
+  - "Add migration logic in getLatestActiveWorkoutState() to check both old and new key formats"
+  - "Update clearActiveWorkoutState() to handle both formats during transition"
+  - "Write implementation_plan.md with exact files, functions, and verification steps"
+  - "Stop for user review (BlockedOnUser=true) before implementing"
+
+files:
+  created:
+    - NAV_FLOW.md
+  modified:
+    - lib/hooks/use-pending-workout.ts (line 30 - removed 'class' from source type)
+    - lib/db/storage.ts (lines 223, 1169 - removed 'class' from source types)
+    - components/workout/resume-hero-card.tsx (lines 58-69 - source-aware routing)
+
+context:
+  branch: audit/2026-01-16-workoutkey
+  git_status: "On branch audit/2026-01-16-workoutkey with unstaged changes"
+  test_status: "16/16 tests passing in workout-flow.test.tsx"
+  typescript_errors: "127 pre-existing errors (Supabase Deno functions, icons) - no new errors"
+
+call_sites_mapped:
+  storage_writes:
+    - app/workout/[id].tsx:1253 (setActiveWorkoutState with source: isAssignedWorkout ? 'assigned' : 'self')
+  storage_reads:
+    - lib/hooks/use-pending-workout.ts:48 (getLatestActiveWorkoutState - needs source-aware lookup)
+    - app/workout/[id]/summary.tsx:553 (clearActiveWorkoutState)
+  key_generation:
+    - lib/db/storage.ts:863 (activeWorkoutKey function - currently 2 params, needs source param)
+
+relevant_docs:
+  - NAV_FLOW.md (comprehensive flow documentation with all file:line references)
+  - .agent/NAVIGATION_MAP.md (original baseline navigation map)
+  - CLAUDE.md (architecture overview)
+  - supabase/migrations/20260116_paths_progression.sql (processed_workouts schema)
+
+architecture_notes:
+  current_storage_keys: |
+    AsyncStorage: @active_workout:{userId}:{workoutKey}
+    Function: activeWorkoutKey(userId: string, workoutKey: string)
+    Problem: No source discrimination, collision risk
+
+  target_storage_keys: |
+    AsyncStorage: @active_workout:{userId}:{source}:{workoutKey}
+    Function: activeWorkoutKey(userId: string, source: WorkoutSource, workoutKey: string)
+    Benefit: Source namespace prevents collisions
+
+  migration_strategy: |
+    1. Read: Check new format first, fallback to old format
+    2. Write: Always use new format
+    3. Cleanup: Remove old keys after successful migration
+    4. Transition: Support both formats for N days/sessions
+
+verification_checklist:
+  - "TypeScript compilation: npx tsc --noEmit (no new errors)"
+  - "Integration tests: npm test -- __tests__/integration/workout-flow.test.tsx (16/16 passing)"
+  - "Manual QA: Resume self workout (verify correct program loads)"
+  - "Manual QA: Resume assigned workout (verify correct assigned workout loads, no program lookup)"
+  - "Manual QA: Start self workout, force quit, start assigned workout with same UUID, verify no collision"

@@ -1,10 +1,12 @@
 import { GymBusynessPrompt } from '@/components/gym/gym-busyness-prompt';
+import { PathProgressCard } from '@/components/paths/PathProgressCard';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { PRCelebration } from '@/components/workout/pr-celebration';
 import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useUserId } from '@/lib/context/auth-context';
 import { usePreferences } from '@/lib/context/preferences-context';
 import {
   clearActiveWorkoutState,
@@ -18,8 +20,11 @@ import {
   saveWorkoutToHistory,
   upsertProgramTemplate
 } from '@/lib/db/storage';
-import { detectPRsLocal, type DetectedPR } from '@/lib/services/workout/pr-detector-local';
+import { completeWorkout } from '@/lib/services/coach';
+import { getCachedWorkoutById, isOnline, queueWorkoutCompletion, startNetworkMonitoring } from '@/lib/services/offline/workout-cache';
 import { invalidateStatsCache } from '@/lib/services/stats';
+import { detectPRsLocal, type DetectedPR } from '@/lib/services/workout/pr-detector-local';
+import { supabase } from '@/lib/supabase/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
@@ -49,15 +54,21 @@ const DIFFICULTY_CONFIG = {
 };
 
 export default function WorkoutSummaryScreen() {
-  const { id, week, day, duration } = useLocalSearchParams();
+  const { id, week, day, duration, source, workoutId } = useLocalSearchParams();
   const workoutWeek = week ? parseInt(week as string) : undefined;
   const workoutDay = day ? parseInt(day as string) : undefined;
   const workoutDuration = duration ? parseInt(duration as string) : 0;
+  const sourceParam = Array.isArray(source) ? source[0] : source;
+  const workoutIdParam = Array.isArray(workoutId) ? workoutId[0] : workoutId;
+  const isAssignedWorkout = sourceParam === 'assigned';
+  const assignedWorkoutId = isAssignedWorkout ? (workoutIdParam ?? String(id)) : undefined;
+  const workoutKey = assignedWorkoutId ?? String(id);
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { homeGym } = usePreferences();
+  const userId = useUserId();
 
   const [difficulty, setDifficulty] = useState<Difficulty | null>(null);
   const [notes, setNotes] = useState('');
@@ -69,6 +80,7 @@ export default function WorkoutSummaryScreen() {
   const [workoutExercises, setWorkoutExercises] = useState<any[]>([]);
   const [actualSessionData, setActualSessionData] = useState<any | null>(null);
   const [detectedPRs, setDetectedPRs] = useState<DetectedPR[]>([]);
+  const [pathProgress, setPathProgress] = useState<{ xpGained: number; nodesCompleted: string[] } | null>(null);
   const prSound = useAudioPlayer('https://cdn.freesound.org/previews/411/411089_5121236-lq.mp3');
 
   // Animations
@@ -104,6 +116,67 @@ export default function WorkoutSummaryScreen() {
 
   useEffect(() => {
     (async () => {
+      if (isAssignedWorkout) {
+        setIsQuickWorkout(false);
+        const source = isAssignedWorkout ? 'assigned' : 'self';
+        const activeState = await getActiveWorkoutState(userId, source, workoutKey);
+        if (activeState?.session) {
+          setActualSessionData(activeState.session);
+          try {
+            const prs = await detectPRsLocal(activeState.session, userId);
+            if (prs.length > 0) {
+              setDetectedPRs(prs);
+            }
+          } catch (prError) {
+            console.log('[Summary] PR detection error:', prError);
+          }
+        }
+
+        let assignedWorkout = await getCachedWorkoutById(workoutKey);
+        if (!assignedWorkout) {
+          const { data, error } = await supabase
+            .from('assigned_workouts')
+            .select('*')
+            .eq('id', workoutKey)
+            .single();
+          if (!error && data) {
+            assignedWorkout = {
+              id: data.id,
+              assignmentId: (data.assignment_id as string) || '',
+              athleteUserId: (data.athlete_user_id as string) || userId,
+              scheduledDate: new Date(data.scheduled_date as string),
+              scheduledAt: data.scheduled_at ? new Date(data.scheduled_at as string) : undefined,
+              scheduledTime: data.scheduled_time ? new Date(data.scheduled_time as string) : undefined,
+              weekNumber: (data.week_number as number) || 1,
+              dayNumber: (data.day_number as number) || 1,
+              workoutName: (data.workout_name as string) || 'Assigned Workout',
+              exercises: typeof data.exercises === 'string' ? JSON.parse(data.exercises) : (data.exercises as any[] || []),
+              status: (data.status as any) || 'pending',
+              startedAt: data.started_at ? new Date(data.started_at as string) : undefined,
+              completedAt: data.completed_at ? new Date(data.completed_at as string) : undefined,
+              skippedReasonCode: data.skipped_reason_code as string | undefined,
+              skippedReasonText: data.skipped_reason_text as string | undefined,
+              skippedAt: data.skipped_at ? new Date(data.skipped_at as string) : undefined,
+              actualResults: (data.actual_results as Record<string, unknown>) || {},
+              athleteFeedback: data.athlete_feedback as string | undefined,
+              athleteRating: data.athlete_rating as number | undefined,
+              coachFeedback: data.coach_feedback as string | undefined,
+              reminderSent: data.reminder_sent as boolean | undefined,
+              incompleteNotificationSent: data.incomplete_notification_sent as boolean | undefined,
+              createdAt: data.created_at ? new Date(data.created_at as string) : new Date(),
+              updatedAt: data.updated_at ? new Date(data.updated_at as string) : new Date(),
+            };
+          }
+        }
+
+        if (assignedWorkout?.exercises) {
+          setWorkoutExercises(assignedWorkout.exercises as any[]);
+          setTemplateName(assignedWorkout.workoutName || 'Assigned Workout');
+        }
+
+        return;
+      }
+
       const program = await getProgram(String(id));
       if (!program) return;
 
@@ -112,7 +185,7 @@ export default function WorkoutSummaryScreen() {
       setIsQuickWorkout(isQuick);
 
       // Get the ACTUAL workout session data (before it gets cleared)
-      const activeState = await getActiveWorkoutState(program.userId, program.id);
+      const activeState = await getActiveWorkoutState(program.userId, 'self', program.id);
       if (activeState?.session) {
         setActualSessionData(activeState.session);
 
@@ -141,7 +214,7 @@ export default function WorkoutSummaryScreen() {
       const edits = await getPendingWorkoutEdits(program.userId, program.id);
       setTemplateEdits(edits);
     })();
-  }, [id, workoutWeek, workoutDay]);
+  }, [id, workoutWeek, workoutDay, isAssignedWorkout, assignedWorkoutId, userId]);
 
   useEffect(() => {
     if (detectedPRs.length === 0) return;
@@ -152,6 +225,27 @@ export default function WorkoutSummaryScreen() {
       // Ignore audio errors
     }
   }, [detectedPRs.length, prSound]);
+
+  // Load path progress from cache (set by handler after workout completion)
+  useEffect(() => {
+    (async () => {
+      try {
+        const { getLastResultForWorkout } = await import('@/lib/services/offline/paths-cache');
+        const result = await getLastResultForWorkout(
+          isAssignedWorkout ? workoutKey : String(id),
+          isAssignedWorkout ? 'assigned' : undefined
+        );
+        if (result) {
+          setPathProgress({
+            xpGained: result.xpGained,
+            nodesCompleted: result.nodesCompleted,
+          });
+        }
+      } catch (error) {
+        console.log('[Summary] Path progress load error:', error);
+      }
+    })();
+  }, [id, isAssignedWorkout, workoutKey]);
 
   const formatDuration = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -166,90 +260,216 @@ export default function WorkoutSummaryScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSaving(true);
 
-    const program = await getProgram(String(id));
-    if (program) {
-      if (workoutWeek !== undefined && workoutDay !== undefined) {
-        await markWorkoutCompleted(program.id, workoutWeek, workoutDay, workoutDuration);
-      }
+    const assignedKey = isAssignedWorkout ? workoutKey : undefined;
+    const program = isAssignedWorkout ? null : await getProgram(String(id));
+    if (!isAssignedWorkout && !program) {
+      setSaving(false);
+      return;
+    }
 
-      // Save to unified history with ACTUAL workout data
-      try {
-        // Use actual session data if available, otherwise fall back to template
-        const exerciseSource = actualSessionData?.exercises || workoutExercises;
-        let totalVolume = 0;
+    if (!isAssignedWorkout && workoutWeek !== undefined && workoutDay !== undefined && program) {
+      await markWorkoutCompleted(program.id, workoutWeek, workoutDay, workoutDuration);
+    }
 
-        const historyExercises = exerciseSource.map((ex: any) => {
-          // Check if this is actual session data (has sets array with isCompleted)
-          const isActualData = ex.sets && Array.isArray(ex.sets) && ex.sets[0]?.hasOwnProperty('isCompleted');
+    // Save to unified history with ACTUAL workout data
+    try {
+      // Use actual session data if available, otherwise fall back to template
+      const exerciseSource = actualSessionData?.exercises || workoutExercises;
+      let totalVolume = 0;
 
-          if (isActualData) {
-            // Use actual completed data
-            const completedSets = ex.sets.filter((s: any) => s.isCompleted);
-            const setsWithData = ex.sets.map((s: any) => ({
-              reps: s.actualReps || (typeof s.reps === 'number' ? s.reps : parseInt(s.reps) || 0),
-              weight: s.actualWeight || s.weight || 0,
-              isCompleted: s.isCompleted || false,
-              setType: s.setType,
-            }));
+      const historyExercises = exerciseSource.map((ex: any) => {
+        // Check if this is actual session data (has sets array with isCompleted)
+        const isActualData = ex.sets && Array.isArray(ex.sets) && ex.sets[0]?.hasOwnProperty('isCompleted');
 
-            // Calculate best set (highest weight, or highest reps if no weight)
-            let bestSet = { reps: 0, weight: undefined as number | undefined };
-            completedSets.forEach((s: any) => {
-              const reps = s.actualReps || (typeof s.reps === 'number' ? s.reps : parseInt(s.reps) || 0);
-              const weight = s.actualWeight || s.weight;
-              if (weight && (!bestSet.weight || weight > bestSet.weight)) {
-                bestSet = { reps, weight };
-              } else if (!weight && reps > bestSet.reps) {
-                bestSet = { reps, weight: undefined };
-              }
-              // Add to total volume
-              if (weight && reps) {
-                totalVolume += weight * reps;
-              }
-            });
+        if (isActualData) {
+          // Use actual completed data
+          const completedSets = ex.sets.filter((s: any) => s.isCompleted);
+          const setsWithData = ex.sets.map((s: any) => ({
+            reps: s.actualReps || (typeof s.reps === 'number' ? s.reps : parseInt(s.reps) || 0),
+            weight: s.actualWeight || s.weight || 0,
+            isCompleted: s.isCompleted || false,
+            setType: s.setType,
+          }));
 
-            return {
-              name: ex.name,
-              setsCompleted: completedSets.length,
-              totalSets: ex.sets.length,
-              bestSet: bestSet.reps > 0 ? bestSet : undefined,
-              sets: setsWithData,
-            };
+          // Calculate best set (highest weight, or highest reps if no weight)
+          let bestSet = { reps: 0, weight: undefined as number | undefined };
+          completedSets.forEach((s: any) => {
+            const reps = s.actualReps || (typeof s.reps === 'number' ? s.reps : parseInt(s.reps) || 0);
+            const weight = s.actualWeight || s.weight;
+            if (weight && (!bestSet.weight || weight > bestSet.weight)) {
+              bestSet = { reps, weight };
+            } else if (!weight && reps > bestSet.reps) {
+              bestSet = { reps, weight: undefined };
+            }
+            // Add to total volume
+            if (weight && reps) {
+              totalVolume += weight * reps;
+            }
+          });
+
+          return {
+            name: ex.name,
+            setsCompleted: completedSets.length,
+            totalSets: ex.sets.length,
+            bestSet: bestSet.reps > 0 ? bestSet : undefined,
+            sets: setsWithData,
+          };
+        }
+        // Fallback to template data
+        return {
+          name: ex.name,
+          setsCompleted: ex.sets || 3,
+          totalSets: ex.sets || 3,
+          bestSet: { reps: parseInt(ex.reps) || 10, weight: undefined },
+        };
+      });
+
+      const buildAssignedResults = () => {
+        if (actualSessionData?.exercises?.length) {
+          return {
+            exercises: actualSessionData.exercises.map((ex: any) => ({
+              exerciseName: ex.name,
+              sets: ex.sets.map((s: any) => ({
+                weight: s.actualWeight ?? s.weight,
+                reps: s.actualReps ?? s.reps,
+                completed: s.isCompleted ?? false,
+              })),
+            })),
+          };
+        }
+
+        return {
+          exercises: historyExercises.map((ex) => ({
+            exerciseName: ex.name,
+            sets: (ex.sets || []).map((s) => ({
+              weight: s.weight,
+              reps: s.reps,
+              completed: s.isCompleted ?? true,
+            })),
+          })),
+        };
+      };
+
+      if (isAssignedWorkout && assignedKey) {
+        const feedback = notes.trim() || undefined;
+        const rating = difficulty
+          ? { easy: 5, moderate: 4, challenging: 3, very_hard: 2 }[difficulty]
+          : undefined;
+        const resultsPayload = buildAssignedResults();
+        const completedAt = new Date();
+        let needsLocalPaths = false;
+
+        try {
+          const online = await isOnline();
+          if (online) {
+            const completion = await completeWorkout(assignedKey, resultsPayload, feedback, rating);
+            if (!completion.success) {
+              await queueWorkoutCompletion(assignedKey, resultsPayload, feedback, rating);
+              needsLocalPaths = true;
+            }
           } else {
-            // Fallback to template data
-            return {
-              name: ex.name,
-              setsCompleted: ex.sets || 3,
-              totalSets: ex.sets || 3,
-              bestSet: { reps: parseInt(ex.reps) || 10, weight: undefined },
-            };
+            await queueWorkoutCompletion(assignedKey, resultsPayload, feedback, rating);
+            needsLocalPaths = true;
           }
-        });
+        } catch (completionError) {
+          console.warn('[Summary] Assigned completion error:', completionError);
+          await queueWorkoutCompletion(assignedKey, resultsPayload, feedback, rating);
+          needsLocalPaths = true;
+        }
 
-        await saveWorkoutToHistory({
-          type: isQuickWorkout ? 'quick' : 'program',
-          programId: isQuickWorkout ? undefined : program.id,
-          programName: isQuickWorkout ? undefined : program.name,
-          workoutName: templateName || program.name,
-          week: workoutWeek,
-          day: workoutDay,
-          completedAt: new Date().toISOString(),
-          durationSeconds: workoutDuration,
-          exercises: historyExercises,
-          userId: program.userId,
-          difficulty: difficulty || undefined,
-          notes: notes.trim() || undefined,
-          totalVolume: totalVolume > 0 ? totalVolume : undefined,
-          gymId: homeGym?.id,
-          gymName: homeGym?.name,
-        });
-        // Invalidate stats cache so Stats tab shows fresh data
-        invalidateStatsCache();
-      } catch (historyError) {
-        console.error('Error saving to history:', historyError);
+        if (needsLocalPaths) {
+          try {
+            const { buildWorkoutCompletedEvent, handleWorkoutCompleted } = await import('@/lib/services/paths/handle-workout-completed');
+            const pathExercises = (resultsPayload as { exercises?: Array<{ exerciseName: string; sets: Array<{ weight?: number; reps?: number; completed?: boolean }> }> }).exercises ?? [];
+            const event = buildWorkoutCompletedEvent({
+              userId,
+              workoutId: assignedKey,
+              source: 'assigned',
+              originTable: 'assigned_workouts',
+              completedAt,
+              exercises: pathExercises.map(ex => ({
+                name: ex.exerciseName,
+                sets: ex.sets.map(s => ({
+                  weight: s.weight,
+                  reps: s.reps,
+                  isCompleted: s.completed ?? true,
+                })),
+              })),
+            });
+            await handleWorkoutCompleted(event);
+          } catch (pathsError) {
+            console.warn('[Summary] Assigned paths processing failed:', pathsError);
+          }
+        }
+
+        startNetworkMonitoring(completeWorkout);
       }
 
-      await clearActiveWorkoutState(program.userId, program.id);
+      const savedRecord = await saveWorkoutToHistory({
+        type: isQuickWorkout ? 'quick' : 'program',
+        source: isAssignedWorkout ? 'assigned' : 'self',
+        externalWorkoutId: assignedKey ?? undefined,
+        programId: isAssignedWorkout || isQuickWorkout ? undefined : program!.id,
+        programName: isAssignedWorkout || isQuickWorkout ? undefined : program!.name,
+        workoutName: templateName || program?.name || 'Workout',
+        week: workoutWeek,
+        day: workoutDay,
+        completedAt: new Date().toISOString(),
+        durationSeconds: workoutDuration,
+        exercises: historyExercises,
+        userId: isAssignedWorkout ? userId : program!.userId,
+        difficulty: difficulty || undefined,
+        notes: notes.trim() || undefined,
+        totalVolume: totalVolume > 0 ? totalVolume : undefined,
+        gymId: homeGym?.id,
+        gymName: homeGym?.name,
+      });
+
+      // Load path progress from cache after sync completes
+      // The sync and path handler run async, so we poll for the result
+      try {
+        const progressKey = isAssignedWorkout ? (assignedKey ?? savedRecord.id) : savedRecord.id;
+        const progressSource = isAssignedWorkout ? 'assigned' : 'self';
+        console.log('[Summary] Loading path progress, key:', progressKey, progressSource);
+        const { getLastResultForWorkout } = await import('@/lib/services/offline/paths-cache');
+
+        // Poll for up to 3 seconds (handler runs async)
+        let result = null;
+        for (let i = 0; i < 15; i++) {
+          await new Promise(resolve => setTimeout(resolve, 200));
+          result = await getLastResultForWorkout(progressKey, progressSource);
+          if (result && result.xpGained > 0) {
+            console.log('[Summary] Found path progress on attempt', i + 1);
+            break;
+          }
+        }
+
+        console.log('[Summary] Path progress result:', result);
+        if (result && (result.xpGained > 0 || result.nodesCompleted.length > 0)) {
+          console.log('[Summary] Setting path progress:', result.xpGained, result.nodesCompleted);
+          setPathProgress({
+            xpGained: result.xpGained,
+            nodesCompleted: result.nodesCompleted,
+          });
+          // Give user a moment to see the XP
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          console.log('[Summary] No path progress found after polling');
+        }
+      } catch (e) {
+        console.log('[Summary] Path progress post-save load error:', e);
+      }
+
+      // Invalidate stats cache so Stats tab shows fresh data
+      invalidateStatsCache();
+    } catch (historyError) {
+      console.error('Error saving to history:', historyError);
+    }
+
+    if (isAssignedWorkout) {
+      await clearActiveWorkoutState(userId, 'assigned', workoutKey);
+    } else if (program) {
+      await clearActiveWorkoutState(program.userId, 'self', program.id);
       await clearPendingWorkoutEdits(program.userId, program.id);
 
       // For quick workouts, optionally delete the temporary program
@@ -328,15 +548,20 @@ export default function WorkoutSummaryScreen() {
 
   const handleDiscard = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const program = await getProgram(String(id));
-    if (program) {
-      await clearActiveWorkoutState(program.userId, program.id);
-      await clearPendingWorkoutEdits(program.userId, program.id);
+    if (isAssignedWorkout) {
+      await clearActiveWorkoutState(userId, 'assigned', workoutKey);
+    } else {
+      const program = await getProgram(String(id));
+      if (program) {
+        await clearActiveWorkoutState(program.userId, 'self', program.id);
+        await clearPendingWorkoutEdits(program.userId, program.id);
+      }
     }
     router.replace('/(tabs)');
   };
 
   const applyEditsToTemplate = async () => {
+    if (isAssignedWorkout) return;
     const program = await getProgram(String(id));
     if (!program || !templateEdits) return;
     await upsertProgramTemplate({
@@ -407,6 +632,16 @@ export default function WorkoutSummaryScreen() {
             colors={colors}
           />
         </Animated.View>
+
+        {/* Path Progress Card */}
+        {pathProgress && pathProgress.xpGained > 0 && (
+          <View style={styles.section}>
+            <PathProgressCard
+              xpGained={pathProgress.xpGained}
+              nodesCompleted={pathProgress.nodesCompleted}
+            />
+          </View>
+        )}
 
         <Animated.View style={{ transform: [{ translateY: contentTranslateY }], opacity: statsOpacity }}>
           {/* Difficulty Rating */}

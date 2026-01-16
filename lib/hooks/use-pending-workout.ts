@@ -9,7 +9,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { useUserId } from '@/lib/context/auth-context';
 import {
   clearActiveWorkoutState,
@@ -19,7 +18,8 @@ import {
 
 export interface PendingWorkout {
   id: string;
-  programId: string;
+  workoutKey: string;
+  programId?: string;
   userId: string;
   name: string;
   startedAt: string;
@@ -27,6 +27,8 @@ export interface PendingWorkout {
   completedSets: number;
   totalSets: number;
   status: 'in_progress' | 'paused';
+  source: 'self' | 'assigned';
+  assignedWorkoutId?: string;
 }
 
 interface UsePendingWorkoutResult {
@@ -42,13 +44,6 @@ export function usePendingWorkout(): UsePendingWorkoutResult {
   const userId = useUserId();
 
   const checkForPendingWorkout = useCallback(async () => {
-    // Only check if Resume Hero feature is enabled
-    if (!isFeatureEnabled('resume_hero')) {
-      setPendingWorkout(null);
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const latest = await getLatestActiveWorkoutState(userId);
       if (!latest?.state?.session) {
@@ -75,9 +70,15 @@ export function usePendingWorkout(): UsePendingWorkoutResult {
         return;
       }
 
+      const source = session.source ?? 'self';
+      const workoutKey = latest.workoutKey;
+      const assignedWorkoutId =
+        source === 'assigned' ? (session.assignedWorkoutId ?? workoutKey) : undefined;
+
       setPendingWorkout({
-        id: latest.programId,
-        programId: latest.programId,
+        id: workoutKey,
+        workoutKey,
+        programId: source === 'self' ? (session.programId ?? workoutKey) : session.programId,
         userId,
         name: sessionName,
         startedAt: session.startTime || new Date().toISOString(),
@@ -85,8 +86,10 @@ export function usePendingWorkout(): UsePendingWorkoutResult {
         completedSets,
         totalSets,
         status,
+        source,
+        assignedWorkoutId,
       });
-      console.log('[PendingWorkout] Found pending session:', latest.programId);
+      console.log('[PendingWorkout] Found pending session:', workoutKey);
     } catch (error) {
       console.error('[PendingWorkout] Error checking for pending workout:', error);
     } finally {
@@ -98,10 +101,16 @@ export function usePendingWorkout(): UsePendingWorkoutResult {
     if (!pendingWorkout) return;
 
     try {
-      await clearActiveWorkoutState(pendingWorkout.userId, pendingWorkout.programId);
-      await clearPendingWorkoutEdits(pendingWorkout.userId, pendingWorkout.programId);
+      await clearActiveWorkoutState(
+        pendingWorkout.userId,
+        pendingWorkout.source,
+        pendingWorkout.workoutKey
+      );
+      if (pendingWorkout.programId) {
+        await clearPendingWorkoutEdits(pendingWorkout.userId, pendingWorkout.programId);
+      }
       setPendingWorkout(null);
-      console.log('[PendingWorkout] Discarded pending workout:', pendingWorkout.programId);
+      console.log('[PendingWorkout] Discarded pending workout:', pendingWorkout.workoutKey);
     } catch (error) {
       console.error('[PendingWorkout] Error discarding workout:', error);
     }
