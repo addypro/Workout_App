@@ -4,63 +4,17 @@
  * Layout for the coach programs sub-stack.
  */
 
+import { Stack } from 'expo-router';
+
+import { BackButton } from '@/components/navigation/back-button';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Ionicons } from '@expo/vector-icons';
-import { Stack, useRouter } from 'expo-router';
-import { Platform, Text, TouchableOpacity } from 'react-native';
+
+const COACH_FALLBACK = '/(tabs)/coach';
 
 export default function ProgramsLayout() {
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
-    const router = useRouter();
-
-    const BackButton = ({ label = 'Back' }: { label?: string }) => (
-        <TouchableOpacity
-            onPress={() => {
-                if (router.canGoBack()) {
-                    router.back();
-                } else {
-                    router.replace('/(tabs)/coach');
-                }
-            }}
-            style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginLeft: Platform.OS === 'ios' ? -8 : 0,
-                paddingVertical: 8,
-                paddingRight: 16,
-            }}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-            <Ionicons
-                name={Platform.OS === 'ios' ? 'chevron-back' : 'arrow-back'}
-                size={Platform.OS === 'ios' ? 28 : 24}
-                color={colors.tint}
-            />
-            {Platform.OS === 'ios' && (
-                <Text style={{ color: colors.tint, fontSize: 17, marginLeft: -4 }}>
-                    {label}
-                </Text>
-            )}
-        </TouchableOpacity>
-    );
-
-    const CloseButton = () => (
-        <TouchableOpacity
-            onPress={() => {
-                if (router.canGoBack()) {
-                    router.back();
-                } else {
-                    router.replace('/(tabs)/coach');
-                }
-            }}
-            style={{ padding: 8 }}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-            <Ionicons name="close" size={24} color={colors.text} />
-        </TouchableOpacity>
-    );
 
     return (
         <Stack
@@ -87,7 +41,7 @@ export default function ProgramsLayout() {
                 name="index"
                 options={{
                     title: 'My Programs',
-                    headerLeft: () => <BackButton label="Coach" />,
+                    headerLeft: () => <BackButton label="Coach" fallbackRoute={COACH_FALLBACK} />,
                 }}
             />
 

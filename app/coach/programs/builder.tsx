@@ -542,6 +542,15 @@ export default function ProgramBuilderScreen() {
                                     Rest Days
                                 </Text>
                             </View>
+                            <View style={[styles.statDivider, { backgroundColor: colors.border }]} />
+                            <View style={styles.stat}>
+                                <Text style={[styles.statValue, { color: colors.textSecondary, fontSize: 16 }]}>
+                                    {endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </Text>
+                                <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+                                    Ends
+                                </Text>
+                            </View>
                         </View>
 
                         {/* Calendar */}

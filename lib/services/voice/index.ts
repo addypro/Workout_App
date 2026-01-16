@@ -1,147 +1,71 @@
 /**
  * Voice Services
  * Main exports for speech-to-workout feature
+ * 
+ * Uses Direct-to-Intent (Gemini Multimodal) - bypasses traditional STT entirely
  */
 
 // Types
 export type {
-  STTResult,
-  STTConfig,
-  STTState,
-  STTError,
-  VoiceCommandType,
-  ParsedExerciseIntent,
-  SupersetIntent,
-  VoiceParseResult,
-  ClarificationType,
   ClarificationOption,
-  ClarificationRequest,
+  ClarificationRequest, ClarificationType, ParsedExerciseIntent, STTConfig, STTError, STTResult, STTState, SupersetIntent, VoiceCommandType, VoiceParseResult
 } from './types';
 
-// Native STT (expo-speech-recognition)
-export { NativeSTTService, getNativeSTTService, useNativeSTT } from './native-stt';
-
-// Whisper STT (recommended, best accuracy for gym)
-export {
-  WhisperSTTService,
-  getWhisperSTTService,
-  preloadWhisperModel,
-  predownloadWhisperModel,
-  unloadWhisperModel,
-  isWhisperModelDownloaded,
-  WHISPER_MODELS,
-  DEFAULT_MODEL as DEFAULT_WHISPER_MODEL,
-} from './whisper-stt';
-export type { WhisperModel, WhisperSTTConfig } from './whisper-stt';
-
-// Vosk Offline STT (lighter alternative)
-export {
-  VoskSTTService,
-  getVoskSTTService,
-  preloadVoskModel,
-  unloadVoskModel,
-} from './vosk-stt';
-
 // Parsing
-export { parseVoiceCommand, generateClarificationRequest, setWorkoutContext } from './enhanced-parser';
+export { generateClarificationRequest, parseVoiceCommand, setWorkoutContext } from './enhanced-parser';
 
 // Intent Mapping (Voice-First Exercise Matching)
 export {
-  matchVoiceIntent,
-  getClarificationOptions,
   getAllIntentCommands,
-  getAllIntentExercises,
-  VOICE_INTENTS,
-  type VoiceIntent,
-  type IntentMatchResult,
+  getAllIntentExercises, getClarificationOptions, matchVoiceIntent, VOICE_INTENTS, type IntentMatchResult, type VoiceIntent
 } from './intent-mapping';
 
 // UFIRE - Unified Fitness Intent & Recommendation Engine
 export {
-  scoreExercises,
-  quickScore,
-  explainScore,
-  UFIRE_WEIGHTS,
-  CONFIDENCE_THRESHOLDS,
-  recordExercisePerformed,
-  recordWorkoutExercises,
-  getExerciseFrequencyScores,
-  getTopExercises,
-  getContextualFlowScore,
-  predictNextExercise,
-  inferWorkoutType,
-  type ExerciseCandidate,
+  CONFIDENCE_THRESHOLDS, explainScore, getContextualFlowScore, getExerciseFrequencyScores,
+  getTopExercises, inferWorkoutType, predictNextExercise, quickScore, recordExercisePerformed,
+  recordWorkoutExercises, scoreExercises, UFIRE_WEIGHTS, type ExerciseCandidate,
   type ScoredExercise,
   type UFIREResult,
-  type WorkoutContext,
+  type WorkoutContext
 } from './ufire';
 
 // Caching
 export {
-  getCachedResult,
-  cacheResult,
-  getCachedLLMResponse,
-  clearCache,
-  getCacheStats,
+  cacheResult, clearCache, getCachedLLMResponse, getCachedResult, getCacheStats
 } from './cache';
 
 // Vocabulary
 export {
-  getVocabularyBias,
-  getCommandVocabulary,
-  getPriorityExercises,
-  clearVocabularyCache,
+  clearVocabularyCache, getCommandVocabulary,
+  getPriorityExercises, getVocabularyBias
 } from './vocabulary';
 
 // Local Embeddings (semantic search)
 export {
-  initializeEmbeddings,
-  searchSimilar,
-  findBestMatch,
-  isInitialized as isEmbeddingsInitialized,
-  getEmbeddingStats,
-  clearEmbeddingsCache,
-  reindexEmbeddings,
-  type ExerciseEmbedding,
-  type SimilarityResult,
+  clearEmbeddingsCache, findBestMatch, getEmbeddingStats, initializeEmbeddings, isInitialized as isEmbeddingsInitialized, reindexEmbeddings, searchSimilar, type ExerciseEmbedding,
+  type SimilarityResult
 } from './embeddings';
 
-// Coordinator
+// Direct-to-Intent (Gemini Multimodal - RECOMMENDED)
+// This is the primary approach - bypasses STT entirely
 export {
-  VoiceCoordinator,
-  VoiceCoordinatorConfig,
-  VoiceCoordinatorState,
-  getVoiceCoordinator,
-  resetVoiceCoordinator,
-  type STTEngine,
-} from './coordinator';
-
-// Direct-to-Intent (Gemini Multimodal - NEW!)
-// This is the recommended approach - bypasses STT entirely
-export {
-  voiceDirectService,
-  VoiceDirectService,
-  checkVoicePermission,
-  requestVoicePermission,
+  cancelVoiceRecording, checkVoicePermission, extractWorkoutFromVoice, requestVoicePermission,
   startVoiceRecording,
-  stopVoiceRecording,
-  cancelVoiceRecording,
-  extractWorkoutFromVoice,
+  stopVoiceRecording, VoiceDirectService, voiceDirectService
 } from './voice-direct-service';
 
 // Direct-to-Intent Types
 export type {
-  RecordingState,
-  RecordingProgress,
-  AudioFile,
-  AudioUploadRequest,
-  AudioContext,
-  ExtractedWorkoutFromAudio,
-  ExtractedExercise,
-  ExtractedSuperset,
-  DirectIntentResult,
-  DirectIntentError,
-  UseDirectVoiceReturn,
+  AudioContext, AudioFile,
+  AudioUploadRequest, DirectIntentError, DirectIntentResult, ExtractedExercise,
+  ExtractedSuperset, ExtractedWorkoutFromAudio, RecordingProgress, RecordingState, UseDirectVoiceReturn
 } from './direct-intent-types';
 
 export { AUDIO_CONFIG } from './direct-intent-types';
+
+// Modifier-Aware Matching (Robust exercise resolution)
+export {
+  extractComponents, matchExerciseRobust, resolveExerciseName,
+  type ExerciseComponents, type MatchResult
+} from './modifier-matcher';

@@ -1,3 +1,4 @@
+import { GymBusynessPrompt } from '@/components/gym/gym-busyness-prompt';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -18,7 +19,9 @@ import {
   upsertProgramTemplate
 } from '@/lib/db/storage';
 import { detectPRsLocal, type DetectedPR } from '@/lib/services/workout/pr-detector-local';
+import { invalidateStatsCache } from '@/lib/services/stats';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -66,6 +69,7 @@ export default function WorkoutSummaryScreen() {
   const [workoutExercises, setWorkoutExercises] = useState<any[]>([]);
   const [actualSessionData, setActualSessionData] = useState<any | null>(null);
   const [detectedPRs, setDetectedPRs] = useState<DetectedPR[]>([]);
+  const prSound = useAudioPlayer('https://cdn.freesound.org/previews/411/411089_5121236-lq.mp3');
 
   // Animations
   const checkScale = useRef(new Animated.Value(0)).current;
@@ -139,6 +143,16 @@ export default function WorkoutSummaryScreen() {
     })();
   }, [id, workoutWeek, workoutDay]);
 
+  useEffect(() => {
+    if (detectedPRs.length === 0) return;
+    try {
+      prSound?.seekTo(0);
+      prSound?.play();
+    } catch {
+      // Ignore audio errors
+    }
+  }, [detectedPRs.length, prSound]);
+
   const formatDuration = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
@@ -175,6 +189,7 @@ export default function WorkoutSummaryScreen() {
               reps: s.actualReps || (typeof s.reps === 'number' ? s.reps : parseInt(s.reps) || 0),
               weight: s.actualWeight || s.weight || 0,
               isCompleted: s.isCompleted || false,
+              setType: s.setType,
             }));
 
             // Calculate best set (highest weight, or highest reps if no weight)
@@ -228,6 +243,8 @@ export default function WorkoutSummaryScreen() {
           gymId: homeGym?.id,
           gymName: homeGym?.name,
         });
+        // Invalidate stats cache so Stats tab shows fresh data
+        invalidateStatsCache();
       } catch (historyError) {
         console.error('Error saving to history:', historyError);
       }
@@ -251,7 +268,7 @@ export default function WorkoutSummaryScreen() {
     }
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    router.push('/');
+    router.replace('/(tabs)');
   };
 
   const handleSaveAsTemplate = async () => {
@@ -277,7 +294,7 @@ export default function WorkoutSummaryScreen() {
             exercises: workoutExercises.map((ex: any, idx: number) => ({
               name: ex.name,
               sets: ex.sets || 3,
-              reps: ex.reps || '8-12',
+              reps: ex.reps || '8',
               restTime: ex.restTime || 90,
               notes: ex.notes || '',
               order: idx,
@@ -316,7 +333,7 @@ export default function WorkoutSummaryScreen() {
       await clearActiveWorkoutState(program.userId, program.id);
       await clearPendingWorkoutEdits(program.userId, program.id);
     }
-    router.push('/');
+    router.replace('/(tabs)');
   };
 
   const applyEditsToTemplate = async () => {
@@ -362,6 +379,15 @@ export default function WorkoutSummaryScreen() {
           <View style={styles.section}>
             <PRCelebration prs={detectedPRs} />
           </View>
+        )}
+
+        {/* Gym Busyness Report - only if user has home gym */}
+        {homeGym && (
+          <GymBusynessPrompt
+            gymId={homeGym.id}
+            gymName={homeGym.name}
+            colors={colors}
+          />
         )}
 
         {/* Stats Cards */}

@@ -1,422 +1,933 @@
 /**
- * Login Screen
+ * Modern Login Screen
  *
- * Provides Sign in with Apple (iOS), email magic link, and guest mode.
- * Clean, minimal design with clear value proposition.
+ * High-fidelity login experience with:
+ * - Cascading entrance animations (Logo → Title → Form → Buttons)
+ * - Real-time Zod email validation with visual feedback
+ * - Apple Sign-In (iOS only), Magic Link, Guest mode
+ * - Dev mode for Coach/Athlete role testing
+ * - Inline error handling (no Alert.alert)
+ * - Full dark mode support
  *
- * DEV MODE: Includes test accounts for coach/athlete testing
+ * Animation Philosophy:
+ * - Elements cascade in with staggered delays (100ms each)
+ * - Spring physics for natural, organic motion
+ * - Loading states integrated into buttons, not full-screen spinners
  */
 
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-  ScrollView,
-  Alert,
-} from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+    Dimensions,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from 'react-native';
+import Animated, {
+    Easing,
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue,
+    withDelay,
+    withSpring,
+    withTiming
+} from 'react-native-reanimated';
 
-import { useAuth, UserRole } from '@/lib/context/auth-context';
+import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, Radius, Typography } from '@/constants/theme';
+import { useAuth, UserRole } from '@/lib/context/auth-context';
 
-export default function LoginScreen() {
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
-  const { signInWithApple, signInWithEmail, continueAsGuest, devModeLogin, isLoading } = useAuth();
+// Conditionally import Apple Authentication for iOS
+let AppleAuthentication: typeof import('expo-apple-authentication') | null = null;
+if (Platform.OS === 'ios') {
+    AppleAuthentication = require('expo-apple-authentication');
+}
 
-  const [email, setEmail] = useState('');
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const [isDevLoading, setIsDevLoading] = useState(false);
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-  const handleAppleSignIn = async () => {
-    await signInWithApple();
-  };
+// ============================================
+// EMAIL VALIDATION (simple regex instead of Zod)
+// ============================================
 
-  const handleEmailSignIn = async () => {
-    if (!email.trim() || !email.includes('@')) {
-      return;
-    }
-    setIsEmailLoading(true);
-    try {
-      await signInWithEmail(email.trim());
-    } finally {
-      setIsEmailLoading(false);
-    }
-  };
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(email: string): boolean {
+    return EMAIL_REGEX.test(email);
+}
 
-  const handleGuest = () => {
-    continueAsGuest();
-    router.back();
-  };
+type EmailValidationState = 'idle' | 'valid' | 'invalid';
 
-  const handleDevLogin = async (role: UserRole) => {
-    setIsDevLoading(true);
-    try {
-      await devModeLogin(role);
-      router.back();
-    } finally {
-      setIsDevLoading(false);
-    }
-  };
+// ============================================
+// ANIMATION CONSTANTS
+// ============================================
 
-  const handleClose = () => {
-    router.back();
-  };
+const SPRING_CONFIG = { damping: 18, stiffness: 120 };
+const STAGGER_DELAY = 100; // ms between each element
 
-  const styles = StyleSheet.create({
+// ============================================
+// ANIMATED FADE-IN COMPONENT
+// ============================================
+
+interface AnimatedElementProps {
+    delay: number;
+    children: React.ReactNode;
+    style?: any;
+}
+
+function AnimatedElement({ delay, children, style }: AnimatedElementProps) {
+    const progress = useSharedValue(0);
+
+    useEffect(() => {
+        progress.value = withDelay(
+            delay,
+            withSpring(1, SPRING_CONFIG)
+        );
+    }, [delay]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        opacity: interpolate(progress.value, [0, 1], [0, 1]),
+        transform: [
+            { translateY: interpolate(progress.value, [0, 1], [20, 0]) },
+        ],
+    }));
+
+    return (
+        <Animated.View style={[style, animatedStyle]}>
+            {children}
+        </Animated.View>
+    );
+}
+
+// ============================================
+// ANIMATED BUTTON WITH LOADING STATE
+// ============================================
+
+interface AnimatedButtonProps {
+    onPress: () => void;
+    isLoading: boolean;
+    disabled: boolean;
+    style: any;
+    textStyle: any;
+    icon?: string;
+    iconColor?: string;
+    label: string;
+    loadingColor?: string;
+    accessibilityLabel: string;
+}
+
+function AnimatedButton({
+    onPress,
+    isLoading,
+    disabled,
+    style,
+    textStyle,
+    icon,
+    iconColor,
+    label,
+    loadingColor = '#FFFFFF',
+    accessibilityLabel,
+}: AnimatedButtonProps) {
+    const scale = useSharedValue(1);
+    const loadingRotation = useSharedValue(0);
+
+    // Loading spinner animation
+    useEffect(() => {
+        if (isLoading) {
+            loadingRotation.value = withTiming(360, {
+                duration: 1000,
+                easing: Easing.linear,
+            });
+            const interval = setInterval(() => {
+                loadingRotation.value = 0;
+                loadingRotation.value = withTiming(360, {
+                    duration: 1000,
+                    easing: Easing.linear,
+                });
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [isLoading]);
+
+    const handlePressIn = useCallback(() => {
+        scale.value = withSpring(0.96, SPRING_CONFIG);
+    }, []);
+
+    const handlePressOut = useCallback(() => {
+        scale.value = withSpring(1, SPRING_CONFIG);
+    }, []);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+        opacity: disabled ? 0.5 : 1,
+    }));
+
+    const spinnerStyle = useAnimatedStyle(() => ({
+        transform: [{ rotate: `${loadingRotation.value}deg` }],
+    }));
+
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            disabled={disabled || isLoading}
+            activeOpacity={0.9}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: disabled || isLoading }}
+        >
+            <Animated.View style={[style, animatedStyle]}>
+                {isLoading ? (
+                    <Animated.View style={spinnerStyle}>
+                        <Ionicons name="reload" size={20} color={loadingColor} />
+                    </Animated.View>
+                ) : (
+                    <>
+                        {icon && <Ionicons name={icon as any} size={20} color={iconColor} />}
+                        <Text style={textStyle}>{label}</Text>
+                    </>
+                )}
+            </Animated.View>
+        </TouchableOpacity>
+    );
+}
+
+// ============================================
+// INLINE TOAST/ERROR COMPONENT
+// ============================================
+
+interface InlineToastProps {
+    message: string | null;
+    type: 'error' | 'success' | 'info';
+    onDismiss: () => void;
+}
+
+function InlineToast({ message, type, onDismiss }: InlineToastProps) {
+    const opacity = useSharedValue(0);
+    const translateY = useSharedValue(-10);
+
+    useEffect(() => {
+        if (message) {
+            opacity.value = withSpring(1, SPRING_CONFIG);
+            translateY.value = withSpring(0, SPRING_CONFIG);
+
+            // Auto-dismiss after 4 seconds
+            const timeout = setTimeout(() => {
+                opacity.value = withTiming(0, { duration: 200 });
+                translateY.value = withTiming(-10, { duration: 200 });
+                setTimeout(onDismiss, 200);
+            }, 4000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [message]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+        transform: [{ translateY: translateY.value }],
+    }));
+
+    if (!message) return null;
+
+    const bgColor = type === 'error' ? '#FF3B3014' : type === 'success' ? '#34C75914' : '#5AC8FA14';
+    const borderColor = type === 'error' ? '#FF3B30' : type === 'success' ? '#34C759' : '#5AC8FA';
+    const iconName = type === 'error' ? 'alert-circle' : type === 'success' ? 'checkmark-circle' : 'information-circle';
+
+    return (
+        <Animated.View
+            style={[
+                {
+                    backgroundColor: bgColor,
+                    borderWidth: 1,
+                    borderColor: borderColor,
+                    borderRadius: Radius.md,
+                    padding: Spacing.md,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: Spacing.sm,
+                    marginBottom: Spacing.md,
+                },
+                animatedStyle,
+            ]}
+        >
+            <Ionicons name={iconName as any} size={20} color={borderColor} />
+            <Text style={{ flex: 1, color: borderColor, ...Typography.footnote }}>
+                {message}
+            </Text>
+            <TouchableOpacity onPress={onDismiss} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Ionicons name="close" size={18} color={borderColor} />
+            </TouchableOpacity>
+        </Animated.View>
+    );
+}
+
+// ============================================
+// DEV MODE SECTION (Compiled out in production)
+// ============================================
+
+interface DevModeSectionProps {
+    colors: typeof Colors.light;
+    onDevLogin: (role: UserRole) => void;
+    isLoading: boolean;
+}
+
+function DevModeSection({ colors, onDevLogin, isLoading }: DevModeSectionProps) {
+    // This component only renders in __DEV__ mode
+    if (!__DEV__) return null;
+
+    return (
+        <AnimatedElement delay={STAGGER_DELAY * 7}>
+            <View style={devStyles.container}>
+                <View style={[devStyles.divider, { backgroundColor: colors.separator }]} />
+                <Text style={[devStyles.title, { color: colors.textTertiary }]}>
+                    🔧 DEV MODE
+                </Text>
+                <View style={devStyles.buttonRow}>
+                    <TouchableOpacity
+                        style={[devStyles.button, devStyles.coachButton]}
+                        onPress={() => onDevLogin('coach')}
+                        disabled={isLoading}
+                    >
+                        <Ionicons name="school-outline" size={18} color="#FF9500" />
+                        <Text style={[devStyles.buttonText, { color: '#FF9500' }]}>Coach</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[devStyles.button, devStyles.athleteButton]}
+                        onPress={() => onDevLogin('athlete')}
+                        disabled={isLoading}
+                    >
+                        <Ionicons name="fitness-outline" size={18} color="#34C759" />
+                        <Text style={[devStyles.buttonText, { color: '#34C759' }]}>Athlete</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </AnimatedElement>
+    );
+}
+
+const devStyles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      padding: Spacing.md,
-      paddingTop: Platform.OS === 'ios' ? 60 : Spacing.md,
-    },
-    closeButton: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: colors.groupedBackground,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Spacing.lg,
-    },
-    heroSection: {
-      alignItems: 'center',
-      marginTop: Spacing.xl,
-      marginBottom: Spacing.xxl,
-    },
-    iconContainer: {
-      width: 80,
-      height: 80,
-      borderRadius: 20,
-      backgroundColor: colors.tintMuted,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: Spacing.lg,
-    },
-    title: {
-      ...Typography.largeTitle,
-      color: colors.text,
-      textAlign: 'center',
-      marginBottom: Spacing.sm,
-    },
-    subtitle: {
-      ...Typography.body,
-      color: colors.textSecondary,
-      textAlign: 'center',
-      maxWidth: 300,
-    },
-    benefitsContainer: {
-      marginBottom: Spacing.xl,
-    },
-    benefitRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: Spacing.sm,
-    },
-    benefitIcon: {
-      width: 32,
-      height: 32,
-      borderRadius: 8,
-      backgroundColor: colors.tintMuted,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginRight: Spacing.md,
-    },
-    benefitText: {
-      ...Typography.body,
-      color: colors.text,
-      flex: 1,
-    },
-    authSection: {
-      gap: Spacing.md,
-    },
-    appleButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
-      paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.lg,
-      borderRadius: Radius.md,
-      gap: Spacing.sm,
-    },
-    appleButtonText: {
-      ...Typography.headline,
-      color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
-    },
-    dividerContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: Spacing.md,
+        marginTop: Spacing.xl,
+        paddingTop: Spacing.lg,
     },
     divider: {
-      flex: 1,
-      height: 1,
-      backgroundColor: colors.separator,
+        height: 1,
+        marginBottom: Spacing.md,
     },
-    dividerText: {
-      ...Typography.footnote,
-      color: colors.textTertiary,
-      marginHorizontal: Spacing.md,
+    title: {
+        ...Typography.caption2,
+        textAlign: 'center',
+        marginBottom: Spacing.md,
+        letterSpacing: 2,
+        textTransform: 'uppercase',
     },
-    emailContainer: {
-      gap: Spacing.sm,
+    buttonRow: {
+        flexDirection: 'row',
+        gap: Spacing.md,
     },
-    emailInput: {
-      ...Typography.body,
-      backgroundColor: colors.groupedBackground,
-      paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.md,
-      borderRadius: Radius.md,
-      color: colors.text,
-    },
-    emailButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.tint,
-      paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.lg,
-      borderRadius: Radius.md,
-      gap: Spacing.sm,
-    },
-    emailButtonDisabled: {
-      opacity: 0.5,
-    },
-    emailButtonText: {
-      ...Typography.headline,
-      color: '#FFFFFF',
-    },
-    guestSection: {
-      alignItems: 'center',
-      marginTop: Spacing.xl,
-      paddingBottom: Spacing.xxl,
-    },
-    guestButton: {
-      paddingVertical: Spacing.sm,
-      paddingHorizontal: Spacing.md,
-    },
-    guestText: {
-      ...Typography.body,
-      color: colors.tint,
-    },
-    guestNote: {
-      ...Typography.caption1,
-      color: colors.textTertiary,
-      marginTop: Spacing.xs,
-      textAlign: 'center',
-    },
-    // Dev mode styles
-    devSection: {
-      marginTop: Spacing.xl,
-      paddingTop: Spacing.lg,
-      borderTopWidth: 1,
-      borderTopColor: colors.separator,
-      borderStyle: 'dashed',
-    },
-    devTitle: {
-      ...Typography.caption1,
-      color: colors.textTertiary,
-      textAlign: 'center',
-      marginBottom: Spacing.md,
-      textTransform: 'uppercase',
-      letterSpacing: 1,
-    },
-    devButtonsRow: {
-      flexDirection: 'row',
-      gap: Spacing.md,
-    },
-    devButton: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.groupedBackground,
-      paddingVertical: Spacing.md,
-      paddingHorizontal: Spacing.sm,
-      borderRadius: Radius.md,
-      borderWidth: 1,
-      borderColor: colors.separator,
-      gap: Spacing.xs,
-    },
-    devButtonText: {
-      ...Typography.footnote,
-      color: colors.text,
-      fontWeight: '500',
+    button: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: Spacing.md,
+        borderRadius: Radius.md,
+        borderWidth: 1,
+        gap: Spacing.xs,
     },
     coachButton: {
-      borderColor: '#FF9500',
-      backgroundColor: 'rgba(255, 149, 0, 0.1)',
+        borderColor: '#FF9500',
+        backgroundColor: 'rgba(255, 149, 0, 0.08)',
     },
     athleteButton: {
-      borderColor: '#34C759',
-      backgroundColor: 'rgba(52, 199, 89, 0.1)',
+        borderColor: '#34C759',
+        backgroundColor: 'rgba(52, 199, 89, 0.08)',
     },
-  });
+    buttonText: {
+        ...Typography.footnote,
+        fontWeight: '600',
+    },
+});
 
-  const benefits = [
-    { icon: 'cloud-outline', text: 'Sync workouts across all devices' },
-    { icon: 'shield-checkmark-outline', text: 'Never lose your progress' },
-    { icon: 'analytics-outline', text: 'Track long-term trends' },
-  ];
+// ============================================
+// MAIN COMPONENT
+// ============================================
 
-  return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-          <Ionicons name="close" size={20} color={colors.text} />
-        </TouchableOpacity>
-      </View>
+export default function LoginModernScreen() {
+    const colorScheme = useColorScheme();
+    const colors = Colors[colorScheme ?? 'light'];
+    const { signInWithApple, signInWithGoogle, signInWithEmail, signInWithPassword, signUpWithPassword, continueAsGuest, devModeLogin, isLoading } = useAuth();
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.heroSection}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="fitness-outline" size={40} color={colors.tint} />
-          </View>
-          <Text style={styles.title}>Sign In</Text>
-          <Text style={styles.subtitle}>
-            Create an account to sync your workouts and never lose your progress
-          </Text>
-        </View>
+    // Form state
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [emailValidation, setEmailValidation] = useState<EmailValidationState>('idle');
+    const [isEmailLoading, setIsEmailLoading] = useState(false);
+    const [isAppleLoading, setIsAppleLoading] = useState(false);
+    const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+    const [isDevLoading, setIsDevLoading] = useState(false);
 
-        <View style={styles.benefitsContainer}>
-          {benefits.map((benefit, index) => (
-            <View key={index} style={styles.benefitRow}>
-              <View style={styles.benefitIcon}>
-                <Ionicons name={benefit.icon as any} size={18} color={colors.tint} />
-              </View>
-              <Text style={styles.benefitText}>{benefit.text}</Text>
+    // Auth mode: 'login' or 'signup'
+    const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+    // Email auth type: 'password' or 'magic'
+    const [emailAuthType, setEmailAuthType] = useState<'password' | 'magic'>('password');
+
+    // Error/success toast state
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<'error' | 'success' | 'info'>('info');
+
+    // ========================================
+    // EMAIL VALIDATION (real-time with Zod)
+    // ========================================
+
+    useEffect(() => {
+        if (email.length === 0) {
+            setEmailValidation('idle');
+            return;
+        }
+
+        setEmailValidation(isValidEmail(email) ? 'valid' : 'invalid');
+    }, [email]);
+
+    // ========================================
+    // HANDLERS
+    // ========================================
+
+    const showToast = useCallback((message: string, type: 'error' | 'success' | 'info') => {
+        setToastMessage(message);
+        setToastType(type);
+    }, []);
+
+    const handleAppleSignIn = useCallback(async () => {
+        setIsAppleLoading(true);
+        try {
+            await signInWithApple();
+        } catch (error: any) {
+            showToast(error?.message || 'Apple Sign-In failed. Please try again.', 'error');
+        } finally {
+            setIsAppleLoading(false);
+        }
+    }, [signInWithApple, showToast]);
+
+    const handleGoogleSignIn = useCallback(async () => {
+        setIsGoogleLoading(true);
+        try {
+            await signInWithGoogle();
+        } catch (error: any) {
+            showToast(error?.message || 'Google Sign-In failed. Please try again.', 'error');
+        } finally {
+            setIsGoogleLoading(false);
+        }
+    }, [signInWithGoogle, showToast]);
+
+    const handleEmailAuth = useCallback(async () => {
+        if (emailValidation !== 'valid') {
+            showToast('Please enter a valid email address', 'error');
+            return;
+        }
+
+        setIsEmailLoading(true);
+        try {
+            if (emailAuthType === 'magic') {
+                await signInWithEmail(email.trim());
+                showToast('Magic link sent! Check your inbox.', 'success');
+            } else {
+                // Password mode
+                if (!password || password.length < 6) {
+                    showToast('Password must be at least 6 characters', 'error');
+                    setIsEmailLoading(false);
+                    return;
+                }
+
+                if (authMode === 'signup') {
+                    await signUpWithPassword(email.trim(), password);
+                    showToast('Account created! Check email to confirm.', 'success');
+                } else {
+                    await signInWithPassword(email.trim(), password);
+                    router.back();
+                }
+            }
+        } catch (error: any) {
+            showToast(error?.message || 'Authentication failed. Please try again.', 'error');
+        } finally {
+            setIsEmailLoading(false);
+        }
+    }, [email, password, emailValidation, emailAuthType, authMode, signInWithEmail, signInWithPassword, signUpWithPassword, showToast]);
+
+    const handleGuest = useCallback(() => {
+        continueAsGuest();
+        router.back();
+    }, [continueAsGuest]);
+
+    const handleDevLogin = useCallback(async (role: UserRole) => {
+        setIsDevLoading(true);
+        try {
+            await devModeLogin(role);
+            router.back();
+        } catch (error: any) {
+            showToast(error?.message || 'Dev login failed', 'error');
+        } finally {
+            setIsDevLoading(false);
+        }
+    }, [devModeLogin, showToast]);
+
+    const handleClose = useCallback(() => {
+        router.back();
+    }, []);
+
+    // ========================================
+    // STYLES
+    // ========================================
+
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.background,
+        },
+        header: {
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            padding: Spacing.md,
+            paddingTop: Platform.OS === 'ios' ? 60 : Spacing.lg,
+        },
+        closeButton: {
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: colors.groupedBackground,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        scrollContent: {
+            flex: 1,
+            paddingHorizontal: Spacing.lg,
+        },
+        // Hero Section
+        heroSection: {
+            alignItems: 'center',
+            marginTop: Spacing.xl,
+            marginBottom: Spacing.xxl,
+        },
+        logoContainer: {
+            width: 88,
+            height: 88,
+            borderRadius: 24,
+            backgroundColor: colors.tintMuted,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: Spacing.lg,
+        },
+        title: {
+            ...Typography.largeTitle,
+            color: colors.text,
+            textAlign: 'center',
+            marginBottom: Spacing.xs,
+        },
+        subtitle: {
+            ...Typography.body,
+            color: colors.textSecondary,
+            textAlign: 'center',
+            maxWidth: 280,
+            lineHeight: 24,
+        },
+        // Value Props
+        valuePropsContainer: {
+            marginBottom: Spacing.xl,
+        },
+        valueProp: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingVertical: Spacing.sm,
+            gap: Spacing.md,
+        },
+        valuePropIcon: {
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            backgroundColor: colors.tintMuted,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        valuePropText: {
+            ...Typography.subhead,
+            color: colors.text,
+            flex: 1,
+        },
+        // Auth Section
+        authSection: {
+            gap: Spacing.md,
+        },
+        appleButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+            paddingVertical: 16,
+            paddingHorizontal: Spacing.lg,
+            borderRadius: Radius.md,
+            gap: Spacing.sm,
+        },
+        appleButtonText: {
+            ...Typography.headline,
+            color: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
+        },
+        dividerRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginVertical: Spacing.sm,
+        },
+        dividerLine: {
+            flex: 1,
+            height: 1,
+            backgroundColor: colors.separator,
+        },
+        dividerText: {
+            ...Typography.caption1,
+            color: colors.textTertiary,
+            marginHorizontal: Spacing.md,
+        },
+        // Email Form
+        emailInputContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: colors.groupedBackground,
+            borderRadius: Radius.md,
+            borderWidth: 1.5,
+            borderColor: emailValidation === 'valid'
+                ? colors.success
+                : emailValidation === 'invalid'
+                    ? colors.error
+                    : 'transparent',
+            paddingHorizontal: Spacing.md,
+        },
+        emailInput: {
+            ...Typography.body,
+            flex: 1,
+            paddingVertical: 14,
+            color: colors.text,
+        },
+        emailValidationIcon: {
+            marginLeft: Spacing.sm,
+        },
+        emailButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colors.tint,
+            paddingVertical: 16,
+            paddingHorizontal: Spacing.lg,
+            borderRadius: Radius.md,
+            gap: Spacing.sm,
+        },
+        emailButtonText: {
+            ...Typography.headline,
+            color: '#FFFFFF',
+        },
+        // Guest Section
+        guestSection: {
+            alignItems: 'center',
+            marginTop: Spacing.xl,
+            paddingBottom: Spacing.xxl,
+        },
+        guestButton: {
+            paddingVertical: Spacing.sm,
+            paddingHorizontal: Spacing.md,
+        },
+        guestText: {
+            ...Typography.subhead,
+            color: colors.textSecondary,
+        },
+        guestNote: {
+            ...Typography.caption1,
+            color: colors.textTertiary,
+            marginTop: Spacing.xs,
+        },
+        // Google Button
+        googleButton: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: 16,
+            paddingHorizontal: Spacing.lg,
+            borderRadius: Radius.md,
+            borderWidth: 1,
+            gap: Spacing.sm,
+        },
+        googleButtonText: {
+            ...Typography.headline,
+        },
+        // Auth Mode Toggles
+        authModeToggle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: Spacing.xs,
+            marginTop: Spacing.md,
+        },
+        authModeText: {
+            ...Typography.footnote,
+        },
+        authModeLink: {
+            ...Typography.footnote,
+            fontWeight: '600',
+        },
+        emailTypeToggle: {
+            alignItems: 'center',
+            paddingVertical: Spacing.sm,
+            marginTop: Spacing.sm,
+        },
+        emailTypeText: {
+            ...Typography.caption1,
+        },
+    });
+
+    // ========================================
+    // VALUE PROPOSITIONS
+    // ========================================
+
+    const valueProps = [
+        { icon: 'cloud-outline', text: 'Sync workouts across all your devices' },
+        { icon: 'shield-checkmark-outline', text: 'Never lose your progress again' },
+        { icon: 'trending-up-outline', text: 'Track long-term strength gains' },
+    ];
+
+    // ========================================
+    // RENDER
+    // ========================================
+
+    return (
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            {/* Header with close button */}
+            <View style={styles.header}>
+                <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                    accessibilityLabel="Close login screen"
+                    accessibilityRole="button"
+                >
+                    <Ionicons name="close" size={20} color={colors.text} />
+                </TouchableOpacity>
             </View>
-          ))}
-        </View>
 
-        <View style={styles.authSection}>
-          {Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={styles.appleButton}
-              onPress={handleAppleSignIn}
-              disabled={isLoading}
+            <ScrollView
+                style={styles.scrollContent}
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
             >
-              <Ionicons
-                name="logo-apple"
-                size={20}
-                color={colorScheme === 'dark' ? '#000000' : '#FFFFFF'}
-              />
-              <Text style={styles.appleButtonText}>Sign in with Apple</Text>
-            </TouchableOpacity>
-          )}
+                {/* Toast for errors/success */}
+                <InlineToast
+                    message={toastMessage}
+                    type={toastType}
+                    onDismiss={() => setToastMessage(null)}
+                />
 
-          <View style={styles.dividerContainer}>
-            <View style={styles.divider} />
-            <Text style={styles.dividerText}>or continue with email</Text>
-            <View style={styles.divider} />
-          </View>
-
-          <View style={styles.emailContainer}>
-            <TextInput
-              style={styles.emailInput}
-              placeholder="Enter your email"
-              placeholderTextColor={colors.textTertiary}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!isEmailLoading}
-            />
-            <TouchableOpacity
-              style={[
-                styles.emailButton,
-                (!email.includes('@') || isEmailLoading) && styles.emailButtonDisabled,
-              ]}
-              onPress={handleEmailSignIn}
-              disabled={!email.includes('@') || isEmailLoading}
-            >
-              {isEmailLoading ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
-              ) : (
-                <>
-                  <Ionicons name="mail-outline" size={20} color="#FFFFFF" />
-                  <Text style={styles.emailButtonText}>Send Magic Link</Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.guestSection}>
-          <TouchableOpacity style={styles.guestButton} onPress={handleGuest}>
-            <Text style={styles.guestText}>Continue as Guest</Text>
-          </TouchableOpacity>
-          <Text style={styles.guestNote}>
-            Your data stays on this device only
-          </Text>
-        </View>
-
-        {/* Dev Mode Test Accounts - Only visible in development */}
-        {__DEV__ && (
-          <View style={styles.devSection}>
-            <Text style={styles.devTitle}>Dev Mode - Test Accounts</Text>
-            <View style={styles.devButtonsRow}>
-              <TouchableOpacity
-                style={[styles.devButton, styles.coachButton]}
-                onPress={() => handleDevLogin('coach')}
-                disabled={isDevLoading}
-              >
-                {isDevLoading ? (
-                  <ActivityIndicator size="small" color="#FF9500" />
-                ) : (
-                  <>
-                    <Ionicons name="school-outline" size={18} color="#FF9500" />
-                    <Text style={[styles.devButtonText, { color: '#FF9500' }]}>
-                      Login as Coach
+                {/* Hero Section - Logo + Title (Cascade in first) */}
+                <AnimatedElement delay={STAGGER_DELAY * 0} style={styles.heroSection}>
+                    <View style={styles.logoContainer}>
+                        <Ionicons name="barbell-outline" size={44} color={colors.tint} />
+                    </View>
+                    <Text style={styles.title}>Welcome Back</Text>
+                    <Text style={styles.subtitle}>
+                        Sign in to sync your workouts and track your gains across all devices
                     </Text>
-                  </>
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.devButton, styles.athleteButton]}
-                onPress={() => handleDevLogin('athlete')}
-                disabled={isDevLoading}
-              >
-                {isDevLoading ? (
-                  <ActivityIndicator size="small" color="#34C759" />
-                ) : (
-                  <>
-                    <Ionicons name="fitness-outline" size={18} color="#34C759" />
-                    <Text style={[styles.devButtonText, { color: '#34C759' }]}>
-                      Login as Athlete
+                </AnimatedElement>
+
+                {/* Value Propositions (Cascade in second) */}
+                <AnimatedElement delay={STAGGER_DELAY * 2} style={styles.valuePropsContainer}>
+                    {valueProps.map((prop, index) => (
+                        <View key={index} style={styles.valueProp}>
+                            <View style={styles.valuePropIcon}>
+                                <Ionicons name={prop.icon as any} size={20} color={colors.tint} />
+                            </View>
+                            <Text style={styles.valuePropText}>{prop.text}</Text>
+                        </View>
+                    ))}
+                </AnimatedElement>
+
+                {/* Auth Section (Cascade in third) */}
+                <AnimatedElement delay={STAGGER_DELAY * 3} style={styles.authSection}>
+                    {/* Apple Sign-In (iOS only) */}
+                    {Platform.OS === 'ios' && (
+                        <AnimatedButton
+                            onPress={handleAppleSignIn}
+                            isLoading={isAppleLoading}
+                            disabled={isLoading}
+                            style={styles.appleButton}
+                            textStyle={styles.appleButtonText}
+                            icon="logo-apple"
+                            iconColor={colorScheme === 'dark' ? '#000000' : '#FFFFFF'}
+                            label="Continue with Apple"
+                            loadingColor={colorScheme === 'dark' ? '#000000' : '#FFFFFF'}
+                            accessibilityLabel="Sign in with Apple"
+                        />
+                    )}
+
+                    {/* Google Sign-In */}
+                    <AnimatedButton
+                        onPress={handleGoogleSignIn}
+                        isLoading={isGoogleLoading}
+                        disabled={isLoading}
+                        style={[styles.googleButton, { backgroundColor: colors.groupedBackground, borderColor: colors.separator }]}
+                        textStyle={[styles.googleButtonText, { color: colors.text }]}
+                        icon="logo-google"
+                        iconColor="#4285F4"
+                        label="Continue with Google"
+                        loadingColor={colors.text}
+                        accessibilityLabel="Sign in with Google"
+                    />
+
+                    {/* Divider */}
+                    <View style={styles.dividerRow}>
+                        <View style={styles.dividerLine} />
+                        <Text style={styles.dividerText}>or use email</Text>
+                        <View style={styles.dividerLine} />
+                    </View>
+
+                    {/* Email Input with Validation */}
+                    <View style={styles.emailInputContainer}>
+                        <Ionicons name="mail-outline" size={20} color={colors.textTertiary} />
+                        <TextInput
+                            style={styles.emailInput}
+                            placeholder="you@example.com"
+                            placeholderTextColor={colors.textTertiary}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            autoComplete="email"
+                            editable={!isEmailLoading}
+                            accessibilityLabel="Email address input"
+                        />
+                        {/* Validation indicator */}
+                        {emailValidation === 'valid' && (
+                            <Ionicons
+                                name="checkmark-circle"
+                                size={22}
+                                color={colors.success}
+                                style={styles.emailValidationIcon}
+                            />
+                        )}
+                        {emailValidation === 'invalid' && email.length > 3 && (
+                            <Ionicons
+                                name="close-circle"
+                                size={22}
+                                color={colors.error}
+                                style={styles.emailValidationIcon}
+                            />
+                        )}
+                    </View>
+
+                    {/* Password Input (only in password mode) */}
+                    {emailAuthType === 'password' && (
+                        <View style={styles.emailInputContainer}>
+                            <Ionicons name="lock-closed-outline" size={20} color={colors.textTertiary} />
+                            <TextInput
+                                style={styles.emailInput}
+                                placeholder="Password"
+                                placeholderTextColor={colors.textTertiary}
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={!showPassword}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                autoComplete="password"
+                                editable={!isEmailLoading}
+                                accessibilityLabel="Password input"
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                            >
+                                <Ionicons
+                                    name={showPassword ? "eye-off-outline" : "eye-outline"}
+                                    size={22}
+                                    color={colors.textTertiary}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
+                    {/* Main Auth Button */}
+                    <AnimatedButton
+                        onPress={handleEmailAuth}
+                        isLoading={isEmailLoading}
+                        disabled={emailValidation !== 'valid' || (emailAuthType === 'password' && password.length < 6)}
+                        style={styles.emailButton}
+                        textStyle={styles.emailButtonText}
+                        icon={emailAuthType === 'magic' ? "paper-plane-outline" : "log-in-outline"}
+                        iconColor="#FFFFFF"
+                        label={emailAuthType === 'magic'
+                            ? "Send Magic Link"
+                            : authMode === 'signup'
+                                ? "Create Account"
+                                : "Sign In"}
+                        loadingColor="#FFFFFF"
+                        accessibilityLabel={authMode === 'signup' ? "Create account" : "Sign in"}
+                    />
+
+                    {/* Auth Mode Toggle (Login/Signup) */}
+                    {emailAuthType === 'password' && (
+                        <View style={styles.authModeToggle}>
+                            <Text style={[styles.authModeText, { color: colors.textSecondary }]}>
+                                {authMode === 'login' ? "Don't have an account?" : "Already have an account?"}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                            >
+                                <Text style={[styles.authModeLink, { color: colors.tint }]}>
+                                    {authMode === 'login' ? "Sign Up" : "Sign In"}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
+                    {/* Email Auth Type Toggle */}
+                    <TouchableOpacity
+                        style={styles.emailTypeToggle}
+                        onPress={() => setEmailAuthType(emailAuthType === 'password' ? 'magic' : 'password')}
+                    >
+                        <Text style={[styles.emailTypeText, { color: colors.textTertiary }]}>
+                            {emailAuthType === 'password'
+                                ? "Use Magic Link instead"
+                                : "Use Password instead"}
+                        </Text>
+                    </TouchableOpacity>
+                </AnimatedElement>
+
+                {/* Guest Mode (Subtle, deemphasized) */}
+                <AnimatedElement delay={STAGGER_DELAY * 5} style={styles.guestSection}>
+                    <TouchableOpacity
+                        style={styles.guestButton}
+                        onPress={handleGuest}
+                        accessibilityLabel="Continue without signing in"
+                        accessibilityRole="button"
+                    >
+                        <Text style={styles.guestText}>Continue as Guest</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.guestNote}>
+                        Data stays on this device only
                     </Text>
-                  </>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
+                </AnimatedElement>
+
+                {/* Dev Mode Section (Compiled out in production) */}
+                <DevModeSection
+                    colors={colors}
+                    onDevLogin={handleDevLogin}
+                    isLoading={isDevLoading}
+                />
+            </ScrollView>
+        </KeyboardAvoidingView>
+    );
 }

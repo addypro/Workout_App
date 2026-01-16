@@ -61,7 +61,7 @@ export const TOP_20_EXERCISES: GlobalExerciseRanking[] = [
     rank: 6,
     score: 95,
     category: 'back',
-    aliases: ['bent over row', 'bb row', 'barbell bent over row', 'rows', 'row'],
+    aliases: ['bent over row', 'bb row', 'barbell bent over row', 'barbell rows'],
   },
   {
     name: 'Dumbbell Lateral Raise',
@@ -145,7 +145,7 @@ export const TOP_20_EXERCISES: GlobalExerciseRanking[] = [
     rank: 18,
     score: 83,
     category: 'back',
-    aliases: ['db row', 'one arm row', 'single arm row', 'one arm dumbbell row'],
+    aliases: ['db row', 'one arm row', 'single arm row', 'one arm dumbbell row', 'single arm dumbbell row', 'dumbbell rows', 'single arm db row'],
   },
   {
     name: 'Bulgarian Split Squat',
@@ -173,7 +173,7 @@ export const CHEST_EXERCISES: GlobalExerciseRanking[] = [
   { name: 'Cable Crossover', rank: 26, score: 75, category: 'chest', aliases: ['cable cross', 'high to low cable', 'crossover'] },
   { name: 'Cable Chest Fly', rank: 27, score: 74, category: 'chest', aliases: ['low cable fly', 'low to high cable'] },
   { name: 'Pec Deck', rank: 28, score: 73, category: 'chest', aliases: ['pec deck fly', 'machine fly', 'chest fly machine'] },
-  { name: 'Chest Press Machine', rank: 29, score: 72, category: 'chest', aliases: ['machine chest press', 'seated chest press'] },
+  { name: 'Chest Press Machine', rank: 29, score: 72, category: 'chest', aliases: ['machine chest press', 'seated chest press', 'chest press', 'machine press'] },
   { name: 'Smith Machine Bench Press', rank: 30, score: 71, category: 'chest', aliases: ['smith bench', 'smith machine bench'] },
   { name: 'Dips', rank: 31, score: 70, category: 'chest', aliases: ['chest dips', 'parallel bar dips', 'dip'] },
   { name: 'Weighted Dips', rank: 32, score: 69, category: 'chest', aliases: ['weighted dip'] },
@@ -210,7 +210,7 @@ export const BACK_EXERCISES: GlobalExerciseRanking[] = [
 
 // Legs: Quads (rank 58-80)
 export const QUAD_EXERCISES: GlobalExerciseRanking[] = [
-  { name: 'Front Squat', rank: 58, score: 43, category: 'legs', aliases: ['front squats', 'barbell front squat'] },
+  { name: 'Front Squat', rank: 58, score: 43, category: 'legs', aliases: ['front squats', 'barbell front squat', 'dumbbell front squat', 'db front squat'] },
   { name: 'Goblet Squat', rank: 59, score: 42, category: 'legs', aliases: ['goblet squats', 'dumbbell goblet squat'] },
   { name: 'Hack Squat', rank: 60, score: 41, category: 'legs', aliases: ['hack squat machine', 'machine hack squat'] },
   { name: 'Walking Lunges', rank: 61, score: 40, category: 'legs', aliases: ['walking lunge', 'lunges'] },
@@ -350,45 +350,70 @@ export const ALL_GLOBAL_RANKINGS: GlobalExerciseRanking[] = [
   ...OLYMPIC_EXERCISES,
 ];
 
+// ============================================
+// O(1) HASHMAP LOOKUPS (Module-level initialization)
+// ============================================
+
+let _rankingsByName: Map<string, GlobalExerciseRanking> | null = null;
+let _rankingsByAlias: Map<string, GlobalExerciseRanking> | null = null;
+let _popularityMap: Map<string, number> | null = null;
+
 /**
- * Build a lookup map from exercise name/alias to popularity score
- * Returns scores normalized to 0-100 scale
+ * Lazy initialize the O(1) lookup maps
  */
-export function buildPopularityMap(): Record<string, number> {
-  const map: Record<string, number> = {};
+function initRankingMaps(): void {
+  if (_rankingsByName) return; // Already initialized
+
+  _rankingsByName = new Map();
+  _rankingsByAlias = new Map();
+  _popularityMap = new Map();
 
   for (const exercise of ALL_GLOBAL_RANKINGS) {
-    // Add canonical name
-    const normalizedName = exercise.name.toLowerCase().trim();
-    map[normalizedName] = exercise.score;
+    const nameLower = exercise.name.toLowerCase();
 
-    // Add all aliases
+    // Map by canonical name
+    _rankingsByName.set(nameLower, exercise);
+    _popularityMap.set(nameLower, exercise.score);
+
+    // Map all aliases
     for (const alias of exercise.aliases) {
-      const normalizedAlias = alias.toLowerCase().trim();
-      if (!map[normalizedAlias] || map[normalizedAlias] < exercise.score) {
-        map[normalizedAlias] = exercise.score;
+      const aliasLower = alias.toLowerCase();
+      if (!_rankingsByAlias.has(aliasLower)) {
+        _rankingsByAlias.set(aliasLower, exercise);
+      }
+      if (!_popularityMap.has(aliasLower)) {
+        _popularityMap.set(aliasLower, exercise.score);
       }
     }
   }
-
-  return map;
 }
 
 /**
- * Get popularity score for an exercise name
+ * Build a lookup map from exercise name/alias to popularity score
+ * Returns scores normalized to 0-100 scale
+ * @deprecated Use getGlobalPopularityScore() for O(1) lookup instead
+ */
+export function buildPopularityMap(): Record<string, number> {
+  initRankingMaps();
+  return Object.fromEntries(_popularityMap!);
+}
+
+/**
+ * Get popularity score for an exercise name - O(1) lookup
  * Returns score 0-100, or null if not found
  */
 export function getGlobalPopularityScore(exerciseName: string): number | null {
-  const map = buildPopularityMap();
+  initRankingMaps();
   const normalized = exerciseName.toLowerCase().trim();
 
-  // Direct match
-  if (map[normalized] !== undefined) {
-    return map[normalized];
+  // O(1) direct lookup
+  const score = _popularityMap!.get(normalized);
+  if (score !== undefined) {
+    return score;
   }
 
-  // Try partial match - find if input contains a known exercise
-  for (const [name, score] of Object.entries(map)) {
+  // Fallback: partial match (still O(n) but only for edge cases)
+  for (const [name, score] of _popularityMap!.entries()) {
     if (normalized.includes(name) || name.includes(normalized)) {
       return score;
     }
@@ -412,29 +437,22 @@ export function getAllVoiceAliases(): string[] {
 }
 
 /**
- * Find best matching exercise from voice input
- * Uses fuzzy matching against all names and aliases
+ * Find best matching exercise from voice input - O(1) lookup
+ * Uses pre-computed HashMaps for instant matching
  */
 export function findExerciseByVoice(voiceInput: string): GlobalExerciseRanking | null {
+  initRankingMaps();
   const normalized = voiceInput.toLowerCase().trim();
 
-  // Direct match on name
-  for (const exercise of ALL_GLOBAL_RANKINGS) {
-    if (exercise.name.toLowerCase() === normalized) {
-      return exercise;
-    }
-  }
+  // O(1) exact match on name
+  const nameMatch = _rankingsByName!.get(normalized);
+  if (nameMatch) return nameMatch;
 
-  // Match on alias
-  for (const exercise of ALL_GLOBAL_RANKINGS) {
-    for (const alias of exercise.aliases) {
-      if (alias.toLowerCase() === normalized) {
-        return exercise;
-      }
-    }
-  }
+  // O(1) match on alias
+  const aliasMatch = _rankingsByAlias!.get(normalized);
+  if (aliasMatch) return aliasMatch;
 
-  // Partial match - input contains exercise name or vice versa
+  // Fallback: partial match (only for edge cases like "bench press 135")
   for (const exercise of ALL_GLOBAL_RANKINGS) {
     const exerciseLower = exercise.name.toLowerCase();
     if (normalized.includes(exerciseLower) || exerciseLower.includes(normalized)) {
@@ -450,3 +468,20 @@ export function findExerciseByVoice(voiceInput: string): GlobalExerciseRanking |
 
   return null;
 }
+
+/**
+ * O(1) lookup by exact name
+ */
+export function getRankingByName(name: string): GlobalExerciseRanking | null {
+  initRankingMaps();
+  return _rankingsByName!.get(name.toLowerCase()) ?? null;
+}
+
+/**
+ * O(1) lookup by alias
+ */
+export function getRankingByAlias(alias: string): GlobalExerciseRanking | null {
+  initRankingMaps();
+  return _rankingsByAlias!.get(alias.toLowerCase()) ?? null;
+}
+

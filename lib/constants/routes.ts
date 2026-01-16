@@ -18,6 +18,8 @@ export const TABS = {
   HISTORY: '/(tabs)/explore' as const,
   /** Import / Tools tab */
   TOOLS: '/(tabs)/tools' as const,
+  /** You tab (profile + settings) */
+  YOU: '/(tabs)/you' as const,
   /** Coach dashboard tab (role-gated) */
   COACH: '/(tabs)/coach' as const,
   /** Upload (hidden from tab bar) */
@@ -35,6 +37,8 @@ export const AUTH = {
   CALLBACK: '/(auth)/callback' as const,
   /** Role selection for new users */
   SELECT_ROLE: '/(auth)/select-role' as const,
+  /** Landing / auth entry */
+  LANDING: '/(auth)/landing' as const,
 } as const;
 
 // ============================================
@@ -80,7 +84,9 @@ export const PROGRAM = {
   /** Program builder/editor */
   EDIT: (programId: string) => `/program/${programId}/edit` as const,
   /** Browse program detail */
-  DETAIL: (programId: string) => `/browse/${programId}` as const,
+  DETAIL: (programId: string) => `/(tabs)/browse?programId=${programId}` as const,
+  /** Legacy program detail route */
+  LEGACY_DETAIL: (programId: string) => `/browse/${programId}` as const,
 } as const;
 
 // ============================================
@@ -89,7 +95,9 @@ export const PROGRAM = {
 
 export const HISTORY = {
   /** History list */
-  LIST: '/history' as const,
+  LIST: '/(tabs)/explore' as const,
+  /** Legacy history list (kept for deep-link compatibility) */
+  LEGACY_LIST: '/history' as const,
   /** Individual workout log detail */
   LOG: (logId: string) => `/history/${logId}` as const,
 } as const;

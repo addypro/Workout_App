@@ -27,6 +27,7 @@ import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 
 interface ExpandableFABProps {
   onQuickWorkout: () => void;
@@ -46,6 +47,8 @@ const SPRING_CONFIG = {
 export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: ExpandableFABProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const useSmartFab = isFeatureEnabled('smart_fab');
+  const hasVoiceLog = !!onVoiceLog;
 
   // Animation values
   const expanded = useSharedValue(0); // 0 = collapsed, 1 = expanded
@@ -55,6 +58,17 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
   const triggerHaptic = useCallback((style: Haptics.ImpactFeedbackStyle) => {
     Haptics.impactAsync(style);
   }, []);
+
+  const triggerQuickWorkout = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onQuickWorkout();
+  }, [onQuickWorkout]);
+
+  const triggerVoiceLog = useCallback(() => {
+    if (!onVoiceLog) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onVoiceLog();
+  }, [onVoiceLog]);
 
   const handleExpand = useCallback(() => {
     'worklet';
@@ -79,13 +93,19 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
       // Just collapse - inner Pressables handle the action
       expanded.value = withSpring(0, SPRING_CONFIG);
       selectedIndex.value = 0;
+    } else if (useSmartFab) {
+      runOnJS(triggerQuickWorkout)();
     } else {
       handleExpand();
     }
-  }, []);
+  }, [handleExpand, triggerQuickWorkout, useSmartFab]);
 
   // Pan gesture for swiping between options (3 options now)
+  // TIGER 1 MITIGATION: Gesture conflict guards for iOS edge gestures
   const panGesture = Gesture.Pan()
+    .minDistance(20) // Prevent accidental triggers
+    .activeOffsetY([-10, 10]) // Only trigger on intentional vertical swipe
+    .failOffsetX([-20, 20]) // Fail if horizontal (let iOS handle edge gestures)
     .onUpdate((e) => {
       if (expanded.value > 0.5) {
         translateY.value = e.translationY;
@@ -97,6 +117,9 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
         } else if (e.translationY < -15) {
           selectedIndex.value = withSpring(0, SPRING_CONFIG);
         }
+      } else if (useSmartFab && e.translationY < -20) {
+        // Swipe up from collapsed state opens the full menu
+        handleExpand();
       }
     })
     .onEnd(() => {
@@ -112,7 +135,15 @@ export function ExpandableFAB({ onQuickWorkout, onNewProgram, onVoiceLog }: Expa
   const longPressGesture = Gesture.LongPress()
     .minDuration(200)
     .onStart(() => {
-      handleExpand();
+      if (useSmartFab) {
+        if (hasVoiceLog) {
+          runOnJS(triggerVoiceLog)();
+        } else {
+          handleExpand();
+        }
+      } else {
+        handleExpand();
+      }
     });
 
   const composedGesture = Gesture.Race(

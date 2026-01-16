@@ -43,7 +43,7 @@ export interface RecordingProgress {
 export interface AudioFile {
   uri: string;
   filename: string;
-  mimeType: 'audio/mp4' | 'audio/m4a' | 'audio/aac' | 'audio/wav';
+  mimeType: 'audio/mp4' | 'audio/m4a' | 'audio/aac' | 'audio/wav' | 'audio/webm' | 'audio/mpeg';
   durationMs: number;
   sizeBytes: number;
 }

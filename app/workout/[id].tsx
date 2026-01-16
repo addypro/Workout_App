@@ -3,15 +3,20 @@ import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { VoiceLoggingModal } from '@/components/voice';
 import { SupersetLinkButton } from '@/components/workout';
+import { InlineRestTimerRow } from '@/components/workout/inline-rest-timer';
 import {
   SET_TYPE_INFO,
   SetTypesGuide,
   SetTypesInfoButton,
   useSetTypesOnboarding,
 } from '@/components/workout/set-types-guide';
+import { SwipeableSetRow } from '@/components/workout/swipeable-set-row';
+import { COMPLETED_SET_COLORS, SET_TYPE_COLORS } from '@/constants/set-type-colors';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useUserId } from '@/lib/context/auth-context';
 import { usePreferences } from '@/lib/context/preferences-context';
+import { useOptionalWorkoutMachine } from '@/lib/context/workout-machine-provider';
 import {
   clearActiveWorkoutState,
   clearPendingWorkoutEdits,
@@ -19,6 +24,7 @@ import {
   getEffectiveProgramData,
   getPreviousExerciseData,
   getProgram,
+  getWorkoutRecordById,
   setActiveWorkoutState,
   setPendingWorkoutEdits,
   type PreviousExerciseData,
@@ -47,12 +53,13 @@ import {
   WorkoutSession,
   WorkoutSet
 } from '@/lib/types/workout-session';
+import { inferWorkoutTypeFromExercises } from '@/lib/utils/workout-utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import * as Speech from 'expo-speech';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Alert,
   Platform,
@@ -62,11 +69,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
-  interpolate,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -76,102 +80,9 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
-const SET_DELETE_THRESHOLD = -60;
-const SPRING_CONFIG = { damping: 20, stiffness: 200 };
-
-// Swipeable Set Row Component
-function SwipeableSetRow({
-  children,
-  onDelete,
-  canDelete,
-}: {
-  children: React.ReactNode;
-  onDelete: () => void;
-  canDelete: boolean;
-}) {
-  const translateX = useSharedValue(0);
-  const isDeleting = useSharedValue(false);
-
-  const panGesture = Gesture.Pan()
-    .activeOffsetX([-15, 15])
-    .failOffsetY([-10, 10])
-    .enabled(canDelete)
-    .onUpdate((e) => {
-      if (!isDeleting.value) {
-        // Allow swiping all the way left (no limit)
-        translateX.value = Math.min(0, e.translationX);
-      }
-    })
-    .onEnd(() => {
-      if (translateX.value <= SET_DELETE_THRESHOLD && !isDeleting.value) {
-        // Swipe off screen completely then delete
-        isDeleting.value = true;
-        translateX.value = withTiming(-400, { duration: 200 }, () => {
-          runOnJS(onDelete)();
-        });
-      } else if (!isDeleting.value) {
-        translateX.value = withSpring(0, SPRING_CONFIG);
-      }
-    });
-
-  const rowStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-  }));
-
-  const deleteStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(translateX.value, [-80, -40, 0], [1, 0.5, 0]),
-    width: Math.abs(Math.min(translateX.value, 0)),
-  }));
-
-  if (!canDelete) {
-    return <>{children}</>;
-  }
-
-  return (
-    <View style={{ position: 'relative', overflow: 'hidden' }}>
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            backgroundColor: '#FF3B30',
-            borderRadius: Radius.sm,
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-          deleteStyle,
-        ]}
-      >
-        <IconSymbol name="trash.fill" size={16} color="#fff" />
-      </Animated.View>
-      <GestureDetector gesture={panGesture}>
-        <Animated.View style={rowStyle}>{children}</Animated.View>
-      </GestureDetector>
-    </View>
-  );
-}
-
-// Set type colors based on "The Invisible Spotter" intensity heatmap
-const SET_TYPE_COLORS: Record<SetType, { bg: string; border: string; text: string }> = {
-  warmup: { bg: '#8E8E9320', border: '#8E8E93', text: '#8E8E93' },
-  working: { bg: '#5AC8FA20', border: '#5AC8FA', text: '#5AC8FA' },
-  top: { bg: '#FF950020', border: '#FF9500', text: '#FF9500' },
-  drop: { bg: '#AF52DE20', border: '#AF52DE', text: '#AF52DE' },
-  failure: { bg: '#FF3B3020', border: '#FF3B30', text: '#FF3B30' },
-};
-
-// Completed set colors - prominent green to easily identify done sets
-const COMPLETED_SET_COLORS = {
-  bg: '#34C75925',
-  border: '#34C759',
-  text: '#34C759',
-  checkBg: '#34C759',
-};
 
 export default function ActiveWorkoutScreen() {
-  const { id, week, day, quick } = useLocalSearchParams();
+  const { id, week, day, quick, repeatFrom } = useLocalSearchParams();
   const selectedWeek = week ? parseInt(week as string) : undefined;
   const selectedDay = day ? parseInt(day as string) : undefined;
   const isQuickWorkout = quick === 'true';
@@ -180,6 +91,7 @@ export default function ActiveWorkoutScreen() {
   const colors = Colors[colorScheme ?? 'light'];
   const insets = useSafeAreaInsets();
   const { weightUnit, setWeightUnit, formatWeight, convertFromKg, convertToKg } = usePreferences();
+  const userId = useUserId();
 
   // Workout state
   const [session, setSession] = useState<WorkoutSession | null>(null);
@@ -190,6 +102,8 @@ export default function ActiveWorkoutScreen() {
   const [workoutWeek, setWorkoutWeek] = useState<number | undefined>(undefined);
   const [workoutDay, setWorkoutDay] = useState<number | undefined>(undefined);
   const [previousData, setPreviousData] = useState<Record<string, PreviousExerciseData>>({});
+  const [repeatPrevData, setRepeatPrevData] = useState<Record<string, PreviousExerciseData> | null>(null);
+  const [lastCompletedSetId, setLastCompletedSetId] = useState<string | null>(null);
 
   // Rest timer editing state - prevents countdown from overwriting user edits
   const [isEditingRestTimer, setIsEditingRestTimer] = useState(false);
@@ -199,6 +113,98 @@ export default function ActiveWorkoutScreen() {
   const [supersetSelectedIds, setSupersetSelectedIds] = useState<string[]>([]);
   const isInSupersetSelectionMode = supersetSelectedIds.length > 0;
   const canCompleteSupersetSelection = supersetSelectedIds.length >= 2 && supersetSelectedIds.length <= 4;
+
+  // ============================================
+  // XSTATE PARALLEL RUN (Gradual Migration)
+  // ============================================
+  // Machine runs alongside useState for validation & debugging.
+  // The machine mirrors state changes but doesn't control UI yet.
+  const workoutMachine = useOptionalWorkoutMachine();
+
+  // Sync session changes to XState machine (parallel run)
+  useEffect(() => {
+    if (!workoutMachine || !session) return;
+
+    // When useState session starts, also start the machine
+    if (session.status === 'in_progress' && workoutMachine.status === 'idle') {
+      console.log('[XState] Starting workout machine with session:', session.id);
+      workoutMachine.startWorkout(session);
+    }
+  }, [session, workoutMachine, workoutMachine?.status]);
+
+  // ============================================
+  // XSTATE DIVERGENCE ASSERTIONS (Parallel Run Safety)
+  // ============================================
+  // Logs warnings when XState and useState states diverge.
+  // This catches sync issues early during the parallel run phase.
+  // To disable machine: see lib/machines/ROLLBACK.md
+  useEffect(() => {
+    if (!workoutMachine) return;
+
+    const divergences: string[] = [];
+
+    // Compare session status
+    const useStateStatus = session?.status ?? 'null';
+    const machineStatus = workoutMachine.status;
+
+    // Map machine status to comparable session status
+    const machineToSessionStatus: Record<string, string> = {
+      'idle': 'null',
+      'active.exercising': 'in_progress',
+      'active.resting': 'in_progress',
+      'paused': 'paused',
+      'finished': 'completed',
+    };
+    const expectedSessionStatus = machineToSessionStatus[machineStatus] ?? machineStatus;
+
+    if (useStateStatus !== expectedSessionStatus && useStateStatus !== 'null') {
+      divergences.push(`status: useState=${useStateStatus} vs machine=${machineStatus}`);
+    }
+
+    // Compare resting state
+    const useStateResting = session?.isResting ?? false;
+    const machineResting = workoutMachine.isResting;
+    if (useStateResting !== machineResting && session?.status === 'in_progress') {
+      divergences.push(`isResting: useState=${useStateResting} vs machine=${machineResting}`);
+    }
+
+    // Compare exercise count (catches add/remove desync)
+    const useStateExerciseCount = session?.exercises?.length ?? 0;
+    const machineExerciseCount = workoutMachine.session?.exercises?.length ?? 0;
+    if (useStateExerciseCount !== machineExerciseCount && machineExerciseCount > 0) {
+      divergences.push(`exerciseCount: useState=${useStateExerciseCount} vs machine=${machineExerciseCount}`);
+    }
+
+    // Compare completed sets count
+    const useStateCompletedSets = session?.exercises?.reduce(
+      (sum, ex) => sum + ex.sets.filter(s => s.isCompleted).length, 0
+    ) ?? 0;
+    const machineCompletedSets = workoutMachine.progress.completedSets;
+    if (useStateCompletedSets !== machineCompletedSets && machineCompletedSets > 0) {
+      divergences.push(`completedSets: useState=${useStateCompletedSets} vs machine=${machineCompletedSets}`);
+    }
+
+    // Log result
+    if (divergences.length > 0) {
+      console.warn(
+        `[XState DIVERGENCE WARNING] State mismatch detected:\n` +
+        divergences.map(d => `  • ${d}`).join('\n') +
+        `\n  See lib/machines/ROLLBACK.md for recovery instructions.`
+      );
+    } else if (__DEV__) {
+      // Only log success in dev mode to reduce noise
+      console.log(`[XState Sync] ✓ useState=${useStateStatus} | machine=${machineStatus}`);
+    }
+  }, [
+    session?.status,
+    session?.isResting,
+    session?.exercises?.length,
+    session?.exercises,
+    workoutMachine?.status,
+    workoutMachine?.isResting,
+    workoutMachine?.session?.exercises?.length,
+    workoutMachine?.progress.completedSets,
+  ]);
 
   // Voice input state
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
@@ -312,7 +318,7 @@ export default function ActiveWorkoutScreen() {
     setsCount?: number;  // Voice input can specify number of sets
     reps?: number | string;  // Voice input can specify reps
     weight?: number;  // Voice input can specify weight
-    perSetDetails?: Array<{ reps: string; weight?: number }>; // Per-set weight/reps
+    perSetDetails?: { reps: string; weight?: number; setType?: 'warmup' | 'working' | 'drop' | 'top' | 'failure' | 'normal' }[]; // Per-set weight/reps
   }) => {
     const timestamp = Date.now();
 
@@ -328,12 +334,12 @@ export default function ActiveWorkoutScreen() {
     });
 
     // Look up previous workout data for this exercise
-    const prevDataRecord = await getPreviousExerciseData([exerciseData.name]);
+    const prevDataRecord = await getPreviousExerciseData([exerciseData.name], userId);
     const prevData = prevDataRecord[exerciseData.name];
 
     // Determine number of sets: voice input > previous data > default 3
-    const numSets = exerciseData.perSetDetails?.length || exerciseData.setsCount || (prevData?.sets?.length) || 3;
-    const defaultReps = exerciseData.reps ? String(exerciseData.reps) : '10';
+    const numSets = exerciseData.perSetDetails?.length || exerciseData.setsCount || (prevData?.sets?.length) || 4;
+    const defaultReps = exerciseData.reps ? String(exerciseData.reps) : '8';
     const voiceWeight = exerciseData.weight; // Weight from voice (already converted)
 
     // Create sets based on perSetDetails > previous data > defaults
@@ -344,6 +350,7 @@ export default function ActiveWorkoutScreen() {
         id: unsafeCoerceSetId(`s${timestamp}-${i}`),
         reps: setDetail.reps || defaultReps,
         weight: setDetail.weight ?? voiceWeight,
+        setType: setDetail.setType === 'normal' ? 'working' : setDetail.setType,
         isCompleted: false,
       }));
       console.log('[Voice] Applied perSetDetails:', exerciseData.perSetDetails);
@@ -362,6 +369,7 @@ export default function ActiveWorkoutScreen() {
         id: unsafeCoerceSetId(`s${timestamp}-${i}`),
         reps: prevSet.reps ? String(prevSet.reps) : defaultReps,
         weight: prevSet.weight ?? undefined,
+        setType: prevSet.setType,
         isCompleted: false,
       }));
     } else {
@@ -387,7 +395,7 @@ export default function ActiveWorkoutScreen() {
       return { ...prev, exercises: [...prev.exercises, newExercise] };
     });
     setHasLiveEdits(true);
-  }, []);
+  }, [userId]);
 
   // Poll for selected exercise - checks every 500ms when session is active
   useEffect(() => {
@@ -422,9 +430,9 @@ export default function ActiveWorkoutScreen() {
   };
 
   // Handle voice exercises extracted from VoiceLoggingModal
-  // Uses the SAME search algorithm as quick.tsx for proper exercise matching
+  // OPTIMIZED: Batches all exercises into a single state update for instant loading
   const handleVoiceExercisesExtracted = useCallback(async (
-    voiceExercises: Array<{
+    voiceExercises: {
       nameRaw: string;
       nameNormalized?: string;
       exerciseId?: string;
@@ -435,13 +443,13 @@ export default function ActiveWorkoutScreen() {
       weightUnit?: 'lbs' | 'kg';
       rpe?: number;
       restSeconds?: number;
-      perSetDetails?: Array<{
+      perSetDetails?: {
         reps: string;
         weight?: number;
         setType?: 'warmup' | 'working' | 'drop' | 'top' | 'failure' | 'normal';
-      }>;
-    }>,
-    supersets?: Array<{ type: 'superset' | 'giant_set' | 'circuit'; exerciseOrders: number[] }>
+      }[];
+    }[],
+    supersets?: { type: 'superset' | 'giant_set' | 'circuit'; exerciseOrders: number[] }[]
   ) => {
     console.log('[Voice] Received', voiceExercises.length, 'exercises from VoiceLoggingModal');
     if (supersets?.length) {
@@ -468,8 +476,25 @@ export default function ActiveWorkoutScreen() {
         return w;
       };
 
-      // Process exercises sequentially to maintain order
-      for (const ex of voiceExercises) {
+      // ============================================
+      // STEP 1: BATCH PREFETCH - Single DB query for all exercise names
+      // ============================================
+      const exerciseNames = voiceExercises
+        .map(ex => ex.nameNormalized || ex.nameRaw?.trim())
+        .filter(Boolean) as string[];
+
+      const prevDataMap = await getPreviousExerciseData(exerciseNames, userId);
+      console.log('[Voice] Prefetched previous data for', exerciseNames.length, 'exercises');
+
+      // ============================================
+      // STEP 2: BUILD ALL EXERCISES - No state updates yet
+      // ============================================
+      const timestamp = Date.now();
+      const newExercises: WorkoutExercise[] = [];
+
+      for (let i = 0; i < voiceExercises.length; i++) {
+        const ex = voiceExercises[i];
+
         // Validate required fields
         if (!ex.nameRaw) {
           console.warn('[Voice] Skipping exercise with no nameRaw');
@@ -482,153 +507,116 @@ export default function ActiveWorkoutScreen() {
           continue;
         }
 
-        // ============================================
-        // STEP 1: Match exercise to database
-        // ============================================
+        // Match exercise to database (instant lookup)
         let matchedName = rawName;
-        let matchSource = 'raw';
-
-        // Try direct alias/slang lookup first (instant, highest confidence)
         const directMatch = lookupExerciseByAlias(rawName);
         if (directMatch) {
           matchedName = directMatch.canonical_name;
-          matchSource = 'alias';
           console.log('[Voice] Alias match:', rawName, '→', matchedName);
         } else {
-          // No alias match - trust the LLM's normalized name (instant, no fuzzy search)
-          // The LLM (Gemini 1.5 Flash) has already normalized the exercise name
           matchedName = ex.nameNormalized || rawName;
-          matchSource = 'llm-normalized';
           console.log('[Voice] Using LLM normalized:', rawName, '→', matchedName);
         }
 
-        // ============================================
-        // STEP 2: Add exercise to session
-        // ============================================
-        const numSets = ex.sets || 3;
-        const repsValue = ex.reps || '10';
+        // Get previous data (already prefetched)
+        const prevData = prevDataMap[matchedName];
 
-        // Convert weight from voice unit to user preference
+        // Build sets
+        const numSets = ex.perSetDetails?.length || ex.sets || prevData?.sets?.length || 4;
+        const defaultReps = ex.reps || '8';
         const convertedWeight = convertWeight(ex.weight, ex.weightUnit);
 
-        // Convert perSetDetails weights if present
-        const convertedPerSetDetails = ex.perSetDetails?.map(sd => ({
-          reps: sd.reps,
-          weight: convertWeight(sd.weight, ex.weightUnit),
-        }));
-
-        // CRITICAL DEBUG: Log what we're about to send
-        console.log('[handleVoiceExercisesExtracted] About to call addExerciseToSession with:', {
-          name: matchedName,
-          numSets,
-          repsValue,
-          convertedWeight,
-          hasPerSetDetails: !!convertedPerSetDetails,
-          perSetDetailsLength: convertedPerSetDetails?.length,
-          perSetDetails: convertedPerSetDetails ? JSON.stringify(convertedPerSetDetails) : 'undefined',
-        });
-
-        console.log(`[Voice] Adding: ${matchedName} (${matchSource}) - ${numSets} sets x ${repsValue}${convertedWeight ? ` @ ${convertedWeight}${weightUnit}` : ''}`);
-
-        // Add immediately without waiting for search (latency fix)
-        addExerciseToSession({
-          name: matchedName,
-          setsCount: numSets,
-          reps: repsValue,
-          weight: convertedWeight,
-          perSetDetails: convertedPerSetDetails,
-        });
-
-        // ============================================
-        // STEP 3: Apply weights (after exercise is added)
-        // ============================================
-
-        // Check for per-set details first (variable weights/reps)
+        let sets: WorkoutSet[];
         if (ex.perSetDetails && ex.perSetDetails.length > 0) {
-          console.log(`[Voice] Applying ${ex.perSetDetails.length} per-set details`);
-
-          setSession(prev => {
-            if (!prev || prev.exercises.length === 0) return prev;
-
-            const exerciseIndex = prev.exercises.length - 1;
-            const targetExercise = prev.exercises[exerciseIndex];
-
-            // Map per-set details to workout sets
-            const updatedSets = targetExercise.sets.map((set, setIndex) => {
-              const perSet = ex.perSetDetails?.[setIndex];
-              if (!perSet) return set;
-
-              return {
-                ...set,
-                reps: perSet.reps || set.reps,
-                weight: convertWeight(perSet.weight, ex.weightUnit),
-              };
-            });
-
-            return {
-              ...prev,
-              exercises: prev.exercises.map((e, i) =>
-                i === exerciseIndex ? { ...e, sets: updatedSets } : e
-              ),
-            };
-          });
-        } else if (ex.weight !== undefined && ex.weight !== null) {
-          // Single weight applies to all sets
-          const convertedWeight = convertWeight(ex.weight, ex.weightUnit);
-          console.log(`[Voice] Applying weight ${ex.weight}${ex.weightUnit || ''} → ${convertedWeight}${weightUnit}`);
-
-          if (convertedWeight !== undefined) {
-            setSession(prev => {
-              if (!prev || prev.exercises.length === 0) return prev;
-
-              const exerciseIndex = prev.exercises.length - 1;
-              const targetExercise = prev.exercises[exerciseIndex];
-
-              const updatedSets = targetExercise.sets.map(set => ({
-                ...set,
-                weight: convertedWeight,
-              }));
-
-              return {
-                ...prev,
-                exercises: prev.exercises.map((e, i) =>
-                  i === exerciseIndex ? { ...e, sets: updatedSets } : e
-                ),
-              };
-            });
-          }
+          // Per-set details from voice
+          sets = ex.perSetDetails.map((sd, j) => ({
+            id: unsafeCoerceSetId(`s${timestamp}-${i}-${j}`),
+            reps: sd.reps || defaultReps,
+            weight: convertWeight(sd.weight, ex.weightUnit) ?? convertedWeight,
+            setType: sd.setType === 'normal' ? 'working' : sd.setType,
+            isCompleted: false,
+          }));
+        } else if (convertedWeight !== undefined) {
+          // Single weight for all sets
+          sets = Array.from({ length: numSets }, (_, j) => ({
+            id: unsafeCoerceSetId(`s${timestamp}-${i}-${j}`),
+            reps: defaultReps,
+            weight: convertedWeight,
+            isCompleted: false,
+          }));
+        } else if (prevData?.sets?.length && !ex.sets) {
+          // Use previous workout data
+          sets = prevData.sets.map((prevSet, j) => ({
+            id: unsafeCoerceSetId(`s${timestamp}-${i}-${j}`),
+            reps: prevSet.reps ? String(prevSet.reps) : defaultReps,
+            weight: prevSet.weight ?? undefined,
+            setType: prevSet.setType,
+            isCompleted: false,
+          }));
+        } else {
+          // Default sets
+          sets = Array.from({ length: numSets }, (_, j) => ({
+            id: unsafeCoerceSetId(`s${timestamp}-${i}-${j}`),
+            reps: defaultReps,
+            isCompleted: false,
+          }));
         }
+
+        newExercises.push({
+          id: unsafeCoerceWorkoutExerciseId(`ex${timestamp}-${i}`),
+          name: matchedName,
+          sets,
+          restTime: ex.restSeconds || 60,
+          currentSetIndex: 0,
+          muscleGroups: [],
+        });
+
+        console.log(`[Voice] Built: ${matchedName} - ${sets.length} sets`);
       }
 
-      // Process supersets - needs access to the exercise IDs we just added
-      // The exercises array tracks which voice exercises map to which session exercise IDs
-      if (supersets && supersets.length > 0 && session) {
-        console.log('[Voice] Processing', supersets.length, 'superset(s)');
+      // ============================================
+      // STEP 3: SINGLE STATE UPDATE - All exercises at once
+      // ============================================
+      if (newExercises.length > 0) {
+        setSession(prev => {
+          if (!prev) return prev;
 
-        for (const superset of supersets) {
-          if (superset.exerciseOrders && superset.exerciseOrders.length >= 2) {
-            // Map exercise orders to the actual exercise IDs in the session
-            // The exercises were just added, so we need to get the last N exercises
-            const recentExercises = session.exercises.slice(-voiceExercises.length);
+          let updatedSession = {
+            ...prev,
+            exercises: [...prev.exercises, ...newExercises],
+          };
 
-            // Get exercise IDs by their order (1-indexed from voice)
-            const exerciseIds: string[] = [];
-            for (const order of superset.exerciseOrders) {
-              const exerciseIndex = order - 1; // Convert 1-indexed to 0-indexed
-              if (exerciseIndex >= 0 && exerciseIndex < recentExercises.length) {
-                exerciseIds.push(recentExercises[exerciseIndex].id);
+          // Apply supersets if specified
+          if (supersets && supersets.length > 0) {
+            const startIndex = prev.exercises.length;
+
+            for (const superset of supersets) {
+              if (superset.exerciseOrders && superset.exerciseOrders.length >= 2) {
+                const exerciseIds = superset.exerciseOrders
+                  .map(order => {
+                    const idx = order - 1; // Convert 1-indexed to 0-indexed
+                    return idx >= 0 && idx < newExercises.length
+                      ? newExercises[idx].id
+                      : null;
+                  })
+                  .filter(Boolean) as string[];
+
+                if (exerciseIds.length >= 2) {
+                  console.log(`[Voice] Linking ${exerciseIds.length} exercises as ${superset.type}`);
+                  updatedSession = linkMultipleExercisesAsSuperset(
+                    updatedSession,
+                    exerciseIds.map(id => unsafeCoerceWorkoutExerciseId(id))
+                  );
+                }
               }
             }
-
-            if (exerciseIds.length >= 2) {
-              console.log(`[Voice] Linking ${exerciseIds.length} exercises as ${superset.type}:`, exerciseIds);
-              setSession(prev => {
-                if (!prev) return prev;
-                return linkMultipleExercisesAsSuperset(prev, exerciseIds.map(id => unsafeCoerceWorkoutExerciseId(id)));
-              });
-            }
           }
-        }
+
+          return updatedSession;
+        });
+
+        setHasLiveEdits(true);
+        console.log('[Voice] Added', newExercises.length, 'exercises in single state update');
       }
 
       // Success feedback
@@ -641,7 +629,7 @@ export default function ActiveWorkoutScreen() {
     }
 
     setVoiceModalVisible(false);
-  }, [addExerciseToSession, weightUnit, session]);
+  }, [weightUnit]);
 
   // Update workout context for UFIRE scoring when session changes
   useEffect(() => {
@@ -660,18 +648,6 @@ export default function ActiveWorkoutScreen() {
     return () => setWorkoutContext(null);
   }, [session?.exercises, elapsedSeconds]);
 
-  // Infer workout type from exercises
-  function inferWorkoutTypeFromExercises(exercises: WorkoutExercise[]): 'push' | 'pull' | 'legs' | 'upper' | 'lower' | 'full_body' | 'custom' | undefined {
-    const muscles = exercises
-      .flatMap(e => e.muscleGroups || [])
-      .filter((m): m is string => typeof m === 'string' && m.length > 0)
-      .map(m => m.toLowerCase());
-    if (muscles.length === 0) return undefined;
-    if (muscles.some(m => m.includes('chest') || m.includes('shoulder') || m.includes('tricep'))) return 'push';
-    if (muscles.some(m => m.includes('back') || m.includes('bicep'))) return 'pull';
-    if (muscles.some(m => m.includes('quad') || m.includes('hamstring') || m.includes('glute'))) return 'legs';
-    return undefined;
-  }
 
 
 
@@ -686,20 +662,68 @@ export default function ActiveWorkoutScreen() {
   useEffect(() => {
     if (!session?.exercises?.length) return;
     const exerciseNames = session.exercises.map(e => e.name);
-    getPreviousExerciseData(exerciseNames).then(data => {
+    getPreviousExerciseData(exerciseNames, userId).then(data => {
       setPreviousData(data);
     });
   }, [session?.exercises?.length]);
 
   // Helper to find previous data for an exercise (case-insensitive)
   const getPrevDataForExercise = useCallback((exerciseName: string): PreviousExerciseData | undefined => {
-    // First try exact match
-    if (previousData[exerciseName]) return previousData[exerciseName];
-    // Then try case-insensitive match
     const normalizedName = exerciseName.toLowerCase().trim();
+    if (repeatPrevData) {
+      if (repeatPrevData[exerciseName]) return repeatPrevData[exerciseName];
+      const repeatKey = Object.keys(repeatPrevData).find(k => k.toLowerCase().trim() === normalizedName);
+      if (repeatKey) return repeatPrevData[repeatKey];
+    }
+
+    if (previousData[exerciseName]) return previousData[exerciseName];
     const key = Object.keys(previousData).find(k => k.toLowerCase().trim() === normalizedName);
     return key ? previousData[key] : undefined;
-  }, [previousData]);
+  }, [previousData, repeatPrevData]);
+
+  useEffect(() => {
+    if (!repeatFrom) {
+      setRepeatPrevData(null);
+      return;
+    }
+
+    const repeatId = Array.isArray(repeatFrom) ? repeatFrom[0] : repeatFrom;
+    if (!repeatId) {
+      setRepeatPrevData(null);
+      return;
+    }
+
+    (async () => {
+      try {
+        const record = await getWorkoutRecordById(repeatId);
+        if (!record) {
+          setRepeatPrevData(null);
+          return;
+        }
+
+        const map: Record<string, PreviousExerciseData> = {};
+        for (const exercise of record.exercises) {
+          if (!exercise.name) continue;
+          if (map[exercise.name]) continue;
+          const sets = (exercise.sets || []).map(set => ({
+            reps: set.reps,
+            weight: set.weight,
+            setType: set.setType,
+          }));
+          map[exercise.name] = {
+            exerciseName: exercise.name,
+            date: record.completedAt,
+            sets,
+          };
+        }
+
+        setRepeatPrevData(map);
+      } catch (error) {
+        console.warn('[ActiveWorkout] Failed to load repeat history:', error);
+        setRepeatPrevData(null);
+      }
+    })();
+  }, [repeatFrom]);
 
   const loadWorkout = async () => {
     try {
@@ -878,9 +902,8 @@ export default function ActiveWorkoutScreen() {
       } else if (prev.currentExerciseIndex < newSession.exercises.length - 1) {
         newSession.currentExerciseIndex = prev.currentExerciseIndex + 1;
         newSession.exercises[prev.currentExerciseIndex + 1].currentSetIndex = 0;
-      } else {
-        handleWorkoutComplete();
       }
+      // Last set of last exercise - user will click Finish manually
 
       return newSession;
     });
@@ -1000,8 +1023,7 @@ export default function ActiveWorkoutScreen() {
         session.exercises[maxSupersetIndex + 1].currentSetIndex = 0;
         session.activeSupersetId = undefined;
       } else {
-        // Workout complete
-        handleWorkoutComplete();
+        // Superset complete, stay here - user clicks Finish manually
       }
     }
 
@@ -1066,7 +1088,8 @@ export default function ActiveWorkoutScreen() {
 
     if (wasResting && !isRestingNow && lastRestEndReasonRef.current === 'completed') {
       lastRestEndReasonRef.current = null;
-      playRestCompleteBell();
+      // Defer to next tick to avoid setState during render warning
+      setTimeout(playRestCompleteBell, 0);
     }
   }, [session?.isResting]);
 
@@ -1120,8 +1143,12 @@ export default function ActiveWorkoutScreen() {
     updateAnySet(session!.currentExerciseIndex, currentSetIndex, updates);
   };
 
-  // Update any set in any exercise
-  const updateAnySet = (exerciseIndex: number, setIndex: number, updates: { reps?: string; weight?: number | null }) => {
+  // Update any set in any exercise (including restAfter timer config)
+  const updateAnySet = (exerciseIndex: number, setIndex: number, updates: {
+    reps?: string;
+    weight?: number | null;
+    restAfter?: { enabled: boolean; duration: number };
+  }) => {
     setHasLiveEdits(true);
     setSession(prev => {
       if (!prev) return prev;
@@ -1130,6 +1157,7 @@ export default function ActiveWorkoutScreen() {
       const set = { ...ex.sets[setIndex] };
       if (updates.reps !== undefined) set.reps = updates.reps;
       if (updates.weight !== undefined) set.weight = updates.weight === null ? undefined : updates.weight;
+      if (updates.restAfter !== undefined) set.restAfter = updates.restAfter;
       ex.sets[setIndex] = set;
       next.exercises[exerciseIndex] = ex;
       return next;
@@ -1172,9 +1200,17 @@ export default function ActiveWorkoutScreen() {
     setHasLiveEdits(true);
     setSession(prev => {
       if (!prev) return prev;
+      const ex = prev.exercises[exerciseIndex];
+
+      // If this is the last set, remove the entire exercise
+      if (ex.sets.length <= 1) {
+        const newExercises = prev.exercises.filter((_, i) => i !== exerciseIndex);
+        const newCurrentIndex = Math.min(prev.currentExerciseIndex, Math.max(0, newExercises.length - 1));
+        return { ...prev, exercises: newExercises, currentExerciseIndex: newCurrentIndex };
+      }
+
+      // Otherwise just remove the set
       const next = { ...prev, exercises: [...prev.exercises] };
-      const ex = next.exercises[exerciseIndex];
-      if (ex.sets.length <= 1) return prev; // Keep at least one set
       const newSets = ex.sets.filter((_, i) => i !== setIndex);
       const newCurrentSetIndex = Math.min(ex.currentSetIndex, newSets.length - 1);
       next.exercises[exerciseIndex] = { ...ex, sets: newSets, currentSetIndex: newCurrentSetIndex };
@@ -1395,6 +1431,7 @@ export default function ActiveWorkoutScreen() {
 
     const exercise = session.exercises[exerciseIndex];
     if (!exercise || !exercise.sets[setIndex] || exercise.sets[setIndex].isCompleted) return;
+    setLastCompletedSetId(exercise.sets[setIndex].id);
 
     // Satisfying haptic feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -1457,13 +1494,58 @@ export default function ActiveWorkoutScreen() {
           newSession.currentExerciseIndex = exerciseIndex + 1;
           newSession.exercises[exerciseIndex + 1].currentSetIndex = 0;
         } else {
-          // Check if all exercises are complete
-          const allComplete = newSession.exercises.every(e => e.sets.every(s => s.isCompleted));
-          if (allComplete) {
-            handleWorkoutComplete();
-          }
+          // All sets complete - user will click Finish manually
         }
       }
+
+      return newSession;
+    });
+
+    setHasLiveEdits(true);
+  };
+
+  /**
+   * Uncomplete a set (undo a mistaken check).
+   * Resets the timer and marks the set as incomplete.
+   */
+  const uncompleteSet = (exerciseIndex: number, setIndex: number) => {
+    if (!session) return;
+
+    const exercise = session.exercises[exerciseIndex];
+    if (!exercise || !exercise.sets[setIndex] || !exercise.sets[setIndex].isCompleted) return;
+
+    // Light haptic for undo
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    setSession(prev => {
+      if (!prev) return prev;
+
+      const newExercises = prev.exercises.map((ex, idx) => ({
+        ...ex,
+        sets: ex.sets.map(s => ({ ...s })),
+      }));
+
+      const targetExercise = newExercises[exerciseIndex];
+      const targetSet = targetExercise.sets[setIndex];
+
+      // Mark set as incomplete
+      targetSet.isCompleted = false;
+      targetSet.completedAt = undefined;
+      targetSet.actualReps = undefined;
+      targetSet.actualWeight = undefined;
+
+      // Reset to this set as current
+      targetExercise.currentSetIndex = setIndex;
+
+      // Stop any active rest timer
+      const newSession: WorkoutSession = {
+        ...prev,
+        exercises: newExercises,
+        isResting: false,
+        restTimeRemaining: 0,
+        restExerciseIndex: undefined,
+        restAfterSetIndex: undefined,
+      };
 
       return newSession;
     });
@@ -1899,6 +1981,43 @@ export default function ActiveWorkoutScreen() {
                       </View>
                     </Pressable>
 
+                    {/* Rest Timer Toggle - like Hevy */}
+                    <Pressable
+                      style={[styles.restTimerToggle, { borderBottomColor: colors.separator }]}
+                      onPress={() => {
+                        Haptics.selectionAsync();
+                        // Toggle rest timer for this exercise
+                        // restTimerEnabled: undefined/true = ON, false = OFF
+                        setSession(prev => {
+                          if (!prev) return prev;
+                          const newExercises = [...prev.exercises];
+                          const currentValue = newExercises[exerciseIndex].restTimerEnabled;
+                          // If currently ON (undefined or true), turn OFF (false)
+                          // If currently OFF (false), turn ON (true)
+                          const newValue = currentValue !== false ? false : true;
+                          newExercises[exerciseIndex] = {
+                            ...newExercises[exerciseIndex],
+                            restTimerEnabled: newValue,
+                          };
+                          return { ...prev, exercises: newExercises };
+                        });
+                      }}
+                    >
+                      <IconSymbol
+                        name="timer"
+                        size={14}
+                        color={exercise.restTimerEnabled !== false ? colors.tint : colors.textTertiary}
+                      />
+                      <ThemedText
+                        style={[
+                          styles.restTimerToggleText,
+                          { color: exercise.restTimerEnabled !== false ? colors.tint : colors.textTertiary }
+                        ]}
+                      >
+                        Rest Timer: {exercise.restTimerEnabled !== false ? 'ON' : 'OFF'}
+                      </ThemedText>
+                    </Pressable>
+
                     {/* Sets Table with Column Headers */}
                     <View style={styles.setsList}>
                       {/* Column Headers */}
@@ -1934,14 +2053,14 @@ export default function ActiveWorkoutScreen() {
                         const setType = set.setType || 'working';
                         const typeColors = SET_TYPE_COLORS[setType];
                         const isDropSet = setType === 'drop';
-                        const canDelete = exercise.sets.length > 1 && !set.isCompleted;
+                        const canDelete = true; // Can delete any set (last set removes exercise)
                         const completedColors = set.isCompleted ? COMPLETED_SET_COLORS : null;
                         // Check if this is the set that's currently resting (just completed)
                         const isRestingAfterThisSet = session.isResting &&
                           session.restExerciseIndex === exerciseIndex &&
                           session.restAfterSetIndex === setIndex;
-                        // Show rest row after completed sets (except last set of exercise)
-                        const showRestRow = set.isCompleted && setIndex < exercise.sets.length - 1;
+                        // Show rest row for all non-last sets (visible in idle before completion)
+                        const showRestRow = setIndex < exercise.sets.length - 1 && (exercise.restTimerEnabled !== false);
                         // Get previous data for this exercise/set
                         const prevExData = getPrevDataForExercise(exercise.name);
                         const prevSet = prevExData?.sets?.[setIndex];
@@ -2056,106 +2175,91 @@ export default function ActiveWorkoutScreen() {
 
                                 {/* Inline Checkbox to complete set */}
                                 <View style={styles.setDoneCol}>
-                                  <Pressable
-                                    style={[
-                                      styles.setCheckbox,
-                                      {
-                                        borderColor: set.isCompleted
-                                          ? COMPLETED_SET_COLORS.checkBg
-                                          : colors.separator,
-                                        backgroundColor: set.isCompleted
-                                          ? COMPLETED_SET_COLORS.checkBg
-                                          : 'transparent',
-                                      },
-                                    ]}
-                                    onPress={() => {
-                                      if (!set.isCompleted) {
-                                        completeAnySet(exerciseIndex, setIndex);
-                                      }
-                                    }}
-                                    disabled={set.isCompleted}
-                                  >
-                                    {set.isCompleted && (
-                                      <IconSymbol name="checkmark" size={14} color="#fff" />
-                                    )}
-                                  </Pressable>
+                                  <SetCompletionPulse active={set.id === lastCompletedSetId && set.isCompleted}>
+                                    <Pressable
+                                      style={[
+                                        styles.setCheckbox,
+                                        {
+                                          borderColor: set.isCompleted
+                                            ? COMPLETED_SET_COLORS.checkBg
+                                            : colors.separator,
+                                          backgroundColor: set.isCompleted
+                                            ? COMPLETED_SET_COLORS.checkBg
+                                            : 'transparent',
+                                        },
+                                      ]}
+                                      onPress={() => {
+                                        if (set.isCompleted) {
+                                          uncompleteSet(exerciseIndex, setIndex);
+                                        } else {
+                                          completeAnySet(exerciseIndex, setIndex);
+                                        }
+                                      }}
+                                    >
+                                      {set.isCompleted && (
+                                        <IconSymbol name="checkmark" size={14} color="#fff" />
+                                      )}
+                                    </Pressable>
+                                  </SetCompletionPulse>
                                 </View>
                               </View>
                             </SwipeableSetRow>
 
-                            {/* Inline Rest Timer Row - centered with distinct background */}
-                            {showRestRow && (
-                              <View
-                                style={[
-                                  styles.inlineRestRow,
-                                  {
-                                    backgroundColor: isRestingAfterThisSet
-                                      ? colors.tint + '15'
-                                      : colors.elevated + '80',
-                                  },
-                                ]}
+                            {/* Inline Rest Timer Row - swipe left to remove */}
+                            {showRestRow && set.restAfter?.enabled !== false && (
+                              <SwipeableSetRow
+                                onDelete={() => {
+                                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                                  updateAnySet(exerciseIndex, setIndex, {
+                                    restAfter: { enabled: false, duration: exercise.restTime },
+                                  });
+                                }}
+                                canDelete={true}
                               >
-                                {isRestingAfterThisSet ? (
-                                  // Active rest state - editable countdown
-                                  <View style={styles.inlineRestActive}>
-                                    <IconSymbol name="timer" size={14} color={colors.tint} />
-                                    <TextInput
-                                      value={isEditingRestTimer ? editingRestValue : String(session.restTimeRemaining ?? 0)}
-                                      onChangeText={(v) => {
-                                        setEditingRestValue(v);
-                                      }}
-                                      onFocus={() => {
-                                        setIsEditingRestTimer(true);
-                                        setEditingRestValue(String(session.restTimeRemaining ?? 0));
-                                      }}
-                                      onBlur={() => {
-                                        const n = parseInt(editingRestValue) || 0;
-                                        setSession(prev => prev ? { ...prev, restTimeRemaining: Math.max(0, n) } : prev);
-                                        setIsEditingRestTimer(false);
-                                      }}
-                                      style={[
-                                        styles.inlineRestInputActive,
-                                        { color: colors.tint, backgroundColor: colors.tint + '20' },
-                                      ]}
-                                      keyboardType="number-pad"
-                                      selectTextOnFocus
-                                    />
-                                    <ThemedText style={[styles.inlineRestUnit, { color: colors.tint }]}>
-                                      sec
-                                    </ThemedText>
-                                    <Pressable
-                                      style={[styles.inlineRestSkip, { backgroundColor: colors.tint }]}
-                                      onPress={skipRest}
-                                    >
-                                      <ThemedText style={styles.inlineRestSkipText}>Skip</ThemedText>
-                                    </Pressable>
-                                  </View>
-                                ) : (
-                                  // Editable rest time
-                                  <>
-                                    <IconSymbol name="timer" size={12} color={colors.textTertiary} />
-                                    <ThemedText style={[styles.inlineRestLabel, { color: colors.textTertiary }]}>
-                                      Rest
-                                    </ThemedText>
-                                    <TextInput
-                                      value={String(exercise.restTime)}
-                                      onChangeText={(v) => {
-                                        const n = parseInt(v) || 0;
-                                        updateExerciseRestTime(exerciseIndex, Math.max(0, n));
-                                      }}
-                                      style={[
-                                        styles.inlineRestInput,
-                                        { color: colors.text, backgroundColor: colors.card },
-                                      ]}
-                                      keyboardType="number-pad"
-                                      selectTextOnFocus
-                                    />
-                                    <ThemedText style={[styles.inlineRestUnit, { color: colors.textTertiary }]}>
-                                      sec
-                                    </ThemedText>
-                                  </>
-                                )}
-                              </View>
+                                <InlineRestTimerRow
+                                  duration={set.restAfter?.duration ?? exercise.restTime}
+                                  autoStart={set.isCompleted}
+                                  isSetCompleted={set.isCompleted}
+                                  onComplete={skipRest}
+                                  onDisable={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                                    updateAnySet(exerciseIndex, setIndex, {
+                                      restAfter: { enabled: false, duration: exercise.restTime },
+                                    });
+                                  }}
+                                  onDurationChange={(newDuration) => {
+                                    // Update the set's restAfter duration
+                                    if (set.restAfter) {
+                                      updateAnySet(exerciseIndex, setIndex, {
+                                        restAfter: { ...set.restAfter, duration: newDuration },
+                                      });
+                                    } else {
+                                      // Initialize restAfter with the new duration
+                                      updateAnySet(exerciseIndex, setIndex, {
+                                        restAfter: { enabled: true, duration: newDuration },
+                                      });
+                                    }
+                                  }}
+                                />
+                              </SwipeableSetRow>
+                            )}
+
+                            {/* Add Timer placeholder - shows when timer is disabled for this set */}
+                            {showRestRow && set.restAfter?.enabled === false && (
+                              <Pressable
+                                style={styles.addTimerPlaceholder}
+                                onPress={() => {
+                                  Haptics.selectionAsync();
+                                  updateAnySet(exerciseIndex, setIndex, {
+                                    restAfter: { enabled: true, duration: exercise.restTime },
+                                  });
+                                }}
+                              >
+                                <IconSymbol name="timer" size={12} color={colors.textTertiary} />
+                                <ThemedText style={[styles.addTimerText, { color: colors.textTertiary }]}>
+                                  + Add Timer
+                                </ThemedText>
+                              </Pressable>
                             )}
 
                             {/* Add Drop Set Link - visible for non-drop, non-completed sets */}
@@ -2207,7 +2311,7 @@ export default function ActiveWorkoutScreen() {
 
       {/* Bottom Actions */}
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 16, backgroundColor: colors.background }]}>
-        {/* MAIN ACTION BUTTON - Always visible (rest timer is inline now) */}
+        {/* Secondary action buttons row */}
         <View style={styles.actionRow}>
           <Pressable
             style={[styles.secondaryButton, { borderColor: colors.separator }]}
@@ -2216,7 +2320,7 @@ export default function ActiveWorkoutScreen() {
             <IconSymbol name="trash" size={18} color="#FF3B30" />
           </Pressable>
 
-          {/* Voice Input Button - Tap to open modal */}
+          {/* Voice Input Button */}
           <Pressable
             style={[styles.voiceButton, { backgroundColor: colors.tint }]}
             onPress={() => setVoiceModalVisible(true)}
@@ -2226,9 +2330,9 @@ export default function ActiveWorkoutScreen() {
 
           <Pressable
             style={[styles.secondaryButton, { borderColor: colors.separator }]}
-            onPress={finishEarly}
+            onPress={handleAddExercise}
           >
-            <IconSymbol name="checkmark.circle" size={18} color={colors.tint} />
+            <IconSymbol name="plus" size={18} color={colors.tint} />
           </Pressable>
         </View>
 
@@ -2247,6 +2351,28 @@ export default function ActiveWorkoutScreen() {
             />
           </View>
         </View>
+
+        {/* Always-visible centered Finish Workout button */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.finishButton,
+            {
+              backgroundColor: progress.totalSets > 0 && progress.totalSetsCompleted >= progress.totalSets
+                ? colors.success
+                : colors.tint,
+              opacity: pressed ? 0.9 : 1,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            },
+          ]}
+          onPress={finishEarly}
+        >
+          <IconSymbol name="checkmark.circle.fill" size={22} color="#fff" />
+          <ThemedText style={styles.finishButtonText}>
+            {progress.totalSets > 0 && progress.totalSetsCompleted >= progress.totalSets
+              ? 'Finish Workout 🎉'
+              : 'Finish Workout'}
+          </ThemedText>
+        </Pressable>
       </View>
 
       {/* Set Types Guide - Onboarding & Reference */}
@@ -2308,6 +2434,31 @@ function EmptyWorkoutState({
       </View>
     </View>
   );
+}
+
+function SetCompletionPulse({
+  active,
+  children,
+}: {
+  active: boolean;
+  children: ReactNode;
+}) {
+  const scale = useSharedValue(1);
+
+  useEffect(() => {
+    if (active) {
+      scale.value = withSequence(
+        withSpring(1.15, { damping: 8, stiffness: 300 }),
+        withSpring(1, { damping: 12 })
+      );
+    }
+  }, [active, scale]);
+
+  const style = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return <Animated.View style={style}>{children}</Animated.View>;
 }
 
 const styles = StyleSheet.create({
@@ -3086,6 +3237,35 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontWeight: '600',
   },
+  // Rest Timer Toggle - Hevy-style
+  restTimerToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  restTimerToggleText: {
+    ...Typography.footnote,
+    fontWeight: '500',
+  },
+  addTimerPlaceholder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    marginVertical: Spacing.xs,
+    alignSelf: 'center',
+    width: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: Radius.sm,
+  },
+  addTimerText: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
   // Inline rest row styles - centered with distinct background
   inlineRestRow: {
     flexDirection: 'row',
@@ -3211,5 +3391,22 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  // Always-visible Finish Workout button
+  finishButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    marginTop: 12,
+  },
+  finishButtonText: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
   },
 });

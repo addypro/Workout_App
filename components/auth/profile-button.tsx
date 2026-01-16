@@ -6,15 +6,16 @@
  * Used in headers across the app for quick access to auth state.
  */
 
-import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useAuth } from '@/lib/context/auth-context';
+import { Colors, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, Radius, Typography } from '@/constants/theme';
+import { useAuth } from '@/lib/context/auth-context';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 
 interface ProfileButtonProps {
   size?: 'small' | 'medium';
@@ -24,73 +25,31 @@ interface ProfileButtonProps {
 export function ProfileButton({ size = 'medium', showLabel = false }: ProfileButtonProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { user, isGuest, isCoach, signOut } = useAuth();
+  const { user, isGuest } = useAuth();
   const [displayName, setDisplayName] = useState<string | null>(null);
 
   useEffect(() => {
     const loadDisplayName = async () => {
-      const name = await AsyncStorage.getItem('@user_display_name');
-      setDisplayName(name);
+      // Priority: user metadata > AsyncStorage fallback
+      const sessionName = user?.user_metadata?.name
+        || user?.user_metadata?.full_name
+        || user?.user_metadata?.display_name;
+
+      if (sessionName) {
+        setDisplayName(sessionName);
+        return;
+      }
+
+      // Fallback to AsyncStorage (for dev mode or Apple sign-in first time)
+      const storedName = await AsyncStorage.getItem('@user_display_name');
+      setDisplayName(storedName);
     };
     loadDisplayName();
   }, [user]);
 
-  const showMenu = () => {
-    // Build menu options based on role
-    const options: { label: string; action: () => void; destructive?: boolean }[] = [];
-
-    if (isCoach) {
-      options.push(
-        { label: 'Coach Dashboard', action: () => router.push('/(tabs)/coach') },
-        { label: 'My Athletes', action: () => router.push('/coach/athletes' as any) },
-        { label: 'Invite Athletes', action: () => router.push('/coach/invite' as any) },
-      );
-    }
-
-    options.push(
-      { label: 'Settings', action: () => Alert.alert('Coming Soon', 'Settings screen coming soon!') },
-      { label: 'Sign Out', action: signOut, destructive: true },
-    );
-
-    const optionLabels = options.map(o => o.label);
-
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: [...optionLabels, 'Cancel'],
-          destructiveButtonIndex: options.findIndex(o => o.destructive),
-          cancelButtonIndex: optionLabels.length,
-          title: displayName || user?.email || 'Account',
-        },
-        (buttonIndex) => {
-          if (buttonIndex < options.length) {
-            options[buttonIndex].action();
-          }
-        }
-      );
-    } else {
-      // Android: Use Alert for now
-      Alert.alert(
-        displayName || user?.email || 'Account',
-        'Select an option',
-        [
-          ...options.map((o) => ({
-            text: o.label,
-            onPress: o.action,
-            style: o.destructive ? ('destructive' as const) : ('default' as const),
-          })),
-          { text: 'Cancel', style: 'cancel' },
-        ]
-      );
-    }
-  };
-
   const handlePress = () => {
-    if (isGuest || !user) {
-      router.push('/(auth)/login');
-    } else {
-      showMenu();
-    }
+    const target = isFeatureEnabled('new_tab_bar') ? '/(tabs)/you' : '/settings';
+    router.push(target as any);
   };
 
   const buttonSize = size === 'small' ? 32 : 40;

@@ -320,7 +320,7 @@ export function QuickEntryModal({
               onPress={() => {
                 triggerHaptic();
                 onClose();
-                router.push('/history');
+                router.push('/(tabs)/explore');
               }}
               colors={colors}
             />

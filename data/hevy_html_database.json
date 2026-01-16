@@ -1,0 +1,2152 @@
+{
+  "source": "hevy.com/exercise",
+  "extractedAt": "2026-01-13",
+  "count": 429,
+  "exercises": [
+    {
+      "name": "21s Bicep Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ab Scissors",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ab Wheel",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Aerobics",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Air Bike",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Arnold Press (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Around The World",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Assisted Pistol Squats",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Back Extension (Hyperextension)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Back Extension (Machine)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Back Extension (Weighted Hyperextension)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ball Slams",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Band Pullaparts",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Battle Ropes",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Behind the Back Bicep Wrist Curl (Barbell)",
+      "muscleGroup": "Forearms",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Behind the Back Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Belt Squat (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Bench Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Bench Press (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Bench Press (Cable)",
+      "muscleGroup": "Chest",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Bench Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Bench Press (Smith Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Bench Press - Close Grip (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Bench Press - Wide Grip (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Bent Over Row (Band)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Band"
+    },
+    {
+      "name": "Bent Over Row (Barbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Bent Over Row (Dumbbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Bicep Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Bicep Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Bicep Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Bicep Curl (Machine)",
+      "muscleGroup": "Biceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Bicep Curl (Suspension)",
+      "muscleGroup": "Biceps",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Bicycle Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Bicycle Crunch Raised Legs",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Bird Dog",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Box Jump",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Box Squat (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Boxing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Bulgarian Split Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Burpee",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Burpee Over the Bar",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Butterfly (Pec Deck)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Core Palloff Press",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Fly Crossovers",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Pull Through",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Twist (Down to up)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Twist (Up to down)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Calf Extension (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Calf Press (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Chest Dip",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Chest Dip (Assisted)",
+      "muscleGroup": "Chest",
+      "equipment": "Assisted"
+    },
+    {
+      "name": "Chest Dip (Weighted)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Chest Fly (Band)",
+      "muscleGroup": "Chest",
+      "equipment": "Band"
+    },
+    {
+      "name": "Chest Fly (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Chest Fly (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Chest Fly (Suspension)",
+      "muscleGroup": "Chest",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Chest Press (Band)",
+      "muscleGroup": "Chest",
+      "equipment": "Band"
+    },
+    {
+      "name": "Chest Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Chest Supported Incline Row (Dumbbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Chest Supported Reverse Fly (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Chest Supported Y Raise (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Chin Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Chin Up (Assisted)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Chin Up (Weighted)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Clamshell",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clap Push Ups",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Clean",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clean Pull",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clean and Jerk",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clean and Press",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Climbing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Concentration Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cross Body Hammer Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Crunch (Machine)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Crunch (Weighted)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Curtsy Lunge (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Cycling",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dead Bug",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dead Hang",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Deadlift (Band)",
+      "muscleGroup": "Glutes",
+      "equipment": "Band"
+    },
+    {
+      "name": "Deadlift (Barbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Deadlift (Dumbbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Deadlift (Smith Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Deadlift (Trap bar)",
+      "muscleGroup": "Glutes",
+      "equipment": "Trap Bar"
+    },
+    {
+      "name": "Deadlift High Pull",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Decline Bench Press (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Decline Bench Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Decline Bench Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Decline Bench Press (Smith Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Decline Chest Fly (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Decline Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Decline Crunch (Weighted)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Decline Push Up",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Diamond Push Up",
+      "muscleGroup": "Triceps",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Downward Dog",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Drag Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dragon Flag",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dragonfly",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dumbbell Row",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dumbbell Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dumbbell Squeeze Press",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dumbbell Step Up",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "EZ Bar Biceps Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Elbow to Knee",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Elliptical Trainer",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Face Pull",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Farmers Walk",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Feet Up Bench Press (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Fire Hydrants",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Floor Press (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Floor Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Floor Triceps Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Flutter Kicks",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Frog Jumps",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Frog Pumps (Dumbbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Front Lever Hold",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Front Lever Raise",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Front Raise (Band)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Band"
+    },
+    {
+      "name": "Front Raise (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Front Raise (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Front Raise (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Front Raise (Suspension)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Front Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Full Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Glute Bridge",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Glute Ham Raise",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Glute Kickback (Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Glute Kickback on Floor",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Goblet Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Good Morning (Barbell)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Gorilla Row (Kettlebell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Kettlebell"
+    },
+    {
+      "name": "HIIT",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hack Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hack Squat (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Hammer Curl (Band)",
+      "muscleGroup": "Biceps",
+      "equipment": "Band"
+    },
+    {
+      "name": "Hammer Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Hammer Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Handstand Hold",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Handstand Push Up",
+      "muscleGroup": "Shoulders",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Hang Clean",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hang Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hanging Knee Raise",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hanging Leg Raise",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Heel Taps",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hex Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "High Knee Skips",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "High Knees",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hiking",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hip Abduction (Machine)",
+      "muscleGroup": "Abductors",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Hip Adduction (Machine)",
+      "muscleGroup": "Adductors",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Hip Thrust",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hip Thrust (Barbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Hip Thrust (Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Hip Thrust (Smith Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Hollow Rock",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Incline Bench Press (Barbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Incline Bench Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Incline Bench Press (Smith Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Incline Chest Fly (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Incline Chest Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Incline Push Ups",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Inverted Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Iso-Lateral Chest Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Iso-Lateral High Row (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Iso-Lateral Low Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Iso-Lateral Row (Machine)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "JM Press (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Jack Knife (Suspension)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Jackknife Sit Up",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jump Rope",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jump Shrug",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jump Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jumping Jack",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jumping Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Around the World",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Clean",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Goblet Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Halo",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell High Pull",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Shoulder Press",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Swing",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Turkish Get Up",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kipping Pull Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Knee Raise Parallel Bars",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kneeling Pulldown (band)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "name": "Kneeling Push Up",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "L-Sit Hold",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Landmine 180",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Landmine Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Landmine Squat and Press",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lat Pulldown (Band)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "name": "Lat Pulldown (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Lat Pulldown (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Lat Pulldown - Close Grip (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Lateral Band Walks",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lateral Box Jump",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lateral Leg Raises",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lateral Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lateral Raise (Band)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Band"
+    },
+    {
+      "name": "Lateral Raise (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Lateral Raise (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Lateral Raise (Machine)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Lateral Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Leg Extension (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Leg Press (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Leg Press Horizontal (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Leg Raise Parallel Bars",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Low Cable Fly Crossovers",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Low Row (Suspension)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lunge (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Lunge (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Lying Knee Raise",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Leg Curl (Machine)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Lying Leg Raise",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Curls",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Curls (Weighted)",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Extension",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Extension (Weighted)",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Meadows Rows (Barbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Mountain Climber",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Muscle Up",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Negative Pull Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Nordic Hamstrings Curls",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Oblique Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "One Arm Push Up",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Overhead Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Overhead Dumbbell Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Overhead Plate Raise",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Overhead Press (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Overhead Press (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Overhead Press (Smith Machine)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Overhead Squat",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Overhead Triceps Extension (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Partial Glute Bridge (Barbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Pause Squat (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Pendlay Row (Barbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Pendulum Squat (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Pike Pushup",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Pilates",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Pinwheel Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Pistol Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plank",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plank Pushup",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Front Raise",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Press",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Squeeze (Svend Press)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Power Clean",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Power Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Preacher Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Preacher Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Preacher Curl (Machine)",
+      "muscleGroup": "Biceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Press Under",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Pull Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Pull Up (Assisted)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Pull Up (Band)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "name": "Pull Up (Weighted)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Pullover (Dumbbell)",
+      "muscleGroup": "Lats",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Pullover (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Push Press",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Push Up",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Push Up (Weighted)",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Push Up - Close Grip",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Rack Pull",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Rear Delt Reverse Fly (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Rear Delt Reverse Fly (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Rear Delt Reverse Fly (Machine)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Rear Kick (Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Renegade Row (Dumbbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Reverse Crunch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Reverse Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Reverse Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Reverse Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Reverse Fly Single Arm (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Reverse Grip Concentration Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Reverse Grip Lat Pulldown (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Reverse Hyperextension",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Reverse Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Reverse Lunge (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Reverse Lunge (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Reverse Plank",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ring Dips",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ring Pull Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Ring Push Up",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Romanian Deadlift (Barbell)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Romanian Deadlift (Dumbbell)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Rope Cable Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Rope Straight Arm Pulldown",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "name": "Rowing Machine",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Running",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Russian Twist (Bodyweight)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Russian Twist (Weighted)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Scapular Pull Ups",
+      "muscleGroup": "Upper Back",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Seated Cable Row - Bar Grip",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Cable Row - Bar Wide Grip",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Cable Row - V Grip (Cable)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Seated Calf Raise",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Chest Flys (Cable)",
+      "muscleGroup": "Chest",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Seated Dip Machine",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Incline Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Seated Lateral Raise (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Seated Leg Curl (Machine)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Overhead Press (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Seated Overhead Press (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Seated Palms Up Wrist Curl",
+      "muscleGroup": "Forearms",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Row (Machine)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Shoulder Press (Machine)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Triceps Press",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Wrist Extension (Barbell)",
+      "muscleGroup": "Forearms",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Shoulder Press (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Shoulder Press (Machine Plates)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Shoulder Taps",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Shrug (Barbell)",
+      "muscleGroup": "Traps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Shrug (Cable)",
+      "muscleGroup": "Traps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Shrug (Dumbbell)",
+      "muscleGroup": "Traps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Shrug (Machine)",
+      "muscleGroup": "Traps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Shrug (Smith Machine)",
+      "muscleGroup": "Traps",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Side Bend",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Side Bend (Dumbbell)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Side Plank",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Arm Cable Crossover",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Arm Cable Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Arm Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Single Arm Landmine Press (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Single Arm Lat Pulldown",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Arm Lateral Raise (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Single Arm Tricep Extension (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Single Arm Triceps Pushdown (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Single Leg Extensions",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Leg Glute Bridge",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Leg Hip Thrust",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Leg Hip Thrust (Dumbbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Single Leg Press (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Single Leg Romanian Deadlift (Barbell)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Single Leg Romanian Deadlift (Dumbbell)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Single Leg Standing Calf Raise",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "name": "Single Leg Standing Calf Raise (Barbell)",
+      "muscleGroup": "Calves",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Single Leg Standing Calf Raise (Dumbbell)",
+      "muscleGroup": "Calves",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Single Leg Standing Calf Raise (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Sissy Squat (Weighted)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sit Up",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sit Up (Weighted)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skating",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skiing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skullcrusher (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Skullcrusher (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Sled Push",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Snowboarding",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Spider Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Spider Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Spiderman",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Spinning",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Split Jerk",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Split Squat (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Sprints",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Squat (Band)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Band"
+    },
+    {
+      "name": "Squat (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Squat (Bodyweight)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Squat (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Squat (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Squat (Smith Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Squat (Suspension)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Squat Row",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stair Machine (Floors)",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stair Machine (Steps)",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Cable Glute Kickbacks",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Calf Raise",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Calf Raise (Barbell)",
+      "muscleGroup": "Calves",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Standing Calf Raise (Dumbbell)",
+      "muscleGroup": "Calves",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Standing Calf Raise (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Standing Calf Raise (Smith)",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Leg Curls",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Military Press (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Step Up",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sternum Pull up (Gironda)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Straight Arm Lat Pulldown (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Straight Leg Deadlift",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stretching",
+      "muscleGroup": "Other",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sumo Deadlift",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sumo Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sumo Squat (Barbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Sumo Squat (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Sumo Squat (Kettlebell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Kettlebell"
+    },
+    {
+      "name": "Superman",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Swimming",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "T Bar Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Thruster (Barbell)",
+      "muscleGroup": "Full Body",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Thruster (Kettlebell)",
+      "muscleGroup": "Full Body",
+      "equipment": "Kettlebell"
+    },
+    {
+      "name": "Toe Touch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Toes to Bar",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Torso Rotation",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Treadmill",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Dip (Assisted)",
+      "muscleGroup": "Triceps",
+      "equipment": "Assisted"
+    },
+    {
+      "name": "Triceps Dip (Weighted)",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Extension (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Triceps Extension (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Triceps Extension (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Triceps Extension (Machine)",
+      "muscleGroup": "Triceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Triceps Extension (Suspension)",
+      "muscleGroup": "Triceps",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Triceps Kickback (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Triceps Kickback (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Triceps Pressdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Pushdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Rope Pushdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Upright Row (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Upright Row (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Upright Row (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "V Up",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Vertical Traction (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Waiter Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Walking",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Walking Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Walking Lunge (Dumbbell)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Wall Ball",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Wall Sit",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Warm Up",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Wide Pull Up",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Wide-Elbow Triceps Press (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Wrist Roller",
+      "muscleGroup": "Forearms",
+      "equipment": "Other"
+    },
+    {
+      "name": "Yoga",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Zercher Squat",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Zottman Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    }
+  ]
+}

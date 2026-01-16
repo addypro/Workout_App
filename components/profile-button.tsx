@@ -43,7 +43,7 @@ export function ProfileButton({ userId = 'local', userName }: ProfileButtonProps
 
   const handlePress = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push('/history');
+    router.push('/(tabs)/explore');
   };
 
   const getInitial = () => {

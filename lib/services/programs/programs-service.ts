@@ -110,7 +110,8 @@ export class ProgramsService {
     for (const id of ids) {
       const p = this.getById(id);
       if (!p) continue;
-      const storage = toStorageFormat(p);
+      // toStorageFormat is now async to support lazy-loaded Kaggle data
+      const storage = await toStorageFormat(p);
       await saveProgram(storage);
       added++;
     }

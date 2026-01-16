@@ -10,7 +10,9 @@ import * as Haptics from 'expo-haptics';
 import { Stack, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -26,7 +28,10 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { VoiceLoggingModal } from '@/components/voice';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { createProgram, saveWorkoutTemplate, updateProgram } from '@/lib/db/storage';
+import { resolveExerciseName } from '@/lib/services/exercise/resolver';
+import { searchExercisesEnhanced } from '@/lib/services/exercise/search';
 import type { ExtractedExercise } from '@/lib/services/voice/direct-intent-types';
 
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
@@ -45,16 +50,16 @@ interface QuickExercise {
   lowConfidence?: boolean; // True if match confidence < 80%, shows disambiguation UI
   confidenceScore?: number; // 0-100 confidence score
   isCustom?: boolean; // True if user created a custom exercise
-  alternatives?: Array<{
+  alternatives?: {
     name: string;
     confidence: 'exact' | 'high' | 'medium' | 'low';
     score: number;
-  }>;
+  }[];
   // Per-set details for variable weights/reps across sets
-  perSetDetails?: Array<{
+  perSetDetails?: {
     reps: string;
     weight?: number;
-  }>;
+  }[];
 }
 
 export default function QuickWorkoutScreen() {
@@ -62,10 +67,12 @@ export default function QuickWorkoutScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const useVoiceFirst = isFeatureEnabled('voice_first');
 
   const [exercises, setExercises] = useState<QuickExercise[]>([]);
   const [loading, setLoading] = useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
+  const [processingVoice, setProcessingVoice] = useState(false); // Shows after 800ms delay
 
   // Track if component is mounted for async operations
   const isMountedRef = useRef(true);
@@ -92,6 +99,8 @@ export default function QuickWorkoutScreen() {
     };
   }, []);
 
+  // Local voice processing was decommissioned - using cloud-only architecture
+
   // Check for selected exercise on focus (after returning from exercise picker)
   useFocusEffect(
     useCallback(() => {
@@ -116,8 +125,8 @@ export default function QuickWorkoutScreen() {
 
         const newExercise: QuickExercise = {
           name: data.name,
-          sets: 3,
-          reps: '8-12',
+          sets: 4,
+          reps: '8',
           restTime: 90,
           muscles: data.muscles,
           equipment: data.equipment,
@@ -148,92 +157,108 @@ export default function QuickWorkoutScreen() {
   const handleVoiceExercisesExtracted = async (voiceExercises: ExtractedExercise[]) => {
     console.log('Quick workout received voice exercises:', voiceExercises.length);
 
-    try {
-      // Use the SAME search algorithm as the exercise picker
-      const { searchExercisesEnhanced, lookupExerciseByAlias } = await import('@/lib/services/exercise/search');
+    // IMMEDIATELY add exercises with raw names (no waiting for matching)
+    // This eliminates perceived latency - user sees exercises instantly
+    const instantExercises: QuickExercise[] = voiceExercises.map((ex) => ({
+      name: ex.nameRaw, // Use raw name initially
+      rawName: ex.nameRaw,
+      sets: ex.sets || 4,
+      reps: ex.reps || '8',
+      weight: ex.weight,
+      weightUnit: ex.weightUnit || 'lbs',
+      restTime: ex.restSeconds || 90,
+      muscles: [],
+      equipment: [],
+      lowConfidence: true, // Mark for background matching
+      confidenceScore: 0,
+      alternatives: [],
+      perSetDetails: ex.perSetDetails,
+    }));
 
-      // Match each exercise to the database with confidence scoring
-      const CONFIDENCE_THRESHOLD = 80; // Below this, flag for disambiguation
+    // Add to exercise list IMMEDIATELY (user sees instant feedback)
+    setExercises(prev => {
+      const newList = [...prev, ...instantExercises];
+      saveExercises(newList);
+      return newList;
+    });
 
-      const newExercises: QuickExercise[] = await Promise.all(
-        voiceExercises.map(async (ex) => {
-          const rawName = ex.nameRaw;
-          const directMatch = lookupExerciseByAlias(rawName);
-          const searchResults = await searchExercisesEnhanced(rawName, {});
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-          // Calculate confidence score
-          let confidenceScore = 0;
-          let matchType: 'direct' | 'search' | 'none' = 'none';
+    // BACKGROUND: Match exercises to database after modal is closed
+    // This happens asynchronously - no user-perceived latency
+    setTimeout(async () => {
+      if (!isMountedRef.current) return;
 
-          if (directMatch) {
-            // Direct alias/slang match = 100% confidence
-            confidenceScore = 100;
-            matchType = 'direct';
-          } else if (searchResults.taxonomyMatches && searchResults.taxonomyMatches.length > 0) {
-            // Use first match score (normalized to 0-100)
-            const topMatch = searchResults.taxonomyMatches[0];
-            confidenceScore = Math.min(100, topMatch.score);
-            matchType = 'search';
-          }
+      const CONFIDENCE_THRESHOLD = 80;
 
-          // Build alternatives (including best matches and any from slang interpretation)
-          const alternatives: QuickExercise['alternatives'] = [];
-          if (searchResults.taxonomyMatches) {
-            for (const match of searchResults.taxonomyMatches.slice(0, 5)) {
-              const conf = match.matchType === 'exact' ? 'exact'
-                : match.score >= 80 ? 'high'
-                  : match.score >= 60 ? 'medium'
-                    : 'low';
+      // Process all exercises in parallel using robust modifier-aware matching
+      const matchedExercises = await Promise.all(
+        instantExercises.map(async (ex, idx) => {
+          try {
+            const rawName = ex.rawName || ex.name;
+
+            // Use robust modifier-aware matching (Knuth-inspired)
+            const robustMatch = resolveExerciseName(rawName);
+
+            // Fallback to legacy search for alternatives
+            const searchResults = await searchExercisesEnhanced(rawName, {});
+
+            const confidenceScore = robustMatch.matched ? robustMatch.confidence : 0;
+
+            const alternatives: QuickExercise['alternatives'] = [];
+            if (searchResults.taxonomyMatches) {
+              for (const match of searchResults.taxonomyMatches.slice(0, 5)) {
+                alternatives.push({
+                  name: match.taxonomyExercise.canonical_name,
+                  confidence: match.matchType === 'exact' ? 'exact' : match.score >= 80 ? 'high' : match.score >= 60 ? 'medium' : 'low',
+                  score: match.score,
+                });
+              }
+            }
+
+            if (confidenceScore < CONFIDENCE_THRESHOLD) {
               alternatives.push({
-                name: match.taxonomyExercise.canonical_name,
-                confidence: conf,
-                score: match.score,
+                name: `Create Custom: "${rawName}"`,
+                confidence: 'low',
+                score: 0,
               });
             }
+
+            const bestMatch = robustMatch.matched ? robustMatch.name : (alternatives[0]?.name || rawName);
+            const isLowConfidence = confidenceScore < CONFIDENCE_THRESHOLD;
+
+            return {
+              ...ex,
+              name: bestMatch,
+              muscles: [],
+              equipment: [],
+              lowConfidence: isLowConfidence,
+              confidenceScore,
+              alternatives: isLowConfidence ? alternatives : alternatives.slice(0, 3),
+            };
+          } catch (error) {
+            console.error('Error matching exercise:', error);
+            return ex; // Keep original on error
           }
-
-          // Add "Create Custom" option if low confidence
-          if (confidenceScore < CONFIDENCE_THRESHOLD) {
-            alternatives.push({
-              name: `Create Custom: "${rawName}"`,
-              confidence: 'low',
-              score: 0,
-            });
-          }
-
-          const bestMatch = directMatch?.canonical_name || alternatives[0]?.name || rawName;
-          const isLowConfidence = confidenceScore < CONFIDENCE_THRESHOLD;
-
-          return {
-            name: bestMatch,
-            rawName: rawName,
-            sets: ex.sets || 3,
-            reps: ex.reps || '8-12',
-            weight: ex.weight,
-            weightUnit: ex.weightUnit || 'lbs',
-            restTime: ex.restSeconds || 90,
-            muscles: directMatch?.muscles?.primary || [],
-            equipment: directMatch?.constraints?.equipment || [],
-            lowConfidence: isLowConfidence,
-            confidenceScore: confidenceScore,
-            alternatives: isLowConfidence ? alternatives : alternatives.slice(0, 3),
-            // Include per-set details for variable weights/reps
-            perSetDetails: ex.perSetDetails,
-          };
         })
       );
 
-      // Add to exercise list
-      setExercises(prev => {
-        const newList = [...prev, ...newExercises];
-        saveExercises(newList);
-        return newList;
-      });
-
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
-      console.error('Error processing voice exercises:', error);
-    }
+      // Update exercises with matched data (silent background update)
+      if (isMountedRef.current) {
+        setExercises(prev => {
+          // Find the exercises we just added and update them
+          const startIdx = prev.length - instantExercises.length;
+          const newList = [...prev];
+          matchedExercises.forEach((matched, idx) => {
+            if (newList[startIdx + idx]) {
+              newList[startIdx + idx] = matched;
+            }
+          });
+          saveExercises(newList);
+          return newList;
+        });
+      }
+    }, 50); // Tiny delay to let modal close first
   };
 
   const openVoiceModal = () => {
@@ -457,6 +482,55 @@ export default function QuickWorkoutScreen() {
           </ThemedText>
         </View>
 
+        {useVoiceFirst && (
+          <Card style={styles.voiceInputCard} padding="md">
+            <View style={styles.voiceInputHeader}>
+              <View style={styles.voiceInputTitleRow}>
+                <IconSymbol name="mic.fill" size={18} color={colors.tint} />
+                <ThemedText style={styles.voiceInputTitle}>Just say what you did</ThemedText>
+              </View>
+              <ThemedText style={[styles.voiceInputSubtitle, { color: colors.textSecondary }]}>
+                {'"3 sets of bench press at 135"'}
+              </ThemedText>
+            </View>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.voicePrimaryButton,
+                { backgroundColor: colors.tint, opacity: pressed ? 0.9 : 1 },
+              ]}
+              onPress={openVoiceModal}
+            >
+              <IconSymbol name="waveform" size={18} color="#fff" />
+              <ThemedText style={styles.voicePrimaryButtonText}>Tap to speak</ThemedText>
+            </Pressable>
+
+            <View style={styles.voiceDivider}>
+              <View style={[styles.voiceDividerLine, { backgroundColor: colors.separator }]} />
+              <ThemedText style={[styles.voiceDividerText, { color: colors.textSecondary }]}>
+                or
+              </ThemedText>
+              <View style={[styles.voiceDividerLine, { backgroundColor: colors.separator }]} />
+            </View>
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.voiceSecondaryButton,
+                {
+                  borderColor: colors.separator,
+                  opacity: pressed ? 0.8 : 1,
+                },
+              ]}
+              onPress={handleAddExercise}
+            >
+              <IconSymbol name="plus" size={18} color={colors.text} />
+              <ThemedText style={[styles.voiceSecondaryButtonText, { color: colors.text }]}>
+                Add Exercise Manually
+              </ThemedText>
+            </Pressable>
+          </Card>
+        )}
+
         {/* Exercises List */}
         {exercises.length === 0 ? (
           <View style={styles.emptyState}>
@@ -465,7 +539,9 @@ export default function QuickWorkoutScreen() {
             </View>
             <ThemedText style={styles.emptyTitle}>No exercises yet</ThemedText>
             <ThemedText style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-              Tap the button below to add your first exercise
+              {useVoiceFirst
+                ? 'Use voice or add an exercise below'
+                : 'Tap the button below to add your first exercise'}
             </ThemedText>
           </View>
         ) : (
@@ -484,35 +560,37 @@ export default function QuickWorkoutScreen() {
         )}
 
         {/* Add Exercise Buttons */}
-        <View style={styles.addButtonsRow}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.addButton,
-              styles.addButtonPrimary,
-              { borderColor: colors.tint, opacity: pressed ? 0.8 : 1 },
-            ]}
-            onPress={handleAddExercise}
-          >
-            <IconSymbol name="magnifyingglass" size={18} color={colors.tint} />
-            <ThemedText style={[styles.addButtonText, { color: colors.tint }]}>
-              Browse
-            </ThemedText>
-          </Pressable>
+        {!useVoiceFirst && (
+          <View style={styles.addButtonsRow}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.addButton,
+                styles.addButtonPrimary,
+                { borderColor: colors.tint, opacity: pressed ? 0.8 : 1 },
+              ]}
+              onPress={handleAddExercise}
+            >
+              <IconSymbol name="magnifyingglass" size={18} color={colors.tint} />
+              <ThemedText style={[styles.addButtonText, { color: colors.tint }]}>
+                Browse
+              </ThemedText>
+            </Pressable>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.addButton,
-              styles.addButtonSecondary,
-              { backgroundColor: colors.tint, opacity: pressed ? 0.9 : 1 },
-            ]}
-            onPress={openVoiceModal}
-          >
-            <IconSymbol name="mic.fill" size={18} color="#fff" />
-            <ThemedText style={[styles.addButtonText, { color: '#fff' }]}>
-              Voice Add
-            </ThemedText>
-          </Pressable>
-        </View>
+            <Pressable
+              style={({ pressed }) => [
+                styles.addButton,
+                styles.addButtonSecondary,
+                { backgroundColor: colors.tint, opacity: pressed ? 0.9 : 1 },
+              ]}
+              onPress={openVoiceModal}
+            >
+              <IconSymbol name="mic.fill" size={18} color="#fff" />
+              <ThemedText style={[styles.addButtonText, { color: '#fff' }]}>
+                Voice Add
+              </ThemedText>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
 
       {/* Start Button */}
@@ -541,6 +619,23 @@ export default function QuickWorkoutScreen() {
         onClose={() => setVoiceModalVisible(false)}
         onExercisesExtracted={handleVoiceExercisesExtracted}
       />
+
+      {/* Processing Overlay - Shows after 200ms delay */}
+      <Modal
+        visible={processingVoice}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+      >
+        <View style={styles.processingOverlay}>
+          <View style={[styles.processingCard, { backgroundColor: colors.elevated }]}>
+            <ActivityIndicator size="large" color={colors.tint} />
+            <ThemedText style={[styles.processingText, { color: colors.text }]}>
+              Matching exercises...
+            </ThemedText>
+          </View>
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -888,6 +983,45 @@ const styles = StyleSheet.create({
   voiceInputSubtitle: {
     ...Typography.caption1,
   },
+  voicePrimaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: Radius.lg,
+  },
+  voicePrimaryButtonText: {
+    color: '#fff',
+    ...Typography.headline,
+    fontWeight: '600',
+  },
+  voiceDivider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  voiceDividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+  },
+  voiceDividerText: {
+    ...Typography.caption2,
+    fontWeight: '500',
+  },
+  voiceSecondaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: Radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  voiceSecondaryButtonText: {
+    ...Typography.body,
+    fontWeight: '600',
+  },
   bottomBar: {
     position: 'absolute',
     bottom: 0,
@@ -960,5 +1094,29 @@ const styles = StyleSheet.create({
   alternativeText: {
     fontSize: 13,
     fontWeight: '500',
+  },
+
+  // Processing overlay styles
+  processingOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  processingCard: {
+    paddingHorizontal: 32,
+    paddingVertical: 28,
+    borderRadius: 20,
+    alignItems: 'center',
+    gap: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  processingText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

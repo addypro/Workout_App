@@ -67,6 +67,11 @@ async function getHistoricalPRs(
 
     if (exerciseNames.length === 0) return prMap;
 
+    // Skip Supabase query for guest users - "local" is not a valid UUID
+    if (athleteUserId === 'local') {
+        return prMap;
+    }
+
     try {
         // Query workout history for this athlete
         // Look at completed assigned workouts

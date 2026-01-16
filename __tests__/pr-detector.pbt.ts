@@ -138,13 +138,13 @@ const setArbitrary = fc.record({
     weight: fc.option(fc.integer({ min: 0, max: 500 }), { nil: undefined }),
     reps: fc.oneof(
         fc.integer({ min: 0, max: 50 }),
-        fc.stringOf(fc.constantFrom('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'), { minLength: 1, maxLength: 2 })
+        fc.nat({ max: 99 }).map(n => String(n))
     ),
     completed: fc.boolean(),
 });
 
 const exerciseResultArbitrary = fc.record({
-    exerciseName: fc.stringOf(fc.alphaNumeric(), { minLength: 3, maxLength: 30 }),
+    exerciseName: fc.string({ minLength: 3, maxLength: 30 }).filter(s => /^[a-zA-Z0-9]+$/.test(s)),
     sets: fc.array(setArbitrary, { minLength: 1, maxLength: 10 }),
 });
 

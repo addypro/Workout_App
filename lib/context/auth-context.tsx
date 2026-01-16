@@ -8,14 +8,15 @@
  * Works in guest mode when Supabase is not configured.
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { Alert, Platform } from 'react-native';
-import { Session, User } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Session, User } from '@supabase/supabase-js';
+import { router } from 'expo-router';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { Alert, Platform } from 'react-native';
 
+import { ensureStorageTables, getDatabase } from '@/lib/db/sqlite';
+import { initializeTierSystem } from '@/lib/services/leagues/tier-system';
 import { supabase } from '@/lib/supabase/client';
-import { syncService } from '@/lib/services/sync';
-import { getWorkoutHistory } from '@/lib/db/storage';
 
 // Conditionally import Apple Authentication (only available on iOS)
 let AppleAuthentication: typeof import('expo-apple-authentication') | null = null;
@@ -40,7 +41,13 @@ interface AuthState {
 
 interface AuthContextType extends AuthState {
   signInWithApple: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signInWithTwitter: () => Promise<void>;
+  signInWithSpotify: () => Promise<void>;
+  signInWithFacebook: () => Promise<void>;
   signInWithEmail: (email: string) => Promise<void>;
+  signInWithPassword: (email: string, password: string) => Promise<void>;
+  signUpWithPassword: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   continueAsGuest: () => void;
   setUserRole: (role: UserRole) => Promise<void>;
@@ -82,6 +89,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Check if user needs role selection (new user with no role)
           const needsRoleSelection = !userRole;
 
+          // Migrate local data first to prevent race conditions
+          await migrateLocalData(session.user.id);
+
           setState({
             user: session.user,
             session,
@@ -90,8 +100,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             userRole,
             needsRoleSelection,
           });
-          // Migrate local data if needed
-          migrateLocalData(session.user.id);
+          // Initialize tier system from database
+          initializeTierSystem(supabase);
         } else {
           setState(prev => ({ ...prev, isLoading: false, userRole }));
         }
@@ -105,6 +115,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const role = currentRole as UserRole;
               const needsRole = !role;
 
+              if (event === 'SIGNED_IN') {
+                // Migrate local data first so UI finds it immediately
+                await migrateLocalData(session.user.id);
+                initializeTierSystem(supabase);
+              }
+
               setState({
                 user: session.user,
                 session,
@@ -113,9 +129,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 userRole: role,
                 needsRoleSelection: needsRole,
               });
-              if (event === 'SIGNED_IN') {
-                await migrateLocalData(session.user.id);
-              }
             } else {
               setState(prev => ({
                 ...prev,
@@ -161,6 +174,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      // Update userId in workout programs
+      const programsData = await AsyncStorage.getItem('@workout_programs');
+      if (programsData) {
+        const programs = JSON.parse(programsData);
+        const updatedPrograms = programs.map((p: any) => ({
+          ...p,
+          userId: p.userId === 'local' ? newUserId : p.userId,
+        }));
+        await AsyncStorage.setItem('@workout_programs', JSON.stringify(updatedPrograms));
+      }
+
       // Update userId in unified history records
       const historyData = await AsyncStorage.getItem('@unified_workout_history');
       if (historyData) {
@@ -170,6 +194,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           userId: r.userId === 'local' ? newUserId : r.userId,
         }));
         await AsyncStorage.setItem('@unified_workout_history', JSON.stringify(updatedRecords));
+      }
+
+      // Update userId in SQLite-backed history and templates
+      const db = await getDatabase();
+      if (db && await ensureStorageTables()) {
+        await db.runAsync(
+          'UPDATE unified_workout_history SET user_id = ? WHERE user_id = ?',
+          [newUserId, 'local']
+        );
+        await db.runAsync(
+          'UPDATE saved_workout_templates SET user_id = ? WHERE user_id = ?',
+          [newUserId, 'local']
+        );
       }
 
       console.log('Successfully migrated local data to user:', newUserId);
@@ -311,11 +348,263 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  /**
+   * Sign in with email and password
+   */
+  const signInWithPassword = useCallback(async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('Password sign-in error:', error);
+      throw error; // Re-throw to let UI handle it
+    }
+  }, []);
+
+  /**
+   * Sign up with email and password
+   */
+  const signUpWithPassword = useCallback(async (email: string, password: string) => {
+    try {
+      const { error, data } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: 'workoutapp://auth/callback',
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        const msg = 'Check your email to confirm your account.';
+        Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Confirm Your Email', msg);
+      }
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      throw error; // Re-throw to let UI handle it
+    }
+  }, []);
+
+  /**
+   * Sign in with Google using OAuth
+   */
+  const signInWithGoogle = useCallback(async () => {
+    try {
+      // Import web browser for OAuth
+      const WebBrowser = await import('expo-web-browser');
+      const AuthSession = await import('expo-auth-session');
+
+      // Get the redirect URL that works with Expo Go
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'workoutapp',
+        path: 'auth/callback',
+      });
+
+      console.log('Google OAuth redirect URL:', redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Open the OAuth URL in an auth session (handles redirect back to app)
+      if (data.url) {
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+        if (result.type === 'success' && result.url) {
+          // Extract tokens from the URL and set session
+          const url = new URL(result.url);
+          const params = new URLSearchParams(url.hash.substring(1)); // Remove #
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+
+          if (accessToken) {
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || '',
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Google sign-in error:', error);
+      const msg = error.message || 'An error occurred during Google sign in.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Sign In Failed', msg);
+    }
+  }, []);
+
+  /**
+   * Sign in with Twitter/X using OAuth
+   */
+  const signInWithTwitter = useCallback(async () => {
+    try {
+      const WebBrowser = await import('expo-web-browser');
+      const AuthSession = await import('expo-auth-session');
+
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'workoutapp',
+        path: 'auth/callback',
+      });
+
+      console.log('Twitter OAuth redirect URL:', redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'twitter',
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.url) {
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+        if (result.type === 'success' && result.url) {
+          const url = new URL(result.url);
+          const params = new URLSearchParams(url.hash.substring(1));
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+
+          if (accessToken) {
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || '',
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Twitter sign-in error:', error);
+      const msg = error.message || 'An error occurred during Twitter sign in.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Sign In Failed', msg);
+    }
+  }, []);
+
+  /**
+   * Sign in with Spotify using OAuth
+   */
+  const signInWithSpotify = useCallback(async () => {
+    try {
+      const WebBrowser = await import('expo-web-browser');
+      const AuthSession = await import('expo-auth-session');
+
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'workoutapp',
+        path: 'auth/callback',
+      });
+
+      console.log('Spotify OAuth redirect URL:', redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'spotify',
+        options: {
+          redirectTo: redirectUrl,
+          scopes: 'user-read-email',
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.url) {
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+        if (result.type === 'success' && result.url) {
+          const url = new URL(result.url);
+          const params = new URLSearchParams(url.hash.substring(1));
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+
+          if (accessToken) {
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || '',
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Spotify sign-in error:', error);
+      const msg = error.message || 'An error occurred during Spotify sign in.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Sign In Failed', msg);
+    }
+  }, []);
+
+  /**
+   * Sign in with Facebook using OAuth
+   */
+  const signInWithFacebook = useCallback(async () => {
+    try {
+      const WebBrowser = await import('expo-web-browser');
+      const AuthSession = await import('expo-auth-session');
+
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: 'workoutapp',
+        path: 'auth/callback',
+      });
+
+      console.log('Facebook OAuth redirect URL:', redirectUrl);
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: redirectUrl,
+          scopes: 'email,public_profile',
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.url) {
+        const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+
+        if (result.type === 'success' && result.url) {
+          const url = new URL(result.url);
+          const params = new URLSearchParams(url.hash.substring(1));
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token');
+
+          if (accessToken) {
+            await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || '',
+            });
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Facebook sign-in error:', error);
+      const msg = error.message || 'An error occurred during Facebook sign in.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Sign In Failed', msg);
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     try {
       await supabase.auth.signOut();
-      // Clear stored role on sign out
+      // Clear stored data on sign out
       await AsyncStorage.removeItem(USER_ROLE_KEY);
+      await AsyncStorage.removeItem('@user_display_name');
     } catch (error: any) {
       console.error('Sign out error:', error);
     } finally {
@@ -328,6 +617,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userRole: null,
         needsRoleSelection: false,
       }));
+      // Navigate to landing page after sign out (full auth options)
+      router.replace('/(auth)/landing');
     }
   }, []);
 
@@ -370,7 +661,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const mockUserId = role === 'coach' ? 'dev-coach-123' : 'dev-athlete-456';
+    // Use valid UUIDs so Supabase queries work in dev mode
+    const mockUserId = role === 'coach'
+      ? '00000000-0000-0000-0000-000000000001'  // dev-coach
+      : '00000000-0000-0000-0000-000000000002'; // dev-athlete
     const mockEmail = role === 'coach' ? 'coach@test.dev' : 'athlete@test.dev';
     const mockDisplayName = role === 'coach' ? 'Test Coach' : 'Test Athlete';
 
@@ -403,7 +697,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value: AuthContextType = {
     ...state,
     signInWithApple,
+    signInWithGoogle,
+    signInWithTwitter,
+    signInWithSpotify,
+    signInWithFacebook,
     signInWithEmail,
+    signInWithPassword,
+    signUpWithPassword,
     signOut,
     continueAsGuest,
     setUserRole,

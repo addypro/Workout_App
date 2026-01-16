@@ -21,6 +21,7 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 
 import { Screen } from '@/components/screen';
+import { SwipeTabs } from '@/components/swipe-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Card } from '@/components/ui/card';
@@ -448,11 +449,12 @@ export default function ImportScreen() {
   );
 
   return (
-    <Screen>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-      >
+    <SwipeTabs current="tools">
+      <Screen>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.content}
+        >
         {/* Hero Section */}
         <View style={styles.hero}>
           <View style={[styles.heroIcon, { backgroundColor: colors.tintMuted }]}>
@@ -904,8 +906,9 @@ export default function ImportScreen() {
             </Pressable>
           </View>
         )}
-      </ScrollView>
-    </Screen>
+        </ScrollView>
+      </Screen>
+    </SwipeTabs>
   );
 }
 

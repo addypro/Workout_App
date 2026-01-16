@@ -21,12 +21,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GymPickerModal } from '@/components/gym/gym-picker-modal';
 import { WorkoutHistoryCard } from '@/components/history/workout-history-card';
 import { Screen } from '@/components/screen';
+import { SwipeTabs } from '@/components/swipe-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAuth } from '@/lib/context/auth-context';
+import { useUserId } from '@/lib/context/auth-context';
 import { usePreferences } from '@/lib/context/preferences-context';
 import {
   getUnifiedHistory,
@@ -40,7 +41,6 @@ export default function HistoryTabScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { user, isGuest } = useAuth();
   const { homeGym, setHomeGym } = usePreferences();
 
   // Gym picker modal state
@@ -60,8 +60,8 @@ export default function HistoryTabScreen() {
     totalDurationMinutes: number;
   } | null>(null);
 
-  // Get user ID for storage
-  const userId = isGuest || !user ? 'local' : user.id;
+  // Use actual user ID from auth context to match Strong import
+  const userId = useUserId();
 
   useFocusEffect(
     useCallback(() => {
@@ -96,33 +96,97 @@ export default function HistoryTabScreen() {
     router.push(`/history/${record.id}`);
   };
 
+  const latestRecord = history[0];
+  const latestRecordId = latestRecord?.id;
+  const groupedHistoryFiltered = latestRecordId
+    ? groupedHistory
+      .map((group) => ({
+        ...group,
+        records: group.records.filter((record) => record.id !== latestRecordId),
+      }))
+      .filter((group) => group.records.length > 0)
+    : groupedHistory;
+
   if (loading) {
     return (
-      <Screen>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.tint} />
-        </View>
-      </Screen>
+      <SwipeTabs current="explore">
+        <Screen>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.tint} />
+          </View>
+        </Screen>
+      </SwipeTabs>
     );
   }
 
   return (
-    <Screen>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 100 },
-        ]}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.tint}
-          />
-        }
-      >
+    <SwipeTabs current="explore">
+      <Screen>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 100 },
+          ]}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.tint}
+            />
+          }
+        >
+        {/* Stats Summary */}
+        {stats && stats.totalWorkouts > 0 && (
+          <View style={styles.section}>
+            <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+              At a Glance
+            </ThemedText>
+            <Card style={styles.statsCard} padding="md">
+              <View style={styles.statsGrid}>
+                <StatItem
+                  icon="flame.fill"
+                  value={stats.currentStreak}
+                  label="Day Streak"
+                  color="#FF9500"
+                  colors={colors}
+                />
+                <StatItem
+                  icon="calendar"
+                  value={stats.thisWeek}
+                  label="This Week"
+                  color={colors.tint}
+                  colors={colors}
+                />
+                <StatItem
+                  icon="chart.bar.fill"
+                  value={stats.thisMonth}
+                  label="This Month"
+                  color="#30D158"
+                  colors={colors}
+                />
+                <StatItem
+                  icon="clock.fill"
+                  value={Math.round(stats.totalDurationMinutes / 60)}
+                  label="Total Hours"
+                  color="#5856D6"
+                  colors={colors}
+                />
+              </View>
+            </Card>
+          </View>
+        )}
+
+        {latestRecord && (
+          <View style={styles.section}>
+            <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+              Latest Workout
+            </ThemedText>
+            <WorkoutHistoryCard record={latestRecord} onPress={handleRecordPress} />
+          </View>
+        )}
+
         {/* My Gym Card */}
         <Pressable
           onPress={() => {
@@ -157,41 +221,54 @@ export default function HistoryTabScreen() {
           currentGym={homeGym}
         />
 
-        {/* Stats Summary */}
-        {stats && stats.totalWorkouts > 0 && (
-          <Card style={styles.statsCard} padding="md">
-            <View style={styles.statsGrid}>
-              <StatItem
-                icon="flame.fill"
-                value={stats.currentStreak}
-                label="Day Streak"
-                color="#FF9500"
-                colors={colors}
-              />
-              <StatItem
-                icon="calendar"
-                value={stats.thisWeek}
-                label="This Week"
-                color={colors.tint}
-                colors={colors}
-              />
-              <StatItem
-                icon="chart.bar.fill"
-                value={stats.thisMonth}
-                label="This Month"
-                color="#30D158"
-                colors={colors}
-              />
-              <StatItem
-                icon="clock.fill"
-                value={Math.round(stats.totalDurationMinutes / 60)}
-                label="Total Hours"
-                color="#5856D6"
-                colors={colors}
-              />
-            </View>
-          </Card>
-        )}
+        {/* Feature Hub - Navigation to Leagues & Challenges */}
+        <View style={styles.featureHub}>
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.push('/leagues' as any);
+            }}
+          >
+            <Card style={styles.featureCard} padding="md">
+              <View style={styles.featureContent}>
+                <View style={[styles.featureIcon, { backgroundColor: '#FFD60A20' }]}>
+                  <ThemedText style={styles.featureEmoji}>🏆</ThemedText>
+                </View>
+                <View style={styles.featureText}>
+                  <ThemedText style={styles.featureTitle}>Leagues</ThemedText>
+                  <ThemedText style={[styles.featureSubtitle, { color: colors.textSecondary }]}>
+                    Weekly competition & rankings
+                  </ThemedText>
+                </View>
+                <IconSymbol name="chevron.right" size={16} color={colors.textTertiary} />
+              </View>
+            </Card>
+          </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.push('/challenges' as any);
+            }}
+          >
+            <Card style={styles.featureCard} padding="md">
+              <View style={styles.featureContent}>
+                <View style={[styles.featureIcon, { backgroundColor: '#FF453A20' }]}>
+                  <ThemedText style={styles.featureEmoji}>🎯</ThemedText>
+                </View>
+                <View style={styles.featureText}>
+                  <ThemedText style={styles.featureTitle}>Challenges</ThemedText>
+                  <ThemedText style={[styles.featureSubtitle, { color: colors.textSecondary }]}>
+                    Iron Will 75 & more
+                  </ThemedText>
+                </View>
+                <IconSymbol name="chevron.right" size={16} color={colors.textTertiary} />
+              </View>
+            </Card>
+          </Pressable>
+        </View>
 
         {/* Empty State */}
         {history.length === 0 ? (
@@ -216,7 +293,7 @@ export default function HistoryTabScreen() {
         ) : (
           /* History List */
           <View style={styles.historyList}>
-            {groupedHistory.map((group) => (
+            {groupedHistoryFiltered.map((group) => (
               <View key={group.period} style={styles.periodSection}>
                 <ThemedText style={[styles.periodTitle, { color: colors.textSecondary }]}>
                   {group.period}
@@ -234,8 +311,9 @@ export default function HistoryTabScreen() {
             ))}
           </View>
         )}
-      </ScrollView>
-    </Screen>
+        </ScrollView>
+      </Screen>
+    </SwipeTabs>
   );
 }
 
@@ -279,8 +357,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.md,
   },
-  statsCard: {
+  section: {
+    gap: Spacing.sm,
     marginBottom: Spacing.lg,
+  },
+  sectionTitle: {
+    ...Typography.headline,
+    fontWeight: '600',
+  },
+  statsCard: {
+    marginBottom: 0,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -398,6 +484,40 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   gymAddress: {
+    ...Typography.caption1,
+    marginTop: 2,
+  },
+  // Feature Hub styles
+  featureHub: {
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  featureCard: {
+    marginBottom: 0,
+  },
+  featureContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  featureIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featureEmoji: {
+    fontSize: 22,
+  },
+  featureText: {
+    flex: 1,
+  },
+  featureTitle: {
+    ...Typography.headline,
+    fontWeight: '600',
+  },
+  featureSubtitle: {
     ...Typography.caption1,
     marginTop: 2,
   },

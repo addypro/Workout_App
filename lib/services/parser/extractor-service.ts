@@ -5,14 +5,14 @@
  * Handles CSV, Excel, PDF, and Image files with appropriate strategies.
  */
 
-import { matchExerciseName } from '@/lib/services/exercise/matcher';
-import { ParsedProgram, ParsedWorkout, ExerciseMatch } from '@/lib/types/program';
-import { findBestMatch } from '@/lib/utils/fuzzy';
 import { getExerciseDatabase } from '@/lib/services/exercise/database';
-import { ParseResult } from './types';
-import { parsePDF, isPDFParsingAvailable } from './pdf';
+import { resolveExerciseName } from '@/lib/services/exercise/resolver';
+import { ExerciseMatch, ParsedProgram, ParsedWorkout } from '@/lib/types/program';
+import { findBestMatch } from '@/lib/utils/fuzzy';
 import { parseExcelFromUri } from './excel';
+import { isPDFParsingAvailable, parsePDF } from './pdf';
 import type { ExtractedProgram } from './pdf/types';
+import { ParseResult } from './types';
 
 // ============================================
 // TYPES
@@ -77,7 +77,7 @@ export class ExtractorService {
   private exerciseNames: string[] = [];
   private exerciseNamesLoaded = false;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): ExtractorService {
     if (!ExtractorService.instance) {
@@ -313,8 +313,9 @@ export class ExtractorService {
               return exercise;
             }
 
-            // Try to match
-            const matchedName = await matchExerciseName(exercise.name);
+            // Try to match using canonical resolver
+            const resolved = resolveExerciseName(exercise.name);
+            const matchedName = resolved.matched ? resolved.name : exercise.name;
 
             if (matchedName !== exercise.name) {
               // Found a match

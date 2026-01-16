@@ -54,8 +54,12 @@ function ProgramCardComponent({
   const handlePress = useCallback(() => {
     // Navigate to detail screen when tapped
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/browse/${program.id}`);
-  }, [router, program.id]);
+    if (onPress) {
+      onPress(program);
+      return;
+    }
+    router.push(`/(tabs)/browse?programId=${program.id}`);
+  }, [router, program.id, onPress, program]);
 
   const handleCheckboxPress = useCallback(() => {
     if (onToggleSelect) {

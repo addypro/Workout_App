@@ -7,30 +7,30 @@
  * - Ability to repeat the workout
  */
 
+import * as Haptics from 'expo-haptics';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  ScrollView,
   ActivityIndicator,
-  Pressable,
   Alert,
   Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
 } from 'react-native';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Card } from '@/components/ui/card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
-  getWorkoutRecordById,
   createProgram,
+  getWorkoutRecordById,
+  updateProgram,
   type UnifiedWorkoutRecord,
 } from '@/lib/db/storage';
 
@@ -103,8 +103,14 @@ export default function HistoryDetailScreen() {
       // Build the exercises for the program
       const exercises = record.exercises.map((ex, idx) => ({
         name: ex.name,
-        sets: ex.totalSets,
-        reps: ex.bestSet?.reps?.toString() || '8-12',
+        sets: ex.sets?.length || ex.totalSets || 4,
+        reps: ex.bestSet?.reps?.toString() || ex.sets?.[0]?.reps?.toString() || '8',
+        perSetDetails: ex.sets?.length
+          ? ex.sets.map(set => ({
+              reps: set.reps?.toString() || '8',
+              weight: set.weight ?? undefined,
+            }))
+          : undefined,
         restTime: 90,
         notes: '',
         order: idx,
@@ -123,20 +129,12 @@ export default function HistoryDetailScreen() {
         ],
       };
 
-      // Update the program
-      const programs = await AsyncStorage.getItem('@workout_programs');
-      if (programs) {
-        const list = JSON.parse(programs);
-        const index = list.findIndex((p: any) => p.id === program.id);
-        if (index !== -1) {
-          list[index].parsedData = parsedData;
-          list[index].isQuickWorkout = true;
-          await AsyncStorage.setItem('@workout_programs', JSON.stringify(list));
-        }
-      }
+      await updateProgram(program.id, {
+        parsedData,
+      });
 
       // Navigate to workout execution
-      router.replace(`/workout/${program.id}?week=1&day=1`);
+      router.replace(`/workout/${program.id}?week=1&day=1&repeatFrom=${record.id}`);
     } catch (error) {
       console.error('Error repeating workout:', error);
       const msg = 'Failed to start workout';
@@ -296,11 +294,39 @@ export default function HistoryDetailScreen() {
                 </View>
               </View>
 
+              {/* All Sets Details */}
+              {exercise.sets && exercise.sets.length > 0 && (
+                <View style={styles.setsContainer}>
+                  {exercise.sets.map((set, setIndex) => (
+                    <View
+                      key={setIndex}
+                      style={[
+                        styles.setRow,
+                        { backgroundColor: colors.groupedBackground }
+                      ]}
+                    >
+                      <View style={styles.setNumberBadge}>
+                        <ThemedText style={styles.setNumberText}>
+                          {setIndex + 1}
+                        </ThemedText>
+                      </View>
+                      <ThemedText style={[styles.setDetails, { color: colors.text }]}>
+                        {set.weight ? `${set.weight} lbs` : 'BW'} × {set.reps} reps
+                      </ThemedText>
+                      {set.isCompleted && (
+                        <IconSymbol name="checkmark.circle.fill" size={16} color="#30D158" />
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Best Set Highlight */}
               {exercise.bestSet && (
-                <View style={[styles.bestSetRow, { backgroundColor: colors.groupedBackground }]}>
+                <View style={[styles.bestSetRow, { backgroundColor: '#FFD60A18' }]}>
                   <IconSymbol name="star.fill" size={14} color="#FFD60A" />
                   <ThemedText style={[styles.bestSetText, { color: colors.text }]}>
-                    Best set: {exercise.bestSet.reps} reps
+                    Best: {exercise.bestSet.reps} reps
                     {exercise.bestSet.weight ? ` @ ${exercise.bestSet.weight} lbs` : ''}
                   </ThemedText>
                 </View>
@@ -471,6 +497,35 @@ const styles = StyleSheet.create({
   exerciseSets: {
     ...Typography.caption1,
   },
+  setsContainer: {
+    gap: 6,
+    marginTop: Spacing.xs,
+  },
+  setRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: Radius.sm,
+  },
+  setNumberBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0,122,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  setNumberText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
+  setDetails: {
+    flex: 1,
+    ...Typography.body,
+  },
   bestSetRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -478,6 +533,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: Radius.sm,
+    marginTop: Spacing.xs,
   },
   bestSetText: {
     ...Typography.caption1,

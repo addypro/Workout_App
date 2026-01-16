@@ -1,0 +1,878 @@
+{
+  "meta": {
+    "source": "hevyapp.com",
+    "count": 124,
+    "scraped_at": "2026-01-13 17:39:25",
+    "pages_visited": 86
+  },
+  "exercises": [
+    {
+      "name": "Arnold Press (Dumbbell)",
+      "muscle_group": "Shoulders",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/arnold-press-dumbbell/"
+    },
+    {
+      "name": "Around The World",
+      "muscle_group": "Chest",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/around-the-worlds/"
+    },
+    {
+      "name": "Behind the Back Bicep Wrist Curl (Barbell)",
+      "muscle_group": "Forearms",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/behind-the-back-bicep-wrist-curl-barbell/"
+    },
+    {
+      "name": "Bench Press (Barbell)",
+      "muscle_group": "Chest",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-bench-press-barbell/"
+    },
+    {
+      "name": "Bench Press (Dumbbell)",
+      "muscle_group": "Chest",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/bench-press-dumbbell/"
+    },
+    {
+      "name": "Bench Press - Close Grip (Barbell)",
+      "muscle_group": "Triceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/bench-press-close-grip-barbell/"
+    },
+    {
+      "name": "Bench Press - Wide Grip (Barbell)",
+      "muscle_group": "Chest",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/wide-grip-bench-press/"
+    },
+    {
+      "name": "Bent over fly",
+      "muscle_group": "Upper Back",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/bent-over-fly/"
+    },
+    {
+      "name": "Bicep Curl (Barbell)",
+      "muscle_group": "Biceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-bicep-curl-barbell/"
+    },
+    {
+      "name": "Bicep Curl (Dumbbell)",
+      "muscle_group": "Biceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-bicep-curl-dumbbell/"
+    },
+    {
+      "name": "Burpee Over the Bar",
+      "muscle_group": "Full Body",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-burpee-over-the-bar/"
+    },
+    {
+      "name": "Cable Crunch",
+      "muscle_group": "Abdominals",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-cable-crunch/"
+    },
+    {
+      "name": "Calf Press (Machine)",
+      "muscle_group": "Calves",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-calf-press-machine/"
+    },
+    {
+      "name": "Chest Dip",
+      "muscle_group": "Chest",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-chest-dip/"
+    },
+    {
+      "name": "Chest Dip (Weighted)",
+      "muscle_group": "Chest",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/chest-dip-weighted/"
+    },
+    {
+      "name": "Chest-Supported Incline Row (dumbbell)",
+      "muscle_group": "Upper Back",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/chest-supported-incline-row-dumbbell/"
+    },
+    {
+      "name": "Clean Pull",
+      "muscle_group": "Full Body",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/clean-pull/"
+    },
+    {
+      "name": "Clean and Jerk",
+      "muscle_group": "Full Body",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/clean-and-jerk/"
+    },
+    {
+      "name": "Concentration Curl",
+      "muscle_group": "Biceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/concentration-curl/"
+    },
+    {
+      "name": "Dead Hang",
+      "muscle_group": "Upper Back",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/dead-hang/"
+    },
+    {
+      "name": "Deadlift (Band)",
+      "muscle_group": "Hamstrings",
+      "equipment": "Resistance Band",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-deadlift-band/"
+    },
+    {
+      "name": "Deadlift (Dumbbell)",
+      "muscle_group": "Hamstrings",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/dumbbell-deadlift/"
+    },
+    {
+      "name": "Decline Bench Press (Dumbbell)",
+      "muscle_group": "Chest",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-decline-bench-press-dumbbell/"
+    },
+    {
+      "name": "Decline Crunch",
+      "muscle_group": "Abdominals",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-decline-crunch/"
+    },
+    {
+      "name": "Diamond Push Up",
+      "muscle_group": "Triceps",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/diamond-push-up/"
+    },
+    {
+      "name": "Dumbbell Skullcrusher",
+      "muscle_group": "Triceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/dumbbell-skull-crusher/"
+    },
+    {
+      "name": "Face Pull",
+      "muscle_group": "Shoulders",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/face-pull/"
+    },
+    {
+      "name": "Farmer's Walk",
+      "muscle_group": "Full Body",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/farmers-walk/"
+    },
+    {
+      "name": "Fire Hydrants",
+      "muscle_group": "Glutes",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-fire-hydrants/"
+    },
+    {
+      "name": "Floor Press (Barbell)",
+      "muscle_group": "Chest",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/floor-press-barbell/"
+    },
+    {
+      "name": "Flutter Kicks",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/flutter-kicks/"
+    },
+    {
+      "name": "Frog Jumps",
+      "muscle_group": "Full Body",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/frog-jumps/"
+    },
+    {
+      "name": "Front Lever Raise",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/front-lever-raise/"
+    },
+    {
+      "name": "Front Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-front-squat/"
+    },
+    {
+      "name": "Glute Bridge",
+      "muscle_group": "Glutes",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-glute-bridge/"
+    },
+    {
+      "name": "Glute Ham Raise",
+      "muscle_group": "Hamstrings",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-glute-ham-raise/"
+    },
+    {
+      "name": "Glute Kickback on Floor",
+      "muscle_group": "Glutes",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/glute-kickback-on-floor/"
+    },
+    {
+      "name": "Goblet Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-goblet-squat/"
+    },
+    {
+      "name": "Good Morning (Barbell)",
+      "muscle_group": "Hamstrings",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-good-morning-barbell/"
+    },
+    {
+      "name": "Hack Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-hack-squat/"
+    },
+    {
+      "name": "Hammer Curl (Band)",
+      "muscle_group": "Biceps",
+      "equipment": "Resistance Band",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/hammer-curl-resistance-band/"
+    },
+    {
+      "name": "Hammer Curl (Dumbbell)",
+      "muscle_group": "Biceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-hammer-curl-dumbbell/"
+    },
+    {
+      "name": "Handstand Push Up",
+      "muscle_group": "Shoulders",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/handstand-push-up/"
+    },
+    {
+      "name": "Hang Snatch",
+      "muscle_group": "Full Body",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/hang-snatch/"
+    },
+    {
+      "name": "Heel Taps",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/heel-taps/"
+    },
+    {
+      "name": "Hip Thrust",
+      "muscle_group": "Glutes",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-hip-thrust/"
+    },
+    {
+      "name": "Hollow Rock Hold",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/hollow-rock-hold/"
+    },
+    {
+      "name": "Incline Bench Press (Barbell)",
+      "muscle_group": "Chest",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-incline-bench-press-barbell/"
+    },
+    {
+      "name": "Incline Bench Press (Dumbbell)",
+      "muscle_group": "Chest",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-incline-bench-press-dumbbell/"
+    },
+    {
+      "name": "Incline Push Ups",
+      "muscle_group": "Chest",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/incline-push-ups/"
+    },
+    {
+      "name": "Inverted Row",
+      "muscle_group": "Upper Back",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-inverted-row/"
+    },
+    {
+      "name": "Jackknife Sit Up",
+      "muscle_group": "Abdominals",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-jackknife-sit-up/"
+    },
+    {
+      "name": "Jump Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-jump-squat/"
+    },
+    {
+      "name": "Kettlebell Goblet Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Kettlebell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/kettlebell-goblet-squat/"
+    },
+    {
+      "name": "Kettlebell Turkish Get Up",
+      "muscle_group": "Full Body",
+      "equipment": "Kettlebell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/kettlebell-turkish-get-up/"
+    },
+    {
+      "name": "Kipping Pull Up",
+      "muscle_group": "Lats",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/kipping-pull-up/"
+    },
+    {
+      "name": "Knee Raise Parallel Bars",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/vertical-knee-raise/"
+    },
+    {
+      "name": "Lat Pulldown (Cable)",
+      "muscle_group": "Lats",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-lat-pulldown-cable/"
+    },
+    {
+      "name": "Lat Pulldown (Machine)",
+      "muscle_group": "Lats",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-lat-pulldown-machine/"
+    },
+    {
+      "name": "Lat Pulldown (band)",
+      "muscle_group": "Lats",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/lat-pulldown-band/"
+    },
+    {
+      "name": "Lateral Leg Raises",
+      "muscle_group": "Glutes",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/lateral-leg-raises/"
+    },
+    {
+      "name": "Lateral Raise (Dumbbell)",
+      "muscle_group": "Shoulders",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-lateral-raise-dumbbell/"
+    },
+    {
+      "name": "Lateral Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-lateral-squat/"
+    },
+    {
+      "name": "Leg Raise Parallel Bars",
+      "muscle_group": "Abdominals",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/leg-raises/"
+    },
+    {
+      "name": "Lunge (Barbell)",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/barbell-lunges/"
+    },
+    {
+      "name": "Lunge (Dumbbell)",
+      "muscle_group": "Quadriceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-lunge-dumbbell/"
+    },
+    {
+      "name": "Lying Knee Raise",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/lying-knee-raises/"
+    },
+    {
+      "name": "Meadows Row",
+      "muscle_group": "Upper Back",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/meadows-row/"
+    },
+    {
+      "name": "Muscle Up",
+      "muscle_group": "Full Body",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/muscle-up/"
+    },
+    {
+      "name": "Oblique Crunch",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/oblique-crunches/"
+    },
+    {
+      "name": "One-Arm Push-Up",
+      "muscle_group": "Full Body",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/one-arm-push-up/"
+    },
+    {
+      "name": "One-Arm Tricep Extension (Dumbbell)",
+      "muscle_group": "Triceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/one-arm-tricep-extension-dumbbell/"
+    },
+    {
+      "name": "Overhead Squat",
+      "muscle_group": "Full Body",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/overhead-squat/"
+    },
+    {
+      "name": "Pendlay Row",
+      "muscle_group": "Upper Back",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/pendlay-row/"
+    },
+    {
+      "name": "Pinwheel Curl (Dumbbell)",
+      "muscle_group": "Biceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-pinwheel-curl-dumbbell/"
+    },
+    {
+      "name": "Plate Curls",
+      "muscle_group": "Biceps",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/plate-curls/"
+    },
+    {
+      "name": "Plate Front Raise",
+      "muscle_group": "Shoulders",
+      "equipment": "Other",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-plate-front-raise/"
+    },
+    {
+      "name": "Plate Press",
+      "muscle_group": "Chest",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/plate-press/"
+    },
+    {
+      "name": "Pull Up",
+      "muscle_group": "Lats",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/pull-up/"
+    },
+    {
+      "name": "Pullover (Dumbbell)",
+      "muscle_group": "Chest",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/dumbbell-pullover/"
+    },
+    {
+      "name": "Push Press",
+      "muscle_group": "Shoulders",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-push-press/"
+    },
+    {
+      "name": "Push Up (Weighted)",
+      "muscle_group": "Chest",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/weighted-push-ups/"
+    },
+    {
+      "name": "Rack Pull",
+      "muscle_group": "Lower Back",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-rack-pull/"
+    },
+    {
+      "name": "Renegade Row",
+      "muscle_group": "Upper Back",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-renegade-row/"
+    },
+    {
+      "name": "Reverse Curl",
+      "muscle_group": "Biceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/reverse-curl/"
+    },
+    {
+      "name": "Reverse Lunge",
+      "muscle_group": "Quadriceps",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/reverse-lunge/"
+    },
+    {
+      "name": "Reverse Plank",
+      "muscle_group": "Abdominals",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-reverse-plank/"
+    },
+    {
+      "name": "Ring Dips",
+      "muscle_group": "Triceps",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/ring-dips/"
+    },
+    {
+      "name": "Russian Twist (Bodyweight)",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/russian-twists/"
+    },
+    {
+      "name": "Russian Twist (weighted)",
+      "muscle_group": "Abdominals",
+      "equipment": "weighted",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/russian-twist-weighted/"
+    },
+    {
+      "name": "Scapular Pull-ups",
+      "muscle_group": "Upper Back",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/scapular-pull-ups/"
+    },
+    {
+      "name": "Seated Calf Raises",
+      "muscle_group": "Calves",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/seated-calf-raises/"
+    },
+    {
+      "name": "Seated Overhead Press (Barbell)",
+      "muscle_group": "Shoulders",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/seated-overhead-barbell-press/"
+    },
+    {
+      "name": "Shrug (Barbell)",
+      "muscle_group": "Traps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/shrug-barbell/"
+    },
+    {
+      "name": "Shrug (Dumbbell)",
+      "muscle_group": "Traps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-shrug-dumbbell/"
+    },
+    {
+      "name": "Single Arm Lat Pulldown",
+      "muscle_group": "Lats",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-single-arm-lat-pulldown/"
+    },
+    {
+      "name": "Single Leg Glute Bridge",
+      "muscle_group": "Glutes",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/single-leg-glute-bridge/"
+    },
+    {
+      "name": "Single Leg Hip Thrust",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/single-leg-hip-thrust/"
+    },
+    {
+      "name": "Single Leg Romanian Deadlift (Dumbbell)",
+      "muscle_group": "Hamstrings",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-single-leg-romanian-deadlift-dumbbell/"
+    },
+    {
+      "name": "Single Leg Standing Calf Raise (Dumbbell)",
+      "muscle_group": "Calves",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-single-leg-standing-calf-raise-dumbbell/"
+    },
+    {
+      "name": "Sissy Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/sissy-squat/"
+    },
+    {
+      "name": "Sit Ups",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/sit-ups/"
+    },
+    {
+      "name": "Skullcrusher (barbell)",
+      "muscle_group": "Triceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/skullcrusher-barbell/"
+    },
+    {
+      "name": "Spiderman",
+      "muscle_group": "Abdominals",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/spiderman-plank/"
+    },
+    {
+      "name": "Split Squat (Dumbbell)",
+      "muscle_group": "Quadriceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/dumbbell-split-squat/"
+    },
+    {
+      "name": "Standing Leg Curls",
+      "muscle_group": "Hamstrings",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-standing-leg-curls/"
+    },
+    {
+      "name": "Standing Military Press (Barbell)",
+      "muscle_group": "Shoulders",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-standing-military-press-barbell/"
+    },
+    {
+      "name": "Sternum Pull up (Gironda)",
+      "muscle_group": "Lats",
+      "equipment": "None",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/sternum-pull-up-gironda/"
+    },
+    {
+      "name": "Stiff / straight leg deadlift",
+      "muscle_group": "Hamstrings",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/stiff-straight-leg-deadlift/"
+    },
+    {
+      "name": "Sumo Deadlift",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/sumo-deadlift/"
+    },
+    {
+      "name": "Sumo Squat (barbell)",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/sumo-squat-barbell/"
+    },
+    {
+      "name": "Superman",
+      "muscle_group": "Lower Back",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-superman/"
+    },
+    {
+      "name": "T Bar Row",
+      "muscle_group": "Upper Back",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-t-bar-row/"
+    },
+    {
+      "name": "Thruster (Kettlebell)",
+      "muscle_group": "Full Body",
+      "equipment": "Kettlebell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/kettlebell-thruster/"
+    },
+    {
+      "name": "Triceps Dip (Weighted)",
+      "muscle_group": "Triceps",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/triceps-dip-weighted/"
+    },
+    {
+      "name": "Triceps Extension (Suspension)",
+      "muscle_group": "Triceps",
+      "equipment": "Suspension Band",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/trx-tricep-extension/"
+    },
+    {
+      "name": "Triceps Extension (barbell)",
+      "muscle_group": "Triceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/triceps-extension-barbell/"
+    },
+    {
+      "name": "Triceps Kickback",
+      "muscle_group": "Triceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-triceps-kickback/"
+    },
+    {
+      "name": "Triceps Rope Pushdown",
+      "muscle_group": "Triceps",
+      "equipment": "Machine",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-triceps-rope-pushdown/"
+    },
+    {
+      "name": "Upright Row (Barbell)",
+      "muscle_group": "Traps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-upright-row-barbell/"
+    },
+    {
+      "name": "V Up",
+      "muscle_group": "Abdominals",
+      "equipment": "Bodyweight",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-v-up/"
+    },
+    {
+      "name": "Wall Sit",
+      "muscle_group": "Quadriceps",
+      "equipment": "Other",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-wall-sit/"
+    },
+    {
+      "name": "Zercher Squat",
+      "muscle_group": "Quadriceps",
+      "equipment": "Barbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-zercher-squat/"
+    },
+    {
+      "name": "Zottman Curl (Dumbbell)",
+      "muscle_group": "Biceps",
+      "equipment": "Dumbbell",
+      "image_url": "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
+      "url": "https://www.hevyapp.com/exercises/how-to-zottman-curl-dumbbell/"
+    }
+  ]
+}

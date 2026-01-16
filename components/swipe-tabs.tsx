@@ -26,12 +26,14 @@ import * as Haptics from 'expo-haptics';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
+import { useAuth } from '@/lib/context/auth-context';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type TabName = 'index' | 'browse' | 'explore' | 'tools' | 'upload';
+type TabName = 'index' | 'browse' | 'explore' | 'stats' | 'tools' | 'upload' | 'you' | 'coach';
 
 interface SwipeTabsProps {
   current: TabName;
@@ -46,8 +48,8 @@ interface SwipeTabsProps {
 // CONSTANTS
 // ============================================================================
 
-// Tab order matches the visible tabs (upload is hidden but still navigable)
-const TAB_ORDER: TabName[] = ['index', 'browse', 'explore', 'tools'];
+const TAB_ORDER_NEW: TabName[] = ['index', 'explore', 'stats', 'you'];
+const TAB_ORDER_OLD: TabName[] = ['index', 'browse', 'explore', 'stats', 'tools'];
 
 const EDGE_ZONE = 28; // Trigger zone from screen edge
 const SWIPE_THRESHOLD = 70; // Distance to trigger tab change
@@ -59,11 +61,11 @@ const SPRING_CONFIG = { damping: 20, stiffness: 300 };
 // HELPERS
 // ============================================================================
 
-function getNeighbor(current: TabName, dir: 'prev' | 'next'): TabName | null {
-  const i = TAB_ORDER.indexOf(current);
+function getNeighbor(order: TabName[], current: TabName, dir: 'prev' | 'next'): TabName | null {
+  const i = order.indexOf(current);
   if (i === -1) return null;
   const j = dir === 'prev' ? i - 1 : i + 1;
-  return TAB_ORDER[j] ?? null;
+  return order[j] ?? null;
 }
 
 function triggerHaptic(type: 'light' | 'medium' | 'selection') {
@@ -95,6 +97,14 @@ export function SwipeTabs({
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { width } = useWindowDimensions();
+  const { isCoach } = useAuth();
+  const useNewTabBar = isFeatureEnabled('new_tab_bar');
+
+  const tabOrder = useMemo(() => {
+    const base = useNewTabBar ? [...TAB_ORDER_NEW] : [...TAB_ORDER_OLD];
+    if (isCoach) base.push('coach');
+    return base;
+  }, [useNewTabBar, isCoach]);
 
   const startXRef = useRef<number>(0);
   const hasTriggeredHaptic = useRef(false);
@@ -103,8 +113,8 @@ export function SwipeTabs({
   const edgeProgress = useSharedValue(0); // -1 = left, 0 = center, 1 = right
   const isNearEdge = useSharedValue(false);
 
-  const hasPrev = getNeighbor(current, 'prev') !== null;
-  const hasNext = getNeighbor(current, 'next') !== null;
+  const hasPrev = getNeighbor(tabOrder, current, 'prev') !== null;
+  const hasNext = getNeighbor(tabOrder, current, 'next') !== null;
 
   const navigateToTab = useCallback((tab: TabName) => {
     triggerHaptic('selection');
@@ -161,12 +171,12 @@ export function SwipeTabs({
 
         // Navigate if threshold crossed
         if (fromLeftEdge && (e.translationX > SWIPE_THRESHOLD || e.velocityX > VELOCITY_THRESHOLD)) {
-          const prev = getNeighbor(current, 'prev');
+          const prev = getNeighbor(tabOrder, current, 'prev');
           if (prev) {
             runOnJS(navigateToTab)(prev);
           }
         } else if (fromRightEdge && (e.translationX < -SWIPE_THRESHOLD || e.velocityX < -VELOCITY_THRESHOLD)) {
-          const next = getNeighbor(current, 'next');
+          const next = getNeighbor(tabOrder, current, 'next');
           if (next) {
             runOnJS(navigateToTab)(next);
           }
@@ -180,7 +190,7 @@ export function SwipeTabs({
         edgeProgress.value = withSpring(0, SPRING_CONFIG);
         isNearEdge.value = false;
       });
-  }, [current, width, hasPrev, hasNext, navigateToTab]);
+  }, [current, width, hasPrev, hasNext, navigateToTab, tabOrder]);
 
   // Edge indicator animations
   const leftIndicatorStyle = useAnimatedStyle(() => {
@@ -271,5 +281,4 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
 });
-
 

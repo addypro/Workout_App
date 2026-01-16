@@ -217,7 +217,7 @@ export function getStaticPopularityScores(): Record<string, number> {
 
   // 2. Load taxonomy data (supplement with additional exercises)
   try {
-    const taxonomy = require('@/data/exercise-taxonomy.json');
+    const taxonomy = require('@/data/legacy/exercise-taxonomy.json');
 
     if (taxonomy.movement_patterns) {
       for (const pattern of taxonomy.movement_patterns) {

@@ -11,11 +11,12 @@
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  FlatList,
   Modal,
   Platform,
   Pressable,
@@ -25,7 +26,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Animated, { FadeInDown, FadeInRight } from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Screen } from '@/components/screen';
@@ -36,7 +37,6 @@ import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme'
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { ProgramDisplayItem } from '@/lib/domain/program';
 import { useSelection } from '@/lib/hooks';
-import { getKagglePrograms } from '@/lib/services/programs/kaggle-loader';
 import { programsService, type CatalogListItem } from '@/lib/services/programs/programs-service';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -112,6 +112,27 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   'ADVANCED': '#F44336',
   'ELITE': '#9C27B0',
 };
+
+type CatalogListItemWithSearch = CatalogListItem & {
+  searchIndex: string;
+};
+
+const CATEGORY_ORDER = ['STRENGTH', 'HYPERTROPHY', 'BODYWEIGHT', 'FULL_BODY', 'ATHLETIC', 'POWERLIFTING'];
+
+function buildSearchIndex(program: CatalogListItem): string {
+  return [
+    program.name,
+    program.description,
+    program.type,
+    program.difficulty,
+    ...(program.tags ?? []),
+    ...(program.muscleGroups ?? []),
+    ...(program.equipment ?? []),
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+}
 
 // ============================================
 // MEMOIZED PROGRAM CARD (List Stability)
@@ -242,25 +263,156 @@ const ProgramCard = React.memo(function ProgramCard({
   );
 });
 
+type CategorySectionProps = {
+  type: string;
+  programs: CatalogListItemWithSearch[];
+  colors: typeof Colors['light'];
+  renderProgramCard: (program: CatalogListItemWithSearch, featured?: boolean) => React.ReactElement;
+};
+
+const HorizontalSpacer = () => <View style={styles.horizontalSpacer} />;
+const FeaturedSpacer = () => <View style={styles.featuredSpacer} />;
+
+const CategorySection = React.memo(function CategorySection({
+  type,
+  programs,
+  colors,
+  renderProgramCard,
+}: CategorySectionProps) {
+  const config = CATEGORY_CONFIG[type] || {
+    icon: 'figure.mixed.cardio',
+    gradient: ['#667EEA', '#764BA2'],
+    label: type.replace(/_/g, ' '),
+    description: '',
+  };
+
+  const initialRenderCount = Math.min(programs.length, 4);
+
+  return (
+    <View style={styles.categorySection}>
+      {/* Section Header */}
+      <View style={styles.sectionHeader}>
+        <LinearGradient
+          colors={config.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.sectionIconContainer}
+        >
+          <IconSymbol name={config.icon as any} size={18} color="#fff" />
+        </LinearGradient>
+        <View style={styles.sectionTitleContainer}>
+          <ThemedText style={styles.sectionTitle}>{config.label}</ThemedText>
+          <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+            {config.description} • {programs.length} program{programs.length !== 1 ? 's' : ''}
+          </ThemedText>
+        </View>
+      </View>
+
+      {/* Horizontal list of programs */}
+      <FlatList
+        data={programs}
+        horizontal
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => renderProgramCard(item)}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.horizontalScroll}
+        decelerationRate="fast"
+        snapToInterval={CARD_WIDTH + 12}
+        snapToAlignment="start"
+        initialNumToRender={initialRenderCount}
+        maxToRenderPerBatch={4}
+        windowSize={3}
+        removeClippedSubviews
+        getItemLayout={(_, index) => ({
+          length: CARD_WIDTH + 12,
+          offset: (CARD_WIDTH + 12) * index,
+          index,
+        })}
+        ItemSeparatorComponent={HorizontalSpacer}
+      />
+    </View>
+  );
+});
+
+type FeaturedSectionProps = {
+  programs: CatalogListItemWithSearch[];
+  colors: typeof Colors['light'];
+  renderProgramCard: (program: CatalogListItemWithSearch, featured?: boolean) => React.ReactElement;
+};
+
+const FeaturedSection = React.memo(function FeaturedSection({
+  programs,
+  colors,
+  renderProgramCard,
+}: FeaturedSectionProps) {
+  if (programs.length === 0) return null;
+
+  return (
+    <View style={styles.featuredSection}>
+      <View style={styles.sectionHeader}>
+        <LinearGradient
+          colors={['#FFD700', '#FFA500']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.sectionIconContainer}
+        >
+          <IconSymbol name="star.fill" size={18} color="#fff" />
+        </LinearGradient>
+        <View style={styles.sectionTitleContainer}>
+          <ThemedText style={styles.sectionTitle}>Featured Programs</ThemedText>
+          <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
+            Top picks for you
+          </ThemedText>
+        </View>
+      </View>
+
+      <FlatList
+        data={programs}
+        horizontal
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => renderProgramCard(item, true)}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.featuredScroll}
+        decelerationRate="fast"
+        snapToInterval={FEATURED_CARD_WIDTH + 16}
+        snapToAlignment="start"
+        initialNumToRender={Math.min(programs.length, 3)}
+        maxToRenderPerBatch={3}
+        windowSize={3}
+        removeClippedSubviews
+        getItemLayout={(_, index) => ({
+          length: FEATURED_CARD_WIDTH + 16,
+          offset: (FEATURED_CARD_WIDTH + 16) * index,
+          index,
+        })}
+        ItemSeparatorComponent={FeaturedSpacer}
+      />
+    </View>
+  );
+});
+
 export default function BrowseScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
   const [isAdding, setIsAdding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [allPrograms, setAllPrograms] = useState<CatalogListItem[]>([]);
+  const [allPrograms, setAllPrograms] = useState<CatalogListItemWithSearch[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [detailProgram, setDetailProgram] = useState<CatalogListItem | null>(null);
 
   const router = useRouter();
-  const params = useLocalSearchParams<{ returnTo?: string }>();
+  const params = useLocalSearchParams<{ returnTo?: string; programId?: string }>();
   const returnTo = params.returnTo;
+  const programIdParam = Array.isArray(params.programId) ? params.programId[0] : params.programId;
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
 
   const selection = useSelection<ProgramDisplayItem>();
+  const openedProgramRef = useRef<string | null>(null);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
   const hasActiveFilters = typeFilter !== 'All' || difficultyFilter !== 'All' || searchQuery !== '';
   const activeFilterCount = (typeFilter !== 'All' ? 1 : 0) + (difficultyFilter !== 'All' ? 1 : 0);
@@ -274,7 +426,11 @@ export default function BrowseScreen() {
           limit: 100,
           offset: 0,
         });
-        setAllPrograms(res.items);
+        const prepared = res.items.map((item) => ({
+          ...item,
+          searchIndex: buildSearchIndex(item),
+        }));
+        setAllPrograms(prepared);
       } finally {
         setIsLoading(false);
       }
@@ -282,39 +438,57 @@ export default function BrowseScreen() {
     load();
   }, []);
 
+  useEffect(() => {
+    if (!programIdParam) return;
+    if (openedProgramRef.current === programIdParam) return;
+    if (allPrograms.length === 0) return;
+
+    const match = allPrograms.find((program) => program.id === programIdParam);
+    if (match) {
+      openedProgramRef.current = programIdParam;
+      setDetailProgram(match);
+    }
+  }, [programIdParam, allPrograms]);
+
+  const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
+
   // Filter programs based on search and filters
   const filteredPrograms = useMemo(() => {
-    return allPrograms.filter(p => {
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        const matchesSearch =
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
-          p.tags?.some(t => t.toLowerCase().includes(q));
-        if (!matchesSearch) return false;
-      }
+    if (!normalizedQuery && typeFilter === 'All' && difficultyFilter === 'All') {
+      return allPrograms;
+    }
+
+    return allPrograms.filter((p) => {
+      if (normalizedQuery && !p.searchIndex.includes(normalizedQuery)) return false;
       if (typeFilter !== 'All' && p.type !== typeFilter) return false;
       if (difficultyFilter !== 'All' && p.difficulty !== difficultyFilter) return false;
       return true;
     });
-  }, [allPrograms, searchQuery, typeFilter, difficultyFilter]);
-
-  // Group programs by type for section display
-  const programsByCategory = useMemo(() => {
-    const groups: Record<string, CatalogListItem[]> = {};
-    for (const program of filteredPrograms) {
-      const type = program.type || 'OTHER';
-      if (!groups[type]) groups[type] = [];
-      groups[type].push(program);
-    }
-    return groups;
-  }, [filteredPrograms]);
+  }, [allPrograms, normalizedQuery, typeFilter, difficultyFilter]);
 
   // Featured programs (top rated / popular)
   const featuredPrograms = useMemo(() => {
     return filteredPrograms
       .filter(p => !p.installed)
       .slice(0, 5);
+  }, [filteredPrograms]);
+
+  // Group programs by type for section display
+  const categorySections = useMemo(() => {
+    const groups: Record<string, CatalogListItemWithSearch[]> = {};
+    for (const program of filteredPrograms) {
+      const type = program.type || 'OTHER';
+      if (!groups[type]) groups[type] = [];
+      groups[type].push(program);
+    }
+
+    const ordered = CATEGORY_ORDER.filter((type) => groups[type]?.length);
+    const remainder = Object.keys(groups).filter((type) => !CATEGORY_ORDER.includes(type));
+
+    return [...ordered, ...remainder].map((type) => ({
+      type,
+      programs: groups[type],
+    }));
   }, [filteredPrograms]);
 
   const handleReturnBack = useCallback(() => {
@@ -390,7 +564,11 @@ export default function BrowseScreen() {
       setDetailProgram(null);
       // Reload to update installed status
       const res = await programsService.listCatalog({ limit: 100, offset: 0 });
-      setAllPrograms(res.items);
+      const prepared = res.items.map((item) => ({
+        ...item,
+        searchIndex: buildSearchIndex(item),
+      }));
+      setAllPrograms(prepared);
       const msg = `${program.name} added!`;
       Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Added!', msg);
     } catch (e) {
@@ -403,14 +581,13 @@ export default function BrowseScreen() {
   };
 
   // Render a program card using the memoized component
-  const renderProgramCard = useCallback((program: CatalogListItem, featured = false) => {
+  const renderProgramCard = useCallback((program: CatalogListItemWithSearch, featured = false) => {
     const isSelected = selection.isSelected(program);
     const categoryConfig = CATEGORY_CONFIG[program.type] || CATEGORY_CONFIG['FULL_BODY'];
     const difficultyColor = DIFFICULTY_COLORS[program.difficulty] || colors.textSecondary;
 
     return (
       <ProgramCard
-        key={program.id}
         program={program}
         featured={featured}
         isSelected={isSelected}
@@ -424,58 +601,25 @@ export default function BrowseScreen() {
     );
   }, [selection, colors, isDark, handleProgramPress, handleCheckboxPress]);
 
-  // Category Section Component
-  const CategorySection = ({ type, programs }: { type: string; programs: CatalogListItem[] }) => {
-    const config = CATEGORY_CONFIG[type] || {
-      icon: 'figure.mixed.cardio',
-      gradient: ['#667EEA', '#764BA2'],
-      label: type.replace(/_/g, ' '),
-      description: ''
-    };
+  const renderCategorySection = useCallback(({ item }: { item: { type: string; programs: CatalogListItemWithSearch[] } }) => (
+    <CategorySection
+      type={item.type}
+      programs={item.programs}
+      colors={colors}
+      renderProgramCard={renderProgramCard}
+    />
+  ), [colors, renderProgramCard]);
 
+  const listHeader = useMemo(() => {
+    if (hasActiveFilters || featuredPrograms.length === 0) return null;
     return (
-      <Animated.View
-        entering={FadeInDown.duration(400).delay(100)}
-        style={styles.categorySection}
-      >
-        {/* Section Header */}
-        <View style={styles.sectionHeader}>
-          <LinearGradient
-            colors={config.gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.sectionIconContainer}
-          >
-            <IconSymbol name={config.icon as any} size={18} color="#fff" />
-          </LinearGradient>
-          <View style={styles.sectionTitleContainer}>
-            <ThemedText style={styles.sectionTitle}>{config.label}</ThemedText>
-            <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              {config.description} • {programs.length} program{programs.length !== 1 ? 's' : ''}
-            </ThemedText>
-          </View>
-        </View>
-
-        {/* Horizontal scroll of programs */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.horizontalScroll}
-          decelerationRate="fast"
-          snapToInterval={CARD_WIDTH + 12}
-        >
-          {programs.map((program, index) => (
-            <Animated.View
-              key={program.id}
-              entering={FadeInRight.duration(300).delay(index * 50)}
-            >
-              {renderProgramCard(program)}
-            </Animated.View>
-          ))}
-        </ScrollView>
-      </Animated.View>
+      <FeaturedSection
+        programs={featuredPrograms}
+        colors={colors}
+        renderProgramCard={renderProgramCard}
+      />
     );
-  };
+  }, [hasActiveFilters, featuredPrograms, colors, renderProgramCard]);
 
   return (
     <SwipeTabs current="browse">
@@ -620,64 +764,23 @@ export default function BrowseScreen() {
             )}
           </View>
         ) : (
-          <ScrollView
+          <FlatList
+            data={categorySections}
+            keyExtractor={(item) => item.type}
+            renderItem={renderCategorySection}
+            ListHeaderComponent={listHeader}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[
               styles.scrollContent,
               { paddingBottom: selection.hasSelection ? 120 : 40 },
             ]}
-          >
-            {/* Featured Section - only show if not filtering */}
-            {!hasActiveFilters && featuredPrograms.length > 0 && (
-              <Animated.View entering={FadeInDown.duration(400)} style={styles.featuredSection}>
-                <View style={styles.sectionHeader}>
-                  <LinearGradient
-                    colors={['#FFD700', '#FFA500']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.sectionIconContainer}
-                  >
-                    <IconSymbol name="star.fill" size={18} color="#fff" />
-                  </LinearGradient>
-                  <View style={styles.sectionTitleContainer}>
-                    <ThemedText style={styles.sectionTitle}>Featured Programs</ThemedText>
-                    <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-                      Top picks for you
-                    </ThemedText>
-                  </View>
-                </View>
-
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.featuredScroll}
-                  decelerationRate="fast"
-                  snapToInterval={FEATURED_CARD_WIDTH + 16}
-                >
-                  {featuredPrograms.map((program, index) => (
-                    <Animated.View
-                      key={program.id}
-                      entering={FadeInRight.duration(300).delay(index * 80)}
-                    >
-                      {renderProgramCard(program, true)}
-                    </Animated.View>
-                  ))}
-                </ScrollView>
-              </Animated.View>
-            )}
-
-            {/* Category Sections */}
-            {Object.entries(programsByCategory)
-              .sort(([a], [b]) => {
-                // Sort by predefined order
-                const order = ['STRENGTH', 'HYPERTROPHY', 'BODYWEIGHT', 'FULL_BODY', 'ATHLETIC', 'POWERLIFTING'];
-                return order.indexOf(a) - order.indexOf(b);
-              })
-              .map(([type, programs]) => (
-                <CategorySection key={type} type={type} programs={programs} />
-              ))
-            }
-          </ScrollView>
+            style={styles.list}
+            removeClippedSubviews
+            initialNumToRender={2}
+            maxToRenderPerBatch={2}
+            windowSize={4}
+            updateCellsBatchingPeriod={50}
+          />
         )}
 
         {/* Floating Add Button */}
@@ -873,6 +976,18 @@ function FilterModal({
   );
 }
 
+type ProgramWorkoutsMeta = {
+  coverageWeeks: number;
+  programDuration: number;
+  isFullPlan: boolean;
+  source: 'kaggle' | 'embedded' | 'unknown';
+};
+
+function getCoverageWeeks(workouts: any[]): number {
+  if (!workouts.length) return 0;
+  return Math.max(...workouts.map((w) => w.week || 1), 1);
+}
+
 // Program Detail Modal Component
 function ProgramDetailModal({
   program,
@@ -891,27 +1006,74 @@ function ProgramDetailModal({
 }) {
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1); // Default expand week 1
   const [expandedWorkout, setExpandedWorkout] = useState<string | null>(null);
+  const [workouts, setWorkouts] = useState<any[]>([]);
+  const [workoutsMeta, setWorkoutsMeta] = useState<ProgramWorkoutsMeta | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Get full program with multi-week Kaggle data when available
-  const workouts = useMemo(() => {
-    if (!program) return [];
+  // Load workouts from SQLite cache (preloaded at startup with accurate Kaggle data)
+  // Falls back to embedded workouts if cache not ready yet
+  useEffect(() => {
+    let cancelled = false;
 
-    // Try to get full multi-week data from Kaggle
-    const kagglePrograms = getKagglePrograms();
-    const kaggleProgram = kagglePrograms.find(
-      p => p.id === program.id || p.name.toLowerCase() === program.name.toLowerCase()
-    );
+    async function loadWorkouts() {
+      if (!program) {
+        setWorkouts([]);
+        setWorkoutsMeta(null);
+        setIsLoading(false);
+        return;
+      }
 
-    if (kaggleProgram && kaggleProgram.workouts.length > 0) {
-      const maxWeek = Math.max(...kaggleProgram.workouts.map(w => w.week || 1), 1);
-      if (maxWeek > 1) {
-        return kaggleProgram.workouts;
+      setIsLoading(true);
+      setWorkoutsMeta(null);
+
+      // Get full program from catalog (sync lookup for metadata)
+      const fullProgram = programsService.getById(program.id);
+      if (!fullProgram) {
+        setWorkouts([]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Try SQLite cache first (has accurate Kaggle multi-week data)
+      try {
+        const { getCachedProgramWorkouts } = await import('@/lib/services/programs/curated-preloader');
+        const cached = await getCachedProgramWorkouts(program.id, fullProgram.duration);
+
+        if (!cancelled && cached && cached.workouts.length > 0) {
+          setWorkouts(cached.workouts);
+          setWorkoutsMeta(cached.meta);
+          setIsLoading(false);
+          return;
+        }
+      } catch (e) {
+        // Cache not available - use fallback
+        console.log('[ProgramDetail] Cache miss, using embedded workouts');
+      }
+
+      // Fallback: Use embedded workouts as-is (no week expansion)
+      if (!cancelled) {
+        const embedded = fullProgram.workouts || [];
+        const coverageWeeks = getCoverageWeeks(embedded);
+        const programDuration = fullProgram.duration || coverageWeeks;
+        const isFullPlan = programDuration > 0 && coverageWeeks >= programDuration;
+
+        setWorkouts(embedded);
+        setWorkoutsMeta(embedded.length > 0 ? {
+          coverageWeeks,
+          programDuration,
+          isFullPlan,
+          source: 'embedded',
+        } : null);
+        setIsLoading(false);
       }
     }
 
-    // Fall back to curated program data
-    const fullProgram = programsService.getById(program.id);
-    return fullProgram?.workouts || [];
+    loadWorkouts();
+    setExpandedWorkout(null);
+
+    return () => {
+      cancelled = true;
+    };
   }, [program]);
 
   // Group workouts by week
@@ -925,8 +1087,16 @@ function ProgramDetailModal({
     return groups;
   }, [workouts]);
 
-  const weekNumbers = Object.keys(workoutsByWeek).map(Number).sort((a, b) => a - b);
-  const hasMultipleWeeks = weekNumbers.length > 1;
+  const availableWeeks = Object.keys(workoutsByWeek).map(Number).sort((a, b) => a - b);
+  const derivedDuration = Math.max(
+    workoutsMeta?.programDuration ?? 0,
+    program?.duration ?? 0,
+    availableWeeks[availableWeeks.length - 1] ?? 0
+  );
+  const displayWeeks = derivedDuration > 0
+    ? Array.from({ length: derivedDuration }, (_, index) => index + 1)
+    : availableWeeks;
+  const hasMultipleWeeks = displayWeeks.length > 1;
 
   if (!program) return null;
 
@@ -1006,6 +1176,13 @@ function ProgramDetailModal({
                   {workouts.length} days
                 </ThemedText>
               </View>
+              {workoutsMeta && !workoutsMeta.isFullPlan && workoutsMeta.coverageWeeks > 0 && (
+                <View style={styles.previewNote}>
+                  <ThemedText style={[styles.previewNoteText, { color: colors.textSecondary }]}>
+                    Preview only: {workoutsMeta.coverageWeeks} of {workoutsMeta.programDuration} weeks available.
+                  </ThemedText>
+                </View>
+              )}
 
               {/* Workout List - Grouped by Week */}
               <ScrollView
@@ -1013,13 +1190,20 @@ function ProgramDetailModal({
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.workoutsScrollContent}
               >
-                {workouts.length === 0 ? (
+                {isLoading ? (
+                  <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+                    <ActivityIndicator size="small" color={colors.tint} />
+                    <ThemedText style={[styles.noWorkoutsText, { color: colors.textTertiary, marginTop: 8 }]}>
+                      Loading workout details...
+                    </ThemedText>
+                  </View>
+                ) : workouts.length === 0 ? (
                   <ThemedText style={[styles.noWorkoutsText, { color: colors.textTertiary }]}>
                     No workout details available
                   </ThemedText>
                 ) : hasMultipleWeeks ? (
                   // Show week sections when multiple weeks
-                  weekNumbers.map((weekNum) => {
+                  displayWeeks.map((weekNum) => {
                     const weekWorkouts = workoutsByWeek[weekNum] || [];
                     const isWeekExpanded = expandedWeek === weekNum;
 
@@ -1049,7 +1233,14 @@ function ProgramDetailModal({
                         </Pressable>
 
                         {/* Week's Workouts */}
-                        {isWeekExpanded && weekWorkouts.map((workout: any, wIdx: number) => {
+                        {isWeekExpanded && weekWorkouts.length === 0 && (
+                          <View style={[styles.weekEmptyState, { backgroundColor: colors.groupedBackground }]}>
+                            <ThemedText style={[styles.weekEmptyText, { color: colors.textSecondary }]}>
+                              Workout details for this week are not available yet.
+                            </ThemedText>
+                          </View>
+                        )}
+                        {isWeekExpanded && weekWorkouts.map((workout: any) => {
                           const workoutKey = `w${weekNum}-d${workout.day}`;
                           const isExpanded = expandedWorkout === workoutKey;
                           const exercises = workout.exercises || [];
@@ -1320,6 +1511,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: Spacing.md,
   },
+  list: {
+    flex: 1,
+  },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
@@ -1358,7 +1552,10 @@ const styles = StyleSheet.create({
   },
   featuredScroll: {
     paddingHorizontal: Spacing.md,
-    gap: 16,
+    paddingRight: Spacing.md + 16,
+  },
+  featuredSpacer: {
+    width: 16,
   },
 
   // Category Section
@@ -1392,7 +1589,10 @@ const styles = StyleSheet.create({
   },
   horizontalScroll: {
     paddingHorizontal: Spacing.md,
-    gap: 12,
+    paddingRight: Spacing.md + 12,
+  },
+  horizontalSpacer: {
+    width: 12,
   },
 
   // Program Card
@@ -1703,6 +1903,13 @@ const styles = StyleSheet.create({
   workoutsCount: {
     ...Typography.caption1,
   },
+  previewNote: {
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.sm,
+  },
+  previewNoteText: {
+    ...Typography.caption1,
+  },
   workoutsScrollContainer: {
     maxHeight: 280,
     paddingHorizontal: Spacing.md,
@@ -1821,5 +2028,16 @@ const styles = StyleSheet.create({
   weekDayCount: {
     ...Typography.caption1,
     marginLeft: 4,
+  },
+  weekEmptyState: {
+    marginTop: Spacing.xs,
+    marginLeft: 12,
+    marginRight: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.md,
+  },
+  weekEmptyText: {
+    ...Typography.caption1,
   },
 });

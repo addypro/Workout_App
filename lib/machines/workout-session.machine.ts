@@ -16,6 +16,7 @@
  */
 
 import { assign, setup } from 'xstate';
+import type { SetId } from '../types/brands';
 import type {
     WorkoutExercise,
     WorkoutSession,
@@ -188,7 +189,7 @@ export const workoutSessionMachine = setup({
             const exercise = { ...exercises[event.exerciseIndex] };
             const lastSet = exercise.sets[exercise.sets.length - 1];
             const newSet: WorkoutSet = {
-                id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                id: `set-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` as SetId,
                 reps: lastSet?.reps ?? 10,
                 weight: lastSet?.weight,
                 isCompleted: false,

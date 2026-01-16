@@ -12,9 +12,12 @@ export * from './types';
 
 // ============================================
 // DATABASE
+// O(1) lookup functions available for performance-critical code
 // ============================================
 export {
   getExerciseDatabase,
+  getExerciseById,
+  getExerciseByName,
   type ExerciseDatabaseEntry,
 } from './database';
 
@@ -22,38 +25,26 @@ export {
 // SEARCH
 // ============================================
 export {
-  getExerciseById,
   type SearchFilters,
   type SearchResult,
 } from './search';
 
 // ============================================
 // SEMANTIC SEARCH (CASP)
+// Note: Functions exported for direct import only (not via barrel)
+// Use: import { semanticSearch } from '@/lib/services/exercise/semantic-search'
 // ============================================
 export {
-  findExerciseByAnyName,
-  getTopSuggestions,
-  semanticSearch,
-  generateCanonicalSlug,
-  getExerciseBySlug,
-  invalidateSearchIndex,
   type SemanticSearchResult,
   type SearchSuggestion,
 } from './semantic-search';
 
 // ============================================
 // PROGRESSION DAG (Calistree-style)
+// Note: Functions exported for direct import only (not via barrel)
+// Use: import { getProgressions } from '@/lib/services/exercise/progression-dag'
 // ============================================
 export {
-  getProgressions,
-  getRegressions,
-  getSiblings,
-  buildProgressionTree,
-  findPath,
-  getProgressionCategory,
-  getRecommendedNext,
-  getSkillTree,
-  invalidateProgressionIndex,
   type ProgressionRelation,
   type ProgressionNode,
   type ProgressionTree,

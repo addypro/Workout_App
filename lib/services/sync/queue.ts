@@ -1,24 +1,40 @@
 /**
  * Offline Sync Queue
  *
- * Manages a persistent queue of items waiting to be synced.
- * Uses AsyncStorage for persistence across app restarts.
+ * Stores queued items in SQLite with AsyncStorage fallback (web/test environments).
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { ensureSyncQueueTable, getDatabase } from '@/lib/db/sqlite';
 import type { QueuedItem, SyncableWorkout } from './types';
 
 const QUEUE_KEY = '@sync_queue';
 const MAX_RETRIES = 5;
 
-class SyncQueue {
+interface QueueBackend {
+  initialize(): Promise<boolean>;
+  addWorkout(workout: SyncableWorkout): Promise<void>;
+  getPending(): Promise<QueuedItem[]>;
+  getPendingCount(): Promise<number>;
+  markSynced(itemId: string): Promise<void>;
+  markFailed(itemId: string, error: string): Promise<void>;
+  getFailedItems(): Promise<QueuedItem[]>;
+  clearFailed(): Promise<void>;
+  clear(): Promise<void>;
+  resetRetries(): Promise<void>;
+}
+
+class AsyncStorageQueueBackend implements QueueBackend {
   private queue: QueuedItem[] = [];
   private loaded = false;
 
-  /**
-   * Load queue from AsyncStorage
-   */
-  async load(): Promise<void> {
+  async initialize(): Promise<boolean> {
+    await this.load();
+    return true;
+  }
+
+  private async load(): Promise<void> {
     if (this.loaded) return;
 
     try {
@@ -32,9 +48,6 @@ class SyncQueue {
     }
   }
 
-  /**
-   * Save queue to AsyncStorage
-   */
   private async save(): Promise<void> {
     try {
       await AsyncStorage.setItem(QUEUE_KEY, JSON.stringify(this.queue));
@@ -43,23 +56,17 @@ class SyncQueue {
     }
   }
 
-  /**
-   * Add a workout to the sync queue
-   */
   async addWorkout(workout: SyncableWorkout): Promise<void> {
     await this.load();
 
-    // Check if already queued (by localId)
     const existing = this.queue.find(
       item => item.type === 'workout' && item.data.localId === workout.localId
     );
 
     if (existing) {
-      // Update existing item
       existing.data = workout;
       existing.createdAt = new Date().toISOString();
     } else {
-      // Add new item
       const item: QueuedItem = {
         id: `workout_${workout.localId}`,
         type: 'workout',
@@ -73,34 +80,22 @@ class SyncQueue {
     await this.save();
   }
 
-  /**
-   * Get all pending items
-   */
   async getPending(): Promise<QueuedItem[]> {
     await this.load();
     return this.queue.filter(item => item.retryCount < MAX_RETRIES);
   }
 
-  /**
-   * Get count of pending items
-   */
   async getPendingCount(): Promise<number> {
     await this.load();
     return this.queue.filter(item => item.retryCount < MAX_RETRIES).length;
   }
 
-  /**
-   * Mark an item as successfully synced (remove from queue)
-   */
   async markSynced(itemId: string): Promise<void> {
     await this.load();
     this.queue = this.queue.filter(item => item.id !== itemId);
     await this.save();
   }
 
-  /**
-   * Mark an item as failed (increment retry count)
-   */
   async markFailed(itemId: string, error: string): Promise<void> {
     await this.load();
     const item = this.queue.find(i => i.id === itemId);
@@ -112,34 +107,22 @@ class SyncQueue {
     }
   }
 
-  /**
-   * Get failed items (exceeded retry limit)
-   */
   async getFailedItems(): Promise<QueuedItem[]> {
     await this.load();
     return this.queue.filter(item => item.retryCount >= MAX_RETRIES);
   }
 
-  /**
-   * Clear failed items
-   */
   async clearFailed(): Promise<void> {
     await this.load();
     this.queue = this.queue.filter(item => item.retryCount < MAX_RETRIES);
     await this.save();
   }
 
-  /**
-   * Clear entire queue
-   */
   async clear(): Promise<void> {
     this.queue = [];
     await this.save();
   }
 
-  /**
-   * Reset retry count for all items (useful after reconnecting)
-   */
   async resetRetries(): Promise<void> {
     await this.load();
     this.queue.forEach(item => {
@@ -147,6 +130,263 @@ class SyncQueue {
       item.error = undefined;
     });
     await this.save();
+  }
+}
+
+type SyncQueueRow = {
+  id: string;
+  type: string;
+  data: string;
+  created_at: string;
+  retry_count: number;
+  last_attempt: string | null;
+  error: string | null;
+};
+
+class SQLiteQueueBackend implements QueueBackend {
+  private ready: Promise<boolean> | null = null;
+
+  async initialize(): Promise<boolean> {
+    if (!this.ready) {
+      this.ready = ensureSyncQueueTable();
+    }
+    return this.ready;
+  }
+
+  private async getDb() {
+    const ready = await this.initialize();
+    if (!ready) return null;
+    return getDatabase();
+  }
+
+  private toItem(row: SyncQueueRow): QueuedItem | null {
+    if (row.type !== 'workout') {
+      return null;
+    }
+
+    try {
+      const data = JSON.parse(row.data) as SyncableWorkout;
+      return {
+        id: row.id,
+        type: 'workout',
+        data,
+        createdAt: row.created_at,
+        retryCount: row.retry_count,
+        lastAttempt: row.last_attempt ?? undefined,
+        error: row.error ?? undefined,
+      };
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to parse queued item:', error);
+      return null;
+    }
+  }
+
+  async addWorkout(workout: SyncableWorkout): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    const itemId = `workout_${workout.localId}`;
+    const now = new Date().toISOString();
+    const payload = JSON.stringify(workout);
+
+    try {
+      const update = await db.runAsync(
+        'UPDATE sync_queue SET data = ?, created_at = ? WHERE id = ?',
+        [payload, now, itemId]
+      );
+
+      if (update.changes === 0) {
+        await db.runAsync(
+          'INSERT INTO sync_queue (id, type, data, created_at, retry_count) VALUES (?, ?, ?, ?, 0)',
+          [itemId, 'workout', payload, now]
+        );
+      }
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to enqueue workout:', error);
+    }
+  }
+
+  async getPending(): Promise<QueuedItem[]> {
+    const db = await this.getDb();
+    if (!db) return [];
+
+    try {
+      const rows = await db.getAllAsync<SyncQueueRow>(
+        'SELECT id, type, data, created_at, retry_count, last_attempt, error FROM sync_queue WHERE retry_count < ? ORDER BY created_at ASC',
+        [MAX_RETRIES]
+      );
+
+      return rows
+        .map(row => this.toItem(row))
+        .filter((item): item is QueuedItem => item !== null);
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to load pending queue:', error);
+      return [];
+    }
+  }
+
+  async getPendingCount(): Promise<number> {
+    const db = await this.getDb();
+    if (!db) return 0;
+
+    try {
+      const row = await db.getFirstAsync<{ count: number }>(
+        'SELECT COUNT(*) as count FROM sync_queue WHERE retry_count < ?',
+        [MAX_RETRIES]
+      );
+      return row?.count ?? 0;
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to count pending queue:', error);
+      return 0;
+    }
+  }
+
+  async markSynced(itemId: string): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    try {
+      await db.runAsync('DELETE FROM sync_queue WHERE id = ?', [itemId]);
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to remove synced item:', error);
+    }
+  }
+
+  async markFailed(itemId: string, error: string): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    try {
+      await db.runAsync(
+        'UPDATE sync_queue SET retry_count = retry_count + 1, last_attempt = ?, error = ? WHERE id = ?',
+        [new Date().toISOString(), error, itemId]
+      );
+    } catch (err) {
+      console.warn('[SyncQueue] Failed to mark item failed:', err);
+    }
+  }
+
+  async getFailedItems(): Promise<QueuedItem[]> {
+    const db = await this.getDb();
+    if (!db) return [];
+
+    try {
+      const rows = await db.getAllAsync<SyncQueueRow>(
+        'SELECT id, type, data, created_at, retry_count, last_attempt, error FROM sync_queue WHERE retry_count >= ? ORDER BY created_at ASC',
+        [MAX_RETRIES]
+      );
+
+      return rows
+        .map(row => this.toItem(row))
+        .filter((item): item is QueuedItem => item !== null);
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to load failed items:', error);
+      return [];
+    }
+  }
+
+  async clearFailed(): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    try {
+      await db.runAsync('DELETE FROM sync_queue WHERE retry_count >= ?', [MAX_RETRIES]);
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to clear failed items:', error);
+    }
+  }
+
+  async clear(): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    try {
+      await db.runAsync('DELETE FROM sync_queue');
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to clear queue:', error);
+    }
+  }
+
+  async resetRetries(): Promise<void> {
+    const db = await this.getDb();
+    if (!db) return;
+
+    try {
+      await db.runAsync('UPDATE sync_queue SET retry_count = 0, error = NULL');
+    } catch (error) {
+      console.warn('[SyncQueue] Failed to reset retries:', error);
+    }
+  }
+}
+
+class SyncQueue {
+  private backend: QueueBackend | null = null;
+  private backendInit: Promise<void> | null = null;
+
+  private async getBackend(): Promise<QueueBackend> {
+    if (!this.backendInit) {
+      this.backendInit = (async () => {
+        const sqliteBackend = new SQLiteQueueBackend();
+        const sqliteReady = await sqliteBackend.initialize();
+
+        if (sqliteReady) {
+          this.backend = sqliteBackend;
+          return;
+        }
+
+        const asyncBackend = new AsyncStorageQueueBackend();
+        await asyncBackend.initialize();
+        this.backend = asyncBackend;
+      })();
+    }
+
+    await this.backendInit;
+    return this.backend as QueueBackend;
+  }
+
+  async addWorkout(workout: SyncableWorkout): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.addWorkout(workout);
+  }
+
+  async getPending(): Promise<QueuedItem[]> {
+    const backend = await this.getBackend();
+    return backend.getPending();
+  }
+
+  async getPendingCount(): Promise<number> {
+    const backend = await this.getBackend();
+    return backend.getPendingCount();
+  }
+
+  async markSynced(itemId: string): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.markSynced(itemId);
+  }
+
+  async markFailed(itemId: string, error: string): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.markFailed(itemId, error);
+  }
+
+  async getFailedItems(): Promise<QueuedItem[]> {
+    const backend = await this.getBackend();
+    return backend.getFailedItems();
+  }
+
+  async clearFailed(): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.clearFailed();
+  }
+
+  async clear(): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.clear();
+  }
+
+  async resetRetries(): Promise<void> {
+    const backend = await this.getBackend();
+    await backend.resetRetries();
   }
 }
 

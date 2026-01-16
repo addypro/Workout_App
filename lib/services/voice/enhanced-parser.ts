@@ -10,27 +10,25 @@
  * - Better exercise matching via searchExercisesEnhanced
  */
 
-import { searchExercisesEnhanced, lookupSlang, type EnhancedSearchResults } from '@/lib/services/exercise/search';
+import { lookupExerciseByAlias, lookupSlang, searchExercisesEnhanced, type EnhancedSearchResults } from '@/lib/services/exercise/search';
 import { parseWorkoutEntry, type ParsedSetEntry } from '@/lib/services/workout/voice-parser';
 import {
-  scoreExercises,
-  CONFIDENCE_THRESHOLDS,
-  type ExerciseCandidate,
-  type UFIREResult,
-  type WorkoutContext,
-} from './ufire';
-import {
-  matchVoiceIntent,
   getClarificationOptions,
+  matchVoiceIntent,
   type IntentMatchResult,
 } from './intent-mapping';
 import type {
-  VoiceParseResult,
-  VoiceCommandType,
-  ParsedExerciseIntent,
-  SupersetIntent,
   ClarificationRequest,
+  ParsedExerciseIntent,
+  VoiceCommandType,
+  VoiceParseResult
 } from './types';
+import {
+  scoreExercises,
+  type ExerciseCandidate,
+  type UFIREResult,
+  type WorkoutContext
+} from './ufire';
 
 // ============================================
 // Extended Patterns for Supersets/Dropsets
@@ -509,11 +507,38 @@ export function setWorkoutContext(context: WorkoutContext | null): void {
 
 /**
  * Find best exercise match using enhanced search + UFIRE scoring
+ * 
+ * Resolution order (exact-first principle):
+ * 1. Exact alias lookup (O(1)) - "bench press" → "Barbell Bench Press"
+ * 2. Intent mapping - for well-known exercise categories
+ * 3. Fuzzy search + UFIRE scoring - for everything else
+ * 
+ * This ensures "Bench Press" NEVER resolves to "Incline Bench Press"
+ * unless "incline" is explicitly spoken.
  */
 async function findExerciseMatch(
   exerciseName: string
 ): Promise<ParsedExerciseIntent> {
   try {
+    // ─────────────────────────────────────────────────────────────
+    // Layer 1: Exact alias lookup (O(1)) - HIGHEST PRIORITY
+    // "bench press" → "Barbell Bench Press" with 100% confidence
+    // ─────────────────────────────────────────────────────────────
+    const exactMatch = lookupExerciseByAlias(exerciseName);
+    if (exactMatch) {
+      console.log(`[findExerciseMatch] Exact alias match: "${exerciseName}" → "${exactMatch.canonical_name}"`);
+      return {
+        rawName: exerciseName,
+        matchedExerciseId: exactMatch.id,
+        matchedExerciseName: exactMatch.canonical_name,
+        matchConfidence: 100,  // 100% confidence for exact alias match
+        needsClarification: false,
+      };
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Layer 2-3: Fuzzy search + UFIRE scoring (fallback)
+    // ─────────────────────────────────────────────────────────────
     const results = await searchExercisesEnhanced(exerciseName, {});
 
     // Convert search results to UFIRE candidates

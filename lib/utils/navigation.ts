@@ -107,7 +107,7 @@ export const DeepLinks = {
     `/exercise/${exerciseId}${encodeParams({ source })}`,
 
   /** Program detail */
-  program: (programId: string) => `/program/${programId}`,
+  program: (programId: string) => `/(tabs)/browse?programId=${programId}`,
 
   /** Browse with filters */
   browseFiltered: (filters: Partial<WorkoutContext>) =>
@@ -118,7 +118,7 @@ export const DeepLinks = {
     `/(tabs)/explore${encodeParams(filters)}`,
 
   /** Workout history */
-  history: () => '/history',
+  history: () => '/(tabs)/explore',
 
   /** Specific workout log */
   workoutLog: (logId: string) => `/history/${logId}`,
@@ -237,7 +237,7 @@ export function useBreadcrumbs() {
     if (context.programId && context.programName) {
       crumbs.push({
         label: context.programName,
-        path: `/program/${context.programId}`,
+        path: `/(tabs)/browse?programId=${context.programId}`,
       });
     }
 
@@ -258,7 +258,7 @@ export function useBreadcrumbs() {
       crumbs.push({ label: 'Exercise', path: pathname });
     } else if (pathname.includes('/workout/')) {
       crumbs.push({ label: 'Workout', path: pathname });
-    } else if (pathname.includes('/history')) {
+    } else if (pathname.includes('/history') || pathname.includes('/(tabs)/explore')) {
       crumbs.push({ label: 'History', path: pathname });
     }
 
@@ -309,7 +309,8 @@ export const RoutePatterns = {
   isExerciseRoute: (path: string) => path.startsWith('/exercise/'),
 
   /** Check if path is a program route */
-  isProgramRoute: (path: string) => path.startsWith('/program/'),
+  isProgramRoute: (path: string) =>
+    path.startsWith('/program/') || path.startsWith('/browse/'),
 
   /** Extract ID from route */
   extractId: (path: string): string | null => {

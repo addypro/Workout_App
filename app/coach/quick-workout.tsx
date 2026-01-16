@@ -52,7 +52,6 @@ export default function QuickWorkoutScreen() {
     const [showExercisePicker, setShowExercisePicker] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [editingExercise, setEditingExercise] = useState<number | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
     // Add exercise from search results

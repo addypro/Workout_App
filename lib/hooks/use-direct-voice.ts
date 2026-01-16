@@ -3,6 +3,8 @@
  *
  * React hook for the "Direct-to-Intent" voice workout logging.
  * Manages recording state, permissions, and extraction results.
+ * 
+ * Uses cloud-only processing via Groq Whisper + Gemini.
  *
  * Usage:
  * ```tsx
@@ -19,20 +21,19 @@
  * ```
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  voiceDirectService,
-  type AudioFile,
-} from '@/lib/services/voice/voice-direct-service';
 import {
   AUDIO_CONFIG,
-  type RecordingState,
-  type ExtractedWorkoutFromAudio,
+  type AudioContext,
   type DirectIntentError,
   type DirectIntentResult,
-  type AudioContext,
+  type ExtractedWorkoutFromAudio,
+  type RecordingState,
   type UseDirectVoiceReturn,
 } from '@/lib/services/voice/direct-intent-types';
+import {
+  voiceDirectService
+} from '@/lib/services/voice/voice-direct-service';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // ============================================
 // HOOK
@@ -53,6 +54,7 @@ export function useDirectVoice(context?: AudioContext): UseDirectVoiceReturn {
   // Check permission on mount
   useEffect(() => {
     voiceDirectService.checkPermission().then(setHasPermission);
+    console.log('[Voice] Mode: cloud (local disabled)');
   }, []);
 
   // Cleanup on unmount
@@ -151,8 +153,9 @@ export function useDirectVoice(context?: AudioContext): UseDirectVoiceReturn {
       setState('uploading');
       const audioFile = await voiceDirectService.stopRecording();
 
-      // Extract workout
+      // Process with cloud service
       setState('processing');
+      console.log('[Voice] Using CLOUD processing');
       const extractionResult = await voiceDirectService.extractWorkout(audioFile, context);
 
       if (extractionResult.success && extractionResult.data) {
@@ -200,43 +203,38 @@ export function useDirectVoice(context?: AudioContext): UseDirectVoiceReturn {
     stopDurationTracking();
     voiceDirectService.cancelRecording();
     setState('idle');
+    setResult(null);
+    setError(null);
     setDurationMs(0);
   }, [stopDurationTracking]);
 
   // Reset state
   const reset = useCallback(() => {
-    stopDurationTracking();
     setState('idle');
-    setDurationMs(0);
     setResult(null);
     setError(null);
-  }, [stopDurationTracking]);
-
-  // Derived state
-  const isRecording = state === 'recording';
-  const isProcessing = state === 'uploading' || state === 'processing';
+    setDurationMs(0);
+  }, []);
 
   return {
     // State
     state,
-    isRecording,
-    isProcessing,
+    isRecording: state === 'recording',
+    isProcessing: state === 'uploading' || state === 'processing',
     durationMs,
 
-    // Result
+    // Results
     result,
     error,
+
+    // Permissions
+    hasPermission,
+    requestPermission,
 
     // Actions
     startRecording,
     stopRecording,
     cancelRecording,
     reset,
-
-    // Permissions
-    hasPermission,
-    requestPermission,
   };
 }
-
-export default useDirectVoice;

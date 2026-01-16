@@ -28,16 +28,18 @@ export type AppRoutes = {
     // TAB ROUTES (main navigation)
     // ==========================================
     '/(tabs)': undefined;
-    '/(tabs)/browse': { returnTo?: string };
+    '/(tabs)/browse': { returnTo?: string; programId?: string };
     '/(tabs)/coach': undefined;
     '/(tabs)/explore': undefined;
     '/(tabs)/tools': undefined;
     '/(tabs)/upload': undefined;
+    '/(tabs)/you': undefined;
 
     // ==========================================
     // AUTH ROUTES
     // ==========================================
     '/(auth)/login': undefined;
+    '/(auth)/landing': undefined;
     '/(auth)/select-role': undefined;
     '/(auth)/callback': undefined;
 
@@ -77,6 +79,11 @@ export type AppRoutes = {
     // ==========================================
     '/history': undefined;
     '/history/[id]': { id: string };
+
+    // ==========================================
+    // SETTINGS ROUTES
+    // ==========================================
+    '/settings': undefined;
 
     // ==========================================
     // COACH ROUTES

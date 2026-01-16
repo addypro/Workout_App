@@ -8,71 +8,17 @@
  * Navigation: All screens in this stack navigate back to /(tabs)/coach
  */
 
-import { Ionicons } from '@expo/vector-icons';
-import { Stack, useRouter } from 'expo-router';
-import { Platform, Text, TouchableOpacity } from 'react-native';
+import { Stack } from 'expo-router';
 
+import { BackButton, CloseButton } from '@/components/navigation/back-button';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+
+const COACH_FALLBACK = '/(tabs)/coach';
 
 export default function CoachLayout() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const router = useRouter();
-
-  // Custom back button component that ensures proper navigation
-  const BackButton = ({ label = 'Coach' }: { label?: string }) => (
-    <TouchableOpacity
-      onPress={() => {
-        if (router.canGoBack()) {
-          router.back();
-        } else {
-          // Fallback: navigate to coach tab if no history
-          router.replace('/(tabs)/coach');
-        }
-      }}
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: Platform.OS === 'ios' ? -8 : 0,
-        paddingVertical: 8,
-        paddingRight: 16,
-      }}
-      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      accessibilityRole="button"
-      accessibilityLabel={`Go back to ${label}`}
-    >
-      <Ionicons
-        name={Platform.OS === 'ios' ? 'chevron-back' : 'arrow-back'}
-        size={Platform.OS === 'ios' ? 28 : 24}
-        color={colors.tint}
-      />
-      {Platform.OS === 'ios' && (
-        <Text style={{ color: colors.tint, fontSize: 17, marginLeft: -4 }}>
-          {label}
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
-
-  // Close button for modals
-  const CloseButton = () => (
-    <TouchableOpacity
-      onPress={() => {
-        if (router.canGoBack()) {
-          router.back();
-        } else {
-          router.replace('/(tabs)/coach');
-        }
-      }}
-      style={{ padding: 8 }}
-      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-      accessibilityRole="button"
-      accessibilityLabel="Close"
-    >
-      <Ionicons name="close" size={24} color={colors.text} />
-    </TouchableOpacity>
-  );
 
   return (
     <Stack
@@ -117,7 +63,7 @@ export default function CoachLayout() {
         name="athletes"
         options={{
           title: 'My Athletes',
-          headerLeft: () => <BackButton label="Coach" />,
+          headerLeft: () => <BackButton label="Coach" fallbackRoute={COACH_FALLBACK} />,
         }}
       />
 
@@ -126,7 +72,7 @@ export default function CoachLayout() {
         name="athlete/[id]"
         options={{
           title: 'Athlete Details',
-          headerLeft: () => <BackButton label="Athletes" />,
+          headerLeft: () => <BackButton label="Athletes" fallbackRoute={COACH_FALLBACK} />,
         }}
       />
 
@@ -137,7 +83,7 @@ export default function CoachLayout() {
           title: 'Invite Athletes',
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerLeft: () => <CloseButton />,
+          headerLeft: () => <CloseButton fallbackRoute={COACH_FALLBACK} />,
           gestureEnabled: true,
           gestureDirection: 'vertical',
         }}
@@ -150,7 +96,7 @@ export default function CoachLayout() {
           title: 'Assign Program',
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerLeft: () => <CloseButton />,
+          headerLeft: () => <CloseButton fallbackRoute={COACH_FALLBACK} />,
           gestureEnabled: true,
           gestureDirection: 'vertical',
         }}
@@ -171,7 +117,7 @@ export default function CoachLayout() {
           title: 'Quick Workout',
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerLeft: () => <CloseButton />,
+          headerLeft: () => <CloseButton fallbackRoute={COACH_FALLBACK} />,
           gestureEnabled: true,
           gestureDirection: 'vertical',
         }}
@@ -184,7 +130,7 @@ export default function CoachLayout() {
           title: 'Assign Workout',
           presentation: 'modal',
           animation: 'slide_from_bottom',
-          headerLeft: () => <CloseButton />,
+          headerLeft: () => <CloseButton fallbackRoute={COACH_FALLBACK} />,
           gestureEnabled: true,
           gestureDirection: 'vertical',
         }}

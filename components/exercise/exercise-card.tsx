@@ -5,18 +5,19 @@
  * Performance: Wrapped with React.memo to prevent unnecessary re-renders in lists
  */
 
-import React, { memo, useCallback } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors, Radius, Spacing, Shadows, Typography } from '@/constants/theme';
-import { withOpacity, OPACITY } from '@/lib/utils/colors';
+import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
   ExerciseDatabaseEntry,
   getDifficultyLevel,
 } from '@/lib/services/exercise/database';
+import { OPACITY, withOpacity } from '@/lib/utils/colors';
+import * as Haptics from 'expo-haptics';
+import React, { memo, useCallback } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { ExerciseGif } from './exercise-gif';
 
 interface ExerciseCardProps {
   exercise: ExerciseDatabaseEntry;
@@ -25,6 +26,12 @@ interface ExerciseCardProps {
   expanded?: boolean;
   showSelectButton?: boolean;
   compact?: boolean;
+  /** Show GIF thumbnail if available */
+  showGif?: boolean;
+  /** Direct GIF URL (optional - for when you already have it) */
+  gifUrl?: string;
+  /** Instructions from ExerciseDB - shown in expanded view */
+  instructions?: string[];
 }
 
 function ExerciseCardComponent({
@@ -34,6 +41,9 @@ function ExerciseCardComponent({
   expanded = false,
   showSelectButton = false,
   compact = false,
+  showGif = false,
+  gifUrl,
+  instructions,
 }: ExerciseCardProps) {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -82,10 +92,21 @@ function ExerciseCardComponent({
         >
           {/* Main Row */}
           <View style={[styles.mainRow, compact && styles.mainRowCompact]}>
-            <View style={[styles.diffIndicator, { backgroundColor: diffColor }]} />
+            {/* GIF Thumbnail (if enabled and URL available) */}
+            {showGif && (
+              <ExerciseGif
+                exerciseName={exercise.name}
+                gifUrl={gifUrl}
+                size={compact ? 'small' : 'medium'}
+              />
+            )}
+
+            {/* Difficulty Indicator (only show if no GIF) */}
+            {!showGif && <View style={[styles.diffIndicator, { backgroundColor: diffColor }]} />}
+
             <View style={styles.content}>
-              <ThemedText 
-                style={[styles.name, compact && styles.nameCompact, { color: colors.text }]} 
+              <ThemedText
+                style={[styles.name, compact && styles.nameCompact, { color: colors.text }]}
                 numberOfLines={expanded ? undefined : 1}
               >
                 {exercise.name}
@@ -105,7 +126,7 @@ function ExerciseCardComponent({
                 )}
               </View>
             </View>
-            
+
             <View style={styles.right}>
               {!showSelectButton && (
                 <View style={[styles.diffBadge, { backgroundColor: withOpacity(diffColor, OPACITY.muted) }]}>
@@ -128,18 +149,29 @@ function ExerciseCardComponent({
                   <ThemedText style={styles.selectButtonText}>Add</ThemedText>
                 </Pressable>
               ) : onPress && (
-                <IconSymbol 
-                  name={expanded ? 'chevron.up' : 'chevron.down'} 
-                  size={14} 
-                  color={colors.textTertiary} 
+                <IconSymbol
+                  name={expanded ? 'chevron.up' : 'chevron.down'}
+                  size={14}
+                  color={colors.textTertiary}
                 />
               )}
             </View>
           </View>
 
-          {/* Expanded Content */}
+          {/* Expanded Content - Steve Jobs Style: Rich details only when requested */}
           {expanded && (
             <View style={[styles.expandedContent, { borderTopColor: colors.separator }]}>
+
+              {/* Hero GIF Section - Only when available */}
+              {gifUrl && (
+                <View style={styles.gifSection}>
+                  <ExerciseGif
+                    exerciseName={exercise.name}
+                    gifUrl={gifUrl}
+                    size="large"
+                  />
+                </View>
+              )}
               {exercise.movementPatterns && exercise.movementPatterns.length > 0 && (
                 <View style={styles.detailRow}>
                   <IconSymbol name="arrow.triangle.2.circlepath" size={14} color={colors.textSecondary} />
@@ -176,7 +208,34 @@ function ExerciseCardComponent({
                   </ThemedText>
                 </View>
               )}
-              
+
+              {/* Instructions (from ExerciseDB) - Clean numbered list */}
+              {instructions && instructions.length > 0 && (
+                <View style={styles.instructionsSection}>
+                  <View style={styles.instructionsHeader}>
+                    <IconSymbol name="list.bullet" size={14} color={colors.tint} />
+                    <ThemedText style={[styles.instructionsTitle, { color: colors.tint }]}>How to Perform</ThemedText>
+                  </View>
+                  {instructions.slice(0, 4).map((instruction, index) => (
+                    <View key={index} style={styles.instructionRow}>
+                      <View style={[styles.instructionNumber, { backgroundColor: colors.tintMuted }]}>
+                        <ThemedText style={[styles.instructionNumberText, { color: colors.tint }]}>
+                          {index + 1}
+                        </ThemedText>
+                      </View>
+                      <ThemedText style={[styles.instructionText, { color: colors.text }]}>
+                        {instruction.replace(/^Step:\d+\s*/i, '')}
+                      </ThemedText>
+                    </View>
+                  ))}
+                  {instructions.length > 4 && (
+                    <ThemedText style={[styles.moreInstructions, { color: colors.textTertiary }]}>
+                      +{instructions.length - 4} more steps
+                    </ThemedText>
+                  )}
+                </View>
+              )}
+
               {/* Select button in expanded view */}
               {onSelect && (
                 <Pressable
@@ -208,6 +267,9 @@ export const ExerciseCard = memo(ExerciseCardComponent, (prevProps, nextProps) =
     prevProps.expanded === nextProps.expanded &&
     prevProps.compact === nextProps.compact &&
     prevProps.showSelectButton === nextProps.showSelectButton &&
+    prevProps.showGif === nextProps.showGif &&
+    prevProps.gifUrl === nextProps.gifUrl &&
+    prevProps.instructions === nextProps.instructions &&
     prevProps.onPress === nextProps.onPress &&
     prevProps.onSelect === nextProps.onSelect
   );
@@ -325,6 +387,51 @@ const styles = StyleSheet.create({
     ...Typography.subhead,
     fontWeight: '600',
     color: '#fff',
+  },
+  // Steve Jobs-style GIF + Instructions section
+  gifSection: {
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  instructionsSection: {
+    marginTop: Spacing.sm,
+    gap: Spacing.xs,
+  },
+  instructionsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  instructionsTitle: {
+    ...Typography.caption1,
+    fontWeight: '600',
+  },
+  instructionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'flex-start',
+  },
+  instructionNumber: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  instructionNumberText: {
+    ...Typography.caption2,
+    fontWeight: '700',
+  },
+  instructionText: {
+    ...Typography.caption1,
+    flex: 1,
+    lineHeight: 18,
+  },
+  moreInstructions: {
+    ...Typography.caption2,
+    marginLeft: 28,
+    marginTop: 2,
   },
 });
 

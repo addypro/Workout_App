@@ -14,3 +14,10 @@ export {
 
 // Voice logging (Direct-to-Intent)
 export { useDirectVoice } from './use-direct-voice';
+
+// Session recovery (P1 UX Redesign)
+export {
+  usePendingWorkout,
+  formatRelativeTime,
+  type PendingWorkout,
+} from './use-pending-workout';

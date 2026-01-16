@@ -7,23 +7,19 @@
  * Mobile-first: Compact, scrollable, thumb-accessible.
  */
 
-import React, { useCallback, useRef } from 'react';
-import {
-  View,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-  Platform,
-  LayoutChangeEvent,
-} from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeIn,
-} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
+import React, { useCallback, useMemo, useRef } from 'react';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View
+} from 'react-native';
+import Animated, {
+  FadeIn
+} from 'react-native-reanimated';
 
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -69,17 +65,17 @@ export function BreadcrumbNav({
   const { breadcrumbs: autoBreadcrumbs, navigateToCrumb } = useBreadcrumbs();
   const items = customItems || autoBreadcrumbs;
 
-  // Don't render if only one item
-  if (items.length <= 1) return null;
-
-  // Collapse items if too many
-  const displayItems = items.length > maxItems
-    ? [
+  // Collapse items if too many - use useMemo to avoid dependency issues
+  const displayItems = useMemo(() => {
+    if (items.length > maxItems) {
+      return [
         items[0],
         { label: '...', path: '' },
         ...items.slice(-2),
-      ]
-    : items;
+      ];
+    }
+    return items;
+  }, [items, maxItems]);
 
   const handlePress = useCallback(
     (item: BreadcrumbItem, index: number) => {
@@ -97,8 +93,11 @@ export function BreadcrumbNav({
         navigateToCrumb(index);
       }
     },
-    [displayItems, onNavigate, customItems, navigateToCrumb]
+    [displayItems.length, onNavigate, customItems, navigateToCrumb]
   );
+
+  // Don't render if only one item
+  if (items.length <= 1) return null;
 
   return (
     <Animated.View
@@ -258,8 +257,6 @@ export function ContextPills({
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  if (pills.length === 0) return null;
-
   const handleRemove = useCallback(
     (key: string) => {
       if (Platform.OS === 'ios') {
@@ -269,6 +266,8 @@ export function ContextPills({
     },
     [onRemove]
   );
+
+  if (pills.length === 0) return null;
 
   return (
     <View style={[styles.pillsContainer, { borderBottomColor: colors.separator }]}>

@@ -1,0 +1,22 @@
+🏋️  ExerciseDB Complete Fetch
+==================================================
+📁 Resuming from offset 0
+   Already have 100 exercises
+
+  Fetching offset=0... (0.0%)
+
+  Fetching offset=20... (1.3%)
+   ⚠️  Rate limited. Waiting 120s...
+
+  Fetching offset=40... (2.7%)
+   ⚠️  Rate limited. Waiting 120s...
+
+✅ Reached end of exercises!
+
+==================================================
+✅ Fetch complete!
+   Total exercises: 100
+   Cache file: /Users/addythegr8/Workout_App/data/exercisedb-cache.json
+
+📋 Run this to rebuild the mapping:
+   npx ts-node scripts/build-exercisedb-mapping.ts

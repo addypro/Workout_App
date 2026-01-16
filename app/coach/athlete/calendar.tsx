@@ -26,7 +26,8 @@ import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
     AssignedWorkout,
-    getAthleteAssignments
+    getAssignedWorkouts,
+    getMyAssignments,
 } from '@/lib/services/coach';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -62,15 +63,28 @@ export default function AthleteCalendarScreen() {
             const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
             const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
 
-            // Note: This uses the existing service - may need pagination handling for large data
-            const result = await getAthleteAssignments(athleteId);
-            if (result.success && result.data) {
-                // Filter to current month
-                const monthWorkouts = result.data.filter(w => {
-                    const date = new Date(w.scheduledDate);
-                    return date >= startOfMonth && date <= endOfMonth;
-                });
-                setWorkouts(monthWorkouts);
+            // Get all assignments for this athlete and load their workouts
+            const assignmentsResult = await getMyAssignments();
+            if (assignmentsResult.success && assignmentsResult.data) {
+                // Filter assignments for this athlete
+                const athleteAssignments = assignmentsResult.data.data.filter(
+                    a => a.athleteUserId === athleteId
+                );
+
+                // Load all workouts for these assignments
+                const allWorkouts: AssignedWorkout[] = [];
+                for (const assignment of athleteAssignments) {
+                    const workoutsResult = await getAssignedWorkouts(assignment.id);
+                    if (workoutsResult.success && workoutsResult.data) {
+                        // Filter to current month
+                        const monthWorkouts = workoutsResult.data.filter(w => {
+                            const date = new Date(w.scheduledDate);
+                            return date >= startOfMonth && date <= endOfMonth;
+                        });
+                        allWorkouts.push(...monthWorkouts);
+                    }
+                }
+                setWorkouts(allWorkouts);
             }
         } catch (error) {
             console.error('Error loading workouts:', error);
@@ -106,7 +120,7 @@ export default function AthleteCalendarScreen() {
         const firstDay = new Date(year, month, 1);
         const lastDay = new Date(year, month + 1, 0);
 
-        const days: Array<{ date: Date; isCurrentMonth: boolean }> = [];
+        const days: { date: Date; isCurrentMonth: boolean }[] = [];
 
         // Add days from previous month to fill the first week
         const startDayOfWeek = firstDay.getDay();

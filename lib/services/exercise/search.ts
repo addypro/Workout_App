@@ -15,6 +15,7 @@ import {
   isDynamicPopularityActive,
   refreshPopularityScores,
 } from '@/lib/services/popularity';
+import { ALL_GLOBAL_RANKINGS } from '@/lib/services/popularity/global-rankings';
 import { levenshteinDistance } from '@/lib/utils/string-distance';
 import {
   BODY_REGIONS,
@@ -26,15 +27,14 @@ import {
   searchCustomExercises,
 } from './custom-exercises';
 import { getExerciseDatabase, type ExerciseDatabaseEntry } from './database';
-
-// Import taxonomy data
-import taxonomyData from '@/data/exercise-taxonomy.json';
+import { nlpIndexes } from './nlp-enrichment';
+import { ensureExerciseSearchIndex, queryExerciseSearchIndex } from './search-index';
 
 // ============================================
 // TAXONOMY TYPES & HELPERS
 // ============================================
 
-interface TaxonomyExercise {
+export interface TaxonomyExercise {
   id: string;
   canonical_name: string;
   type: string;
@@ -73,13 +73,15 @@ interface TaxonomyExercise {
   };
 }
 
+// Use NLP-compatible MovementPattern with exercise names (string[])
+// The actual TaxonomyExercise data is looked up via aliasToExerciseMap when needed
 interface MovementPattern {
   pattern_id: string;
   canonical_name: string;
   description: string;
   icon: string;
   default_exercise_id: string;
-  exercises: TaxonomyExercise[];
+  exercises: string[]; // Exercise names (lookup via aliasToExerciseMap)
 }
 
 interface SlangEntry {
@@ -225,12 +227,21 @@ function extractActionWordPatterns(query: string): string[] | null {
 
 /**
  * Get all exercises in specified movement patterns
+ * Note: Returns sync but relies on maps being pre-warmed by warmSearchIndex()
  */
 function getExercisesInPatterns(patternIds: string[]): TaxonomyExercise[] {
+  // Maps should already be initialized via warmSearchIndex() at app start
+  // This is now a fast sync lookup
   const exercises: TaxonomyExercise[] = [];
-  for (const pattern of (taxonomyData as any).movement_patterns as MovementPattern[]) {
+  for (const pattern of nlpIndexes.movementPatterns) {
     if (patternIds.includes(pattern.pattern_id)) {
-      exercises.push(...pattern.exercises);
+      // Look up each exercise by name
+      for (const exerciseName of pattern.exercises) {
+        const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+        if (exercise) {
+          exercises.push(exercise);
+        }
+      }
     }
   }
   return exercises;
@@ -248,13 +259,18 @@ function buildFilterCacheKey(bodyRegion?: string, equipment?: string): string {
 }
 
 // Pre-compute filter results at module load for instant filtering
-function initFilterCache() {
+async function initFilterCache(): Promise<void> {
   if (filterCache.size > 0) return; // Already initialized
 
+  await initTaxonomyMaps(); // Ensure maps are ready
   const allExercises: TaxonomyExercise[] = [];
-  for (const pattern of (taxonomyData as any).movement_patterns || []) {
-    for (const exercise of pattern.exercises || []) {
-      allExercises.push(exercise);
+  for (const pattern of nlpIndexes.movementPatterns || []) {
+    for (const exerciseName of pattern.exercises || []) {
+      // Look up each exercise by name
+      const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+      if (exercise) {
+        allExercises.push(exercise);
+      }
     }
   }
 
@@ -296,45 +312,136 @@ function getCachedFilterResults(bodyRegion?: string, equipment?: string): Taxono
 // Build lookup maps for fast access
 const taxonomyExerciseMap = new Map<string, TaxonomyExercise>();
 const aliasToExerciseMap = new Map<string, TaxonomyExercise>();
-const slangDictionary: Record<string, SlangEntry> = (taxonomyData as any).slang_dictionary || {};
+// Use NLP indexes for slang dictionary (O(1) lookup via pre-built hash map)
+const slangDictionary: Record<string, SlangEntry> = nlpIndexes.slangDictionary as Record<string, SlangEntry>;
 
-// Initialize maps
-function initTaxonomyMaps() {
-  if (taxonomyExerciseMap.size > 0) return; // Already initialized
+// Singleton promise for initialization (prevents race conditions)
+let _initPromise: Promise<void> | null = null;
+let _isInitialized = false;
 
-  for (const pattern of (taxonomyData as any).movement_patterns as MovementPattern[]) {
-    for (const exercise of pattern.exercises) {
-      taxonomyExerciseMap.set(exercise.id, exercise);
+/**
+ * Initialize taxonomy maps with proper async handling.
+ * Uses singleton pattern to prevent multiple concurrent initializations.
+ *
+ * STATE-OF-THE-ART PATTERN: This ensures first button press doesn't hang
+ * by either returning immediately (if already initialized) or awaiting
+ * the same Promise that's already in progress.
+ */
+async function initTaxonomyMaps(): Promise<void> {
+  // Fast path: already initialized
+  if (_isInitialized && taxonomyExerciseMap.size > 0) return;
 
-      // Map canonical name
-      aliasToExerciseMap.set(exercise.canonical_name.toLowerCase(), exercise);
+  // If initialization is in progress, wait for it
+  if (_initPromise) return _initPromise;
 
-      // Map all aliases
-      if (exercise.nlp_metadata?.aliases) {
-        for (const alias of exercise.nlp_metadata.aliases) {
-          aliasToExerciseMap.set(alias.toLowerCase(), exercise);
+  // Start initialization
+  _initPromise = (async () => {
+    try {
+      // PRIORITY 1: Add Hevy database exercises FIRST
+      // This ensures all 429 Hevy exercises are searchable
+      const hevyDb = await getExerciseDatabase();
+
+      for (const exercise of hevyDb) {
+        // Create a TaxonomyExercise-like entry for Hevy exercises
+        const hevyEntry: TaxonomyExercise = {
+          id: exercise.id,
+          canonical_name: exercise.name,
+          type: 'weighted',
+          popularity_score: 80, // High priority
+          constraints: {
+            equipment: exercise.equipment,
+          },
+          muscles: exercise.muscles as any, // Hevy uses different muscle schema
+          nlp_metadata: {
+            aliases: exercise.aliases || [],
+          },
+        };
+
+        // Map by name (Hevy format: "Bench Press (Barbell)")
+        const nameLower = exercise.name.toLowerCase();
+        if (!aliasToExerciseMap.has(nameLower)) {
+          aliasToExerciseMap.set(nameLower, hevyEntry);
+        }
+
+        // Also map without equipment suffix for search
+        // "Bench Press (Barbell)" → also searchable as "bench press"
+        const withoutEquipMatch = exercise.name.match(/^(.+?)\s*\(([^)]+)\)$/);
+        if (withoutEquipMatch) {
+          const baseName = withoutEquipMatch[1].toLowerCase();
+          if (!aliasToExerciseMap.has(baseName)) {
+            aliasToExerciseMap.set(baseName, hevyEntry);
+          }
+        }
+
+        // Map all aliases
+        if (exercise.aliases) {
+          for (const alias of exercise.aliases) {
+            const aliasLower = alias.toLowerCase();
+            if (!aliasToExerciseMap.has(aliasLower)) {
+              aliasToExerciseMap.set(aliasLower, hevyEntry);
+            }
+          }
+        }
+      }
+      console.log(`[Search] Added ${hevyDb.length} Hevy exercises to alias map`);
+
+      // PRIORITY 2: Add NLP aliases (pre-built from taxonomy data)
+      let nlpAliasesAdded = 0;
+      for (const [alias, canonicalName] of Object.entries(nlpIndexes.aliasMap)) {
+        const exercise = aliasToExerciseMap.get(canonicalName.toLowerCase());
+        if (exercise && !aliasToExerciseMap.has(alias)) {
+          aliasToExerciseMap.set(alias, exercise);
+          nlpAliasesAdded++;
+        }
+      }
+      console.log(`[Search] Added ${nlpAliasesAdded} NLP aliases`);
+
+      // PRIORITY 3: Map slang dictionary direct_match entries
+      for (const [slangTerm, entry] of Object.entries(slangDictionary)) {
+        if (entry.direct_match) {
+          const exercise = aliasToExerciseMap.get(entry.direct_match.toLowerCase());
+          if (exercise && !aliasToExerciseMap.has(slangTerm.toLowerCase())) {
+            aliasToExerciseMap.set(slangTerm.toLowerCase(), exercise);
+          }
         }
       }
 
-      // Map misspellings
-      if (exercise.nlp_metadata?.misspellings) {
-        for (const misspelling of exercise.nlp_metadata.misspellings) {
-          aliasToExerciseMap.set(misspelling.toLowerCase(), exercise);
+      // PRIORITY 4: Map aliases from global-rankings
+      for (const ranking of ALL_GLOBAL_RANKINGS) {
+        const exercise = aliasToExerciseMap.get(ranking.name.toLowerCase());
+        if (exercise && ranking.aliases) {
+          for (const alias of ranking.aliases) {
+            if (!aliasToExerciseMap.has(alias.toLowerCase())) {
+              aliasToExerciseMap.set(alias.toLowerCase(), exercise);
+            }
+          }
         }
       }
 
-      // Map slang terms
-      if (exercise.nlp_metadata?.slang_terms) {
-        for (const slang of exercise.nlp_metadata.slang_terms) {
-          aliasToExerciseMap.set(slang.toLowerCase(), exercise);
-        }
-      }
+      _isInitialized = true;
+      console.log(`[Search] Taxonomy maps initialized with ${aliasToExerciseMap.size} total entries`);
+    } catch (error) {
+      console.error('[Search] Failed to initialize taxonomy maps:', error);
+      _initPromise = null; // Allow retry on failure
+      throw error;
     }
-  }
+  })();
+
+  return _initPromise;
 }
 
-// Initialize on module load
-initTaxonomyMaps();
+/**
+ * Pre-warm the search index on app startup.
+ * Call this early (e.g., in _layout.tsx useEffect) to ensure
+ * first button press is instant.
+ */
+export async function warmSearchIndex(): Promise<void> {
+  await initTaxonomyMaps();
+  initFilterCache();
+  await ensureExerciseSearchIndex();
+}
+
+// Lazy initialization - called on first search instead of module load
 
 // ============================================
 // TAXONOMY FILTER HELPER
@@ -388,8 +495,10 @@ function taxonomyMatchesFilter(
 
 /**
  * Look up exercise by alias, slang term, or canonical name
+ * Note: Sync lookup - relies on warmSearchIndex() being called at app start
  */
 export function lookupExerciseByAlias(query: string): TaxonomyExercise | null {
+  // Maps should be pre-warmed by warmSearchIndex() at app start
   const normalized = query.toLowerCase().trim();
   return aliasToExerciseMap.get(normalized) || null;
 }
@@ -425,12 +534,19 @@ export function lookupSlang(term: string): {
 
   // Get exercises from patterns
   if (entry.patterns) {
+    // Maps should be pre-warmed by warmSearchIndex() at app start
     for (const patternId of entry.patterns) {
-      const pattern = (taxonomyData as any).movement_patterns.find(
-        (p: MovementPattern) => p.pattern_id === patternId
+      const pattern = nlpIndexes.movementPatterns.find(
+        p => p.pattern_id === patternId
       );
       if (pattern) {
-        result.exercises.push(...pattern.exercises);
+        // Look up each exercise by name
+        for (const exerciseName of pattern.exercises) {
+          const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+          if (exercise) {
+            result.exercises.push(exercise);
+          }
+        }
       }
     }
   }
@@ -467,22 +583,37 @@ export function getSmartSuggestions(exerciseId: string): {
 
 /**
  * Get all exercises in a movement pattern
+ * Converts exercise names from NLP index to TaxonomyExercise objects
+ * Note: Sync lookup - relies on warmSearchIndex() being called at app start
  */
 export function getExercisesByMovementPattern(patternId: string): TaxonomyExercise[] {
-  const pattern = (taxonomyData as any).movement_patterns.find(
-    (p: MovementPattern) => p.pattern_id === patternId
+  // Maps should be pre-warmed by warmSearchIndex() at app start
+  const pattern = nlpIndexes.movementPatterns.find(
+    p => p.pattern_id === patternId
   );
-  return pattern?.exercises || [];
+  if (!pattern) return [];
+
+  // Convert exercise names to TaxonomyExercise objects
+  return pattern.exercises
+    .map(name => aliasToExerciseMap.get(name.toLowerCase()))
+    .filter((ex): ex is TaxonomyExercise => ex !== undefined);
 }
 
 /**
  * Get movement patterns for a muscle group
+ * Uses NLP pattern index with exercise name lookups
+ * Note: Sync lookup - relies on warmSearchIndex() being called at app start
  */
-export function getPatternsForMuscle(muscle: string): MovementPattern[] {
+export function getPatternsForMuscle(muscle: string): typeof nlpIndexes.movementPatterns {
+  // Maps should be pre-warmed by warmSearchIndex() at app start
   const normalizedMuscle = muscle.toLowerCase();
 
-  return ((taxonomyData as any).movement_patterns as MovementPattern[]).filter(pattern => {
-    return pattern.exercises.some(exercise => {
+  return nlpIndexes.movementPatterns.filter(pattern => {
+    return pattern.exercises.some(exerciseName => {
+      // Look up the full exercise data by name
+      const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+      if (!exercise) return false;
+
       const allMuscles = [
         ...(exercise.muscles?.primary || []),
         ...(exercise.muscles?.secondary || []),
@@ -505,21 +636,23 @@ function matchTaxonomyExercises(query: string): TaxonomyExercise[] {
   // STEP 1: Extract action word and get compatible patterns
   const compatiblePatterns = extractActionWordPatterns(normalizedQuery);
 
-  // STEP 2: Determine which patterns to search
-  let patternsToSearch: MovementPattern[];
+  // STEP 2: Determine which patterns to search (use NLP patterns directly, no type cast)
+  let patternsToSearch = nlpIndexes.movementPatterns;
 
   if (compatiblePatterns && compatiblePatterns.length > 0) {
     // Action word found - ONLY search compatible patterns
-    patternsToSearch = ((taxonomyData as any).movement_patterns as MovementPattern[])
+    patternsToSearch = nlpIndexes.movementPatterns
       .filter(p => compatiblePatterns.includes(p.pattern_id));
-  } else {
-    // No action word found - search all patterns
-    patternsToSearch = (taxonomyData as any).movement_patterns as MovementPattern[];
   }
 
-  // STEP 3: Match within filtered patterns
+  // STEP 3: Match within filtered patterns (look up exercise by name)
+  // Maps should be pre-warmed by warmSearchIndex() at app start
   for (const pattern of patternsToSearch) {
-    for (const exercise of pattern.exercises) {
+    for (const exerciseName of pattern.exercises) {
+      // Look up the full TaxonomyExercise object by name
+      const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+      if (!exercise) continue;
+
       let score = 0;
 
       // Exact canonical name match
@@ -858,14 +991,6 @@ function getPopularityScore(exercise: ExerciseDatabaseEntry): number {
   return 30; // Default score for unknown/long-tail exercises
 }
 
-/**
- * Async version of getPopularityScore that ensures merged scores are loaded
- */
-async function getPopularityScoreAsync(exercise: ExerciseDatabaseEntry): Promise<number> {
-  // Ensure merged scores are loaded
-  await getMergedPopularityScores();
-  return getPopularityScore(exercise);
-}
 
 /**
  * Calculate relevance score for a search query
@@ -1029,15 +1154,27 @@ export async function searchExercisesAdvanced(
   query: string,
   userFilters: SearchFilters = {}
 ): Promise<SearchResults> {
+  // Ensure maps are ready (properly awaited)
+  await initTaxonomyMaps();
+
   const database = await getExerciseDatabase();
   const queryLower = query.toLowerCase().trim();
+  let searchPool = database;
+
+  if (queryLower) {
+    const candidateIds = await queryExerciseSearchIndex(queryLower, 300);
+    if (candidateIds.length > 0) {
+      const idSet = new Set(candidateIds);
+      searchPool = database.filter(exercise => idSet.has(exercise.id));
+    }
+  }
 
   // Parse semantic intent from query
   const { filters: semanticFilters, intent } = parseSemanticIntent(query);
   const combinedFilters = { ...semanticFilters, ...userFilters };
 
   // Score all exercises
-  const scoredExercises: SearchResult[] = database.map(exercise => {
+  const scoredExercises: SearchResult[] = searchPool.map(exercise => {
     const { score, reason } = calculateRelevanceScore(exercise, queryLower, combinedFilters);
     return { ...exercise, score, matchReason: reason };
   });
@@ -1210,36 +1347,8 @@ export async function getExercisesByCategory(
   return scored;
 }
 
-/**
- * Fuzzy search for handling typos
- */
-function fuzzyMatch(text: string, query: string): boolean {
-  const textLower = text.toLowerCase();
-  const queryLower = query.toLowerCase();
-
-  // Exact substring match
-  if (textLower.includes(queryLower)) return true;
-
-  // Simple Levenshtein distance for short queries
-  if (queryLower.length <= 5) {
-    return levenshteinDistance(textLower, queryLower) <= 2;
-  }
-
-  // For longer queries, check word-by-word
-  const queryWords = queryLower.split(/\s+/);
-  const textWords = textLower.split(/\s+/);
-
-  let matchedWords = 0;
-  for (const qw of queryWords) {
-    if (textWords.some(tw => tw.includes(qw) || levenshteinDistance(tw, qw) <= 1)) {
-      matchedWords++;
-    }
-  }
-
-  return matchedWords >= Math.ceil(queryWords.length * 0.6);
-}
-
 // Note: levenshteinDistance is imported from @/lib/utils/string-distance
+
 
 // ============================================
 // ENHANCED SEARCH WITH TAXONOMY
@@ -1295,6 +1404,9 @@ export async function searchExercisesEnhanced(
   query: string,
   filters: SearchFilters = {}
 ): Promise<EnhancedSearchResults> {
+  // Ensure maps are ready (properly awaited)
+  await initTaxonomyMaps();
+
   const database = await getExerciseDatabase();
   const normalizedQuery = query.toLowerCase().trim();
 
@@ -1314,7 +1426,7 @@ export async function searchExercisesEnhanced(
   // OPTIMIZED: Use pre-computed cache for INSTANT (O(1)) filter results
   if (!hasQuery && hasFilters) {
     // Initialize cache on first use (lazy initialization)
-    initFilterCache();
+    await initFilterCache();
 
     // Try cache first (O(1) lookup!)
     const cachedExercises = getCachedFilterResults(filters.bodyRegion, filters.equipment);
@@ -1332,11 +1444,16 @@ export async function searchExercisesEnhanced(
       }
     } else {
       // Cache miss - fall back to computation (rare)
+      // Maps already initialized above
       const seenIds = new Set<string>();
       const matched: TaxonomyExercise[] = [];
 
-      for (const pattern of (taxonomyData as any).movement_patterns || []) {
-        for (const exercise of pattern.exercises || []) {
+      for (const pattern of nlpIndexes.movementPatterns || []) {
+        for (const exerciseName of pattern.exercises || []) {
+          // Look up the full TaxonomyExercise object by name
+          const exercise = aliasToExerciseMap.get(exerciseName.toLowerCase());
+          if (!exercise) continue;
+
           if (seenIds.has(exercise.id)) continue;
           if (taxonomyMatchesFilter(exercise, { bodyRegion: filters.bodyRegion, equipment: filters.equipment })) {
             seenIds.add(exercise.id);
@@ -1400,15 +1517,16 @@ export async function searchExercisesEnhanced(
 
     // Add pattern recommendations from slang
     for (const patternId of slangResult.patterns) {
-      const pattern = (taxonomyData as any).movement_patterns.find(
-        (p: MovementPattern) => p.pattern_id === patternId
+      const pattern = nlpIndexes.movementPatterns.find(
+        p => p.pattern_id === patternId
       );
       if (pattern) {
+        // Exercise names are now strings, return as-is for pattern recommendations
         result.patternRecommendations.push({
           pattern_id: pattern.pattern_id,
           canonical_name: pattern.canonical_name,
           description: pattern.description,
-          exercises: pattern.exercises.slice(0, 5),
+          exercises: pattern.exercises.slice(0, 5) as any, // Names as strings
         });
       }
     }
@@ -1549,33 +1667,10 @@ function determineMatchType(
 }
 
 /**
- * Get exercise details by ID (from taxonomy or database)
+ * Export movement pattern type for external use
+ * TaxonomyExercise is already exported at definition (line 39)
  */
-export async function getExerciseById(
-  id: string
-): Promise<{
-  taxonomy: TaxonomyExercise | null;
-  database: ExerciseDatabaseEntry | null;
-}> {
-  const taxonomyExercise = taxonomyExerciseMap.get(id) || null;
-  const database = await getExerciseDatabase();
-
-  let databaseEntry: ExerciseDatabaseEntry | null = null;
-
-  if (taxonomyExercise) {
-    databaseEntry = findDatabaseMatch(taxonomyExercise, database);
-  } else {
-    // Try to find by ID in database
-    databaseEntry = database.find(ex => ex.id === id) || null;
-  }
-
-  return { taxonomy: taxonomyExercise, database: databaseEntry };
-}
-
-/**
- * Export taxonomy types for external use
- */
-export type { MovementPattern, TaxonomyExercise };
+export type { MovementPattern };
 
 // ============================================
 // RE-EXPORT SEMANTIC SEARCH MODULE
@@ -1584,4 +1679,3 @@ export type { MovementPattern, TaxonomyExercise };
 export {
   findExerciseByAnyName, generateCanonicalSlug, getExerciseBySlug, getTopSuggestions, invalidateSearchIndex, semanticSearch, type SearchSuggestion, type SemanticSearchResult
 } from './semantic-search';
-

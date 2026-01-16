@@ -28,6 +28,7 @@ import {
 } from 'react-native';
 
 import { Screen } from '@/components/screen';
+import { SwipeTabs } from '@/components/swipe-tabs';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { createProgram } from '@/lib/db/storage';
@@ -419,28 +420,31 @@ export default function CoachTabScreen() {
 
   if (isLoading && !dashboard) {
     return (
-      <Screen>
-        <View style={styles.loadingContainer}>
-          <Text style={{ color: colors.textSecondary }}>Loading...</Text>
-        </View>
-      </Screen>
+      <SwipeTabs current="coach">
+        <Screen>
+          <View style={styles.loadingContainer}>
+            <Text style={{ color: colors.textSecondary }}>Loading...</Text>
+          </View>
+        </Screen>
+      </SwipeTabs>
     );
   }
 
   return (
-    <Screen>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => loadData(true)}
-            tintColor={colors.tint}
-          />
-        }
-      >
+    <SwipeTabs current="coach">
+      <Screen>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => loadData(true)}
+              tintColor={colors.tint}
+            />
+          }
+        >
         {/* Trial Banner */}
         {dashboard?.subscriptionTier === 'trial' && dashboard.trialDaysRemaining !== undefined && (
           <View style={styles.trialBanner}>
@@ -640,7 +644,8 @@ export default function CoachTabScreen() {
             </View>
           )}
         </View>
-      </ScrollView>
-    </Screen>
+        </ScrollView>
+      </Screen>
+    </SwipeTabs>
   );
 }

@@ -15,7 +15,7 @@ import { Screen } from '@/components/screen';
 import { Colors, Radius, Spacing, Shadows, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { getProgramById } from '@/lib/services/programs';
+import { getFullWorkouts, getProgramById, type Workout } from '@/lib/services/programs';
 import { saveProgram, getProgramByName } from '@/lib/db/storage';
 import { downloadCSV, programToCSV } from '@/lib/utils/csv-export';
 
@@ -44,17 +44,70 @@ export default function ProgramDetailsScreen() {
 
   const [installing, setInstalling] = useState(false);
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number> | null>(null);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [workoutsLoading, setWorkoutsLoading] = useState(true);
 
   // Memoize program lookup to avoid recalculation on re-renders
   const program = useMemo(() => getProgramById(id as string), [id]);
 
-  // Initialize expanded weeks on mount (avoid setting state during render)
   useEffect(() => {
-    if (program && expandedWeeks === null) {
-      const weeks = [...new Set(program.workouts.map(w => w.week))].sort((a, b) => a - b);
-      setExpandedWeeks(new Set(weeks.slice(0, 2))); // Expand first 2 weeks
-    }
-  }, [program, expandedWeeks]);
+    let cancelled = false;
+
+    const loadWorkouts = async () => {
+      if (!program) {
+        setWorkouts([]);
+        setWorkoutsLoading(false);
+        return;
+      }
+
+      setWorkoutsLoading(true);
+      try {
+        const full = await getFullWorkouts(program);
+        if (!cancelled) {
+          setWorkouts(full);
+        }
+      } catch (error) {
+        console.warn('[ProgramDetails] Failed to load full workouts, using embedded data:', error);
+        if (!cancelled) {
+          setWorkouts(program.workouts || []);
+        }
+      } finally {
+        if (!cancelled) {
+          setWorkoutsLoading(false);
+        }
+      }
+    };
+
+    loadWorkouts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [program]);
+
+  const workoutsByWeek = useMemo(() => (
+    workouts.reduce((acc, w) => {
+      if (!acc[w.week]) acc[w.week] = [];
+      acc[w.week].push(w);
+      return acc;
+    }, {} as Record<number, Workout[]>)
+  ), [workouts]);
+
+  const programDuration = program?.duration ?? 0;
+  const coverageWeeks = workouts.length > 0
+    ? Math.max(...workouts.map((w) => w.week || 1), 1)
+    : 0;
+  const displayWeeks = programDuration > 0
+    ? Array.from({ length: programDuration }, (_, index) => index + 1)
+    : Array.from({ length: coverageWeeks }, (_, index) => index + 1);
+  const showPreviewNote = coverageWeeks > 0 && programDuration > coverageWeeks;
+
+  // Initialize expanded weeks once data is ready
+  useEffect(() => {
+    if (!program || workoutsLoading || expandedWeeks !== null) return;
+    const initialWeeks = displayWeeks.length > 0 ? displayWeeks.slice(0, 2) : [1];
+    setExpandedWeeks(new Set(initialWeeks));
+  }, [program, workoutsLoading, expandedWeeks, displayWeeks]);
 
   if (!program) {
     return (
@@ -89,6 +142,7 @@ export default function ProgramDetailsScreen() {
   };
 
   const doInstall = async () => {
+    const installWorkouts = workouts.length > 0 ? workouts : program.workouts;
     await saveProgram({
       name: program.name,
       description: program.description || `${program.type} program - ${program.difficulty}`,
@@ -102,7 +156,7 @@ export default function ProgramDetailsScreen() {
         difficulty: program.difficulty,
         muscleGroups: program.muscleGroups,
         equipment: program.equipment,
-        workouts: program.workouts.map(w => ({
+        workouts: installWorkouts.map(w => ({
           week: w.week,
           day: w.day,
           name: w.name,
@@ -159,14 +213,9 @@ export default function ProgramDetailsScreen() {
     }
   };
 
-  const workoutsByWeek = program.workouts.reduce((acc, w) => {
-    if (!acc[w.week]) acc[w.week] = [];
-    acc[w.week].push(w);
-    return acc;
-  }, {} as Record<number, typeof program.workouts>);
-
-  const weeks = Object.keys(workoutsByWeek).map(Number).sort((a, b) => a - b);
-  const totalExercises = program.workouts.reduce((sum, w) => sum + w.exercises.length, 0);
+  const workoutCount = workoutsLoading ? program.workouts.length : workouts.length;
+  const totalExercises = (workoutsLoading ? program.workouts : workouts)
+    .reduce((sum, w) => sum + w.exercises.length, 0);
 
   return (
     <Screen contentStyle={styles.screenContent} edges={['top', 'left', 'right', 'bottom']}>
@@ -204,7 +253,7 @@ export default function ProgramDetailsScreen() {
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <StatCard icon="calendar" value={program.duration} label="Weeks" color={colors.tint} colors={colors} />
-          <StatCard icon="figure.strengthtraining.traditional" value={program.workouts.length} label="Workouts" color="#FF9F0A" colors={colors} />
+          <StatCard icon="figure.strengthtraining.traditional" value={workoutCount} label="Workouts" color="#FF9F0A" colors={colors} />
           <StatCard icon="dumbbell" value={totalExercises} label="Exercises" color="#BF5AF2" colors={colors} />
         </View>
 
@@ -243,20 +292,27 @@ export default function ProgramDetailsScreen() {
             <Pressable
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                const allExpanded = expandedWeeks?.size === weeks.length;
-                setExpandedWeeks(allExpanded ? new Set() : new Set(weeks));
+                const allExpanded = expandedWeeks?.size === displayWeeks.length;
+                setExpandedWeeks(allExpanded ? new Set() : new Set(displayWeeks));
               }}
               hitSlop={8}
             >
               <ThemedText style={[styles.expandAllText, { color: colors.tint }]}>
-                {expandedWeeks?.size === weeks.length ? 'Collapse All' : 'Expand All'}
+                {expandedWeeks?.size === displayWeeks.length ? 'Collapse All' : 'Expand All'}
               </ThemedText>
             </Pressable>
           </View>
+          {showPreviewNote && (
+            <View style={styles.previewNote}>
+              <ThemedText style={[styles.previewNoteText, { color: colors.textSecondary }]}>
+                Preview only: {coverageWeeks} of {program.duration} weeks available.
+              </ThemedText>
+            </View>
+          )}
           <View style={styles.weeksList}>
-            {weeks.map(week => {
+            {displayWeeks.map(week => {
               const isExpanded = expandedWeeks?.has(week) ?? false;
-              const weekWorkouts = workoutsByWeek[week];
+              const weekWorkouts = workoutsByWeek[week] || [];
               return (
                 <View key={week} style={[styles.weekCard, { backgroundColor: colors.card, borderColor: colors.separator }, Shadows.sm]}>
                   <Pressable style={styles.weekHeader} onPress={() => toggleWeek(week)}>
@@ -276,6 +332,13 @@ export default function ProgramDetailsScreen() {
 
                   {isExpanded && (
                     <View style={[styles.weekContent, { borderTopColor: colors.separator }]}>
+                      {weekWorkouts.length === 0 && (
+                        <View style={styles.weekEmptyState}>
+                          <ThemedText style={[styles.weekEmptyText, { color: colors.textSecondary }]}>
+                            Workout details for this week are not available yet.
+                          </ThemedText>
+                        </View>
+                      )}
                       {weekWorkouts.map((workout, i) => (
                         <View key={i} style={[styles.workoutSection, i < weekWorkouts.length - 1 && { borderBottomColor: colors.separator, borderBottomWidth: StyleSheet.hairlineWidth }]}>
                           {/* Workout Header */}
@@ -334,7 +397,7 @@ export default function ProgramDetailsScreen() {
             const fakeProgram = {
               id: program.id,
               name: program.name,
-              parsedData: { workouts: program.workouts },
+              parsedData: { workouts: workouts.length > 0 ? workouts : program.workouts },
             };
             const content = programToCSV(fakeProgram as any);
             const safeName = program.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -469,6 +532,12 @@ const styles = StyleSheet.create({
     ...Typography.footnote,
     fontWeight: '500',
   },
+  previewNote: {
+    paddingHorizontal: Spacing.xs,
+  },
+  previewNoteText: {
+    ...Typography.caption1,
+  },
   tags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -521,6 +590,13 @@ const styles = StyleSheet.create({
   },
   weekContent: {
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  weekEmptyState: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+  },
+  weekEmptyText: {
+    ...Typography.caption1,
   },
   workoutSection: {
     paddingVertical: Spacing.sm,

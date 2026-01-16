@@ -22,6 +22,39 @@ const corsHeaders = {
 };
 
 // ============================================
+// CHUNK SESSION STORAGE
+// ============================================
+
+/**
+ * In-memory storage for chunk upload sessions.
+ * Each session collects base64 chunks that are concatenated on final request.
+ * Sessions expire after 5 minutes.
+ */
+interface ChunkSession {
+  chunks: Map<number, string>; // chunkIndex -> base64 data
+  mimeType: string;
+  context: any;
+  createdAt: number;
+  totalChunks?: number;
+}
+
+const chunkSessions = new Map<string, ChunkSession>();
+const CHUNK_SESSION_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Clean up expired sessions
+ */
+function cleanupExpiredSessions(): void {
+  const now = Date.now();
+  for (const [sessionId, session] of chunkSessions.entries()) {
+    if (now - session.createdAt > CHUNK_SESSION_TTL_MS) {
+      chunkSessions.delete(sessionId);
+      console.log(`[Chunks] Expired session ${sessionId}`);
+    }
+  }
+}
+
+// ============================================
 // PROMPTS
 // ============================================
 
@@ -113,18 +146,48 @@ RETURN JSON ONLY. NO MARKDOWN. NO EXPLANATIONS.
    - If only some reps mentioned → autofill remaining with the last mentioned rep count
    - If no weight mentioned → weight: null for all sets
 
-3. NORMALIZE EXERCISE NAMES
-   - "bench" → "Bench Press"
-   - "squats" → "Barbell Squat"
-   - "deads" → "Deadlift"
-   - "OHP" → "Overhead Press"
-   - "rows" → "Barbell Row"
-   - "curls" → "Bicep Curl"
-   - "RDLs" → "Romanian Deadlift"
-   - "pullups" → "Pull Up"
-   - "pushups" → "Push Up"
-   - "hip thrust" → "Hip Thrust"
-   - "lunges" → "Lunges"
+3. EXERCISE NAME HANDLING - USE HEVY FORMAT!
+   
+   OUTPUT FORMAT: "Exercise Name (Equipment)" - Equipment in parentheses at end
+   
+   A. CONVERT TO HEVY FORMAT:
+      Examples:
+      - "alternating dumbbell curl bicep" → "Bicep Curl - Alternating (Dumbbell)"
+      - "seated cable row back" → "Seated Row (Cable)"  
+      - "incline press dumbbell" → "Incline Press (Dumbbell)"
+      - "lat pulldown cable" → "Lat Pulldown (Cable)"
+      - "chest fly machine" → "Chest Fly (Machine)"
+      - "barbell curl standing" → "Bicep Curl (Barbell)"
+      - "bench press" → "Bench Press (Barbell)"
+      - "dumbbell row" → "Row (Dumbbell)"
+   
+   B. EXPAND ABBREVIATIONS:
+      - "bench" → "Bench Press (Barbell)"
+      - "deads" → "Deadlift (Barbell)"
+      - "OHP" → "Overhead Press (Barbell)"
+      - "RDLs" → "Romanian Deadlift (Barbell)"
+      - "pullups" / "pull ups" → "Pull Up"
+      - "pushups" / "push ups" → "Push Up"
+      - "db" → "(Dumbbell)"
+      - "bb" → "(Barbell)"
+      
+   C. PRESERVE SPECIFIC EXERCISE NAMES:
+      - "Meadows Row" → "Meadows Row (Barbell)"
+      - "Pendlay Row" → "Pendlay Row (Barbell)"
+      - "T-Bar Row" → "T-Bar Row"
+      - "Hammer Curl" → "Hammer Curl (Dumbbell)"
+      - "Preacher Curl" → "Preacher Curl (Barbell)"
+      - "Spider Curl" → "Spider Curl (Dumbbell)"
+      
+   D. INFER EQUIPMENT FROM CONTEXT:
+      - If user says "chest press machine" → "Chest Press (Machine)"
+      - If user says just "chest press" → "Chest Press" (keep ambiguous)
+      - If user says "bench press 135" → "Bench Press (Barbell)" (heavy = barbell)
+      - If user says "bench press 25s" → "Bench Press (Dumbbell)" (25s = per hand)
+      
+   E. BODYWEIGHT EXERCISES - NO EQUIPMENT SUFFIX:
+      - "Pull Up", "Push Up", "Dip", "Plank" (no parentheses)
+      - "Squat Row" (bodyweight full-body movement)
 
 4. WEIGHT UNIT INFERENCE
    - Default to "lbs" (US standard)
@@ -282,6 +345,38 @@ async function saveToCache(supabase: any, hash: string, mimeType: string, result
 
 type ContentCategory = 'audio' | 'image' | 'pdf' | 'unknown';
 
+function sniffAudioMimeType(data: Uint8Array): string | null {
+  if (data.length < 12) return null;
+
+  // WAV: "RIFF" .... "WAVE"
+  if (
+    data[0] === 0x52 && data[1] === 0x49 && data[2] === 0x46 && data[3] === 0x46 &&
+    data[8] === 0x57 && data[9] === 0x41 && data[10] === 0x56 && data[11] === 0x45
+  ) {
+    return 'audio/wav';
+  }
+
+  // MP3: "ID3" or frame sync 0xFF 0xFB/0xF3/0xF2
+  if (
+    (data[0] === 0x49 && data[1] === 0x44 && data[2] === 0x33) ||
+    (data[0] === 0xff && (data[1] & 0xe0) === 0xe0)
+  ) {
+    return 'audio/mpeg';
+  }
+
+  // WebM/Matroska: EBML header
+  if (data[0] === 0x1a && data[1] === 0x45 && data[2] === 0xdf && data[3] === 0xa3) {
+    return 'audio/webm';
+  }
+
+  // MP4/M4A: "ftyp" at offset 4
+  if (data[4] === 0x66 && data[5] === 0x74 && data[6] === 0x79 && data[7] === 0x70) {
+    return 'audio/mp4';
+  }
+
+  return null;
+}
+
 function categorizeContent(mimeType: string): ContentCategory {
   const normalized = mimeType.toLowerCase();
 
@@ -352,6 +447,49 @@ async function transcribeWithGroqWhisper(
 
   const transcription = await response.text();
   console.log('Transcription:', transcription.slice(0, 100) + '...');
+
+  return transcription;
+}
+
+/**
+ * Transcribe audio using Deepgram API (fallback when Groq rate limited)
+ * 45 hrs/month free tier
+ */
+async function transcribeWithDeepgram(
+  audioData: Uint8Array,
+  mimeType: string,
+  deepgramApiKey: string
+): Promise<string> {
+  // Determine encoding from mime type
+  let encoding = 'mp4';
+  if (mimeType.includes('webm')) encoding = 'webm';
+  else if (mimeType.includes('wav')) encoding = 'wav';
+  else if (mimeType.includes('mp3')) encoding = 'mp3';
+  else if (mimeType.includes('m4a')) encoding = 'mp4';
+
+  console.log('Calling Deepgram for transcription (fallback)...');
+
+  const response = await fetch(
+    'https://api.deepgram.com/v1/listen?model=nova-3&smart_format=true&language=en',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${deepgramApiKey}`,
+        'Content-Type': mimeType,
+      },
+      body: audioData,
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Deepgram error:', errorText);
+    throw new Error(`Deepgram transcription failed: ${response.status} - ${errorText}`);
+  }
+
+  const result = await response.json();
+  const transcription = result.results?.channels?.[0]?.alternatives?.[0]?.transcript || '';
+  console.log('Deepgram Transcription:', transcription.slice(0, 100) + '...');
 
   return transcription;
 }
@@ -496,15 +634,79 @@ serve(async (req) => {
       }
     } else if (contentType.includes('application/json')) {
       const json = await req.json();
-      if (json.base64 && json.type) {
+
+      // CHUNK MODE: Collect chunks for parallel upload
+      if (json.mode === 'chunk') {
+        const { sessionId, chunkIndex, base64, type, context: chunkContext, isFinal, totalChunks } = json;
+
+        if (!sessionId || chunkIndex === undefined || !base64) {
+          throw new Error('Chunk mode requires: sessionId, chunkIndex, base64');
+        }
+
+        // Clean up expired sessions periodically
+        cleanupExpiredSessions();
+
+        // Get or create session
+        let session = chunkSessions.get(sessionId);
+        if (!session) {
+          session = {
+            chunks: new Map(),
+            mimeType: type || 'audio/mp4',
+            context: chunkContext || {},
+            createdAt: Date.now(),
+            totalChunks,
+          };
+          chunkSessions.set(sessionId, session);
+          console.log(`[Chunks] New session ${sessionId}`);
+        }
+
+        // Store chunk
+        session.chunks.set(chunkIndex, base64);
+        console.log(`[Chunks] Session ${sessionId}: chunk ${chunkIndex} received (${session.chunks.size}/${totalChunks || '?'} chunks)`);
+
+        // If not final, return acknowledgment
+        if (!isFinal) {
+          return new Response(
+            JSON.stringify({
+              success: true,
+              mode: 'chunk',
+              sessionId,
+              chunkIndex,
+              chunksReceived: session.chunks.size,
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // FINAL: Concatenate all chunks in order
+        console.log(`[Chunks] Session ${sessionId}: final chunk received, concatenating ${session.chunks.size} chunks`);
+        const sortedIndices = [...session.chunks.keys()].sort((a, b) => a - b);
+        const fullBase64 = sortedIndices.map(i => session!.chunks.get(i)).join('');
+
+        fileData = Uint8Array.from(atob(fullBase64), c => c.charCodeAt(0));
+        mimeType = session.mimeType;
+        context = session.context;
+
+        // Clean up session
+        chunkSessions.delete(sessionId);
+        console.log(`[Chunks] Session ${sessionId}: complete, ${fileData.length} bytes`);
+
+      } else if (json.base64 && json.type) {
+        // STANDARD MODE: Single upload
         fileData = Uint8Array.from(atob(json.base64), c => c.charCodeAt(0));
         mimeType = json.type;
         context = json.context || {};
       } else {
-        throw new Error('Invalid JSON format. Expected { base64, type, context? }');
+        throw new Error('Invalid JSON format. Expected { base64, type, context? } or { mode: "chunk", ... }');
       }
     } else {
       throw new Error('Unsupported content type. Use multipart/form-data or application/json');
+    }
+
+    const sniffedMime = sniffAudioMimeType(fileData);
+    if (sniffedMime && sniffedMime !== mimeType) {
+      console.log(`[Mime] Sniffed ${sniffedMime} (was ${mimeType})`);
+      mimeType = sniffedMime;
     }
 
     // 3. Categorize content
@@ -539,14 +741,82 @@ serve(async (req) => {
 
     // 5. Process based on content type
     if (category === 'audio') {
-      // GROQ PIPELINE: Whisper -> Llama 3
-      const transcription = await transcribeWithGroqWhisper(fileData, mimeType, groqApiKey);
+      // API KEYS: Primary + Secondary Groq, Deepgram fallback
+      const groqApiKey2 = Deno.env.get('GROQ_API_KEY_2');
+      const deepgramApiKey = Deno.env.get('DEEPGRAM_API_KEY');
+
+      // TRANSCRIPTION: Try Groq Key1 → Key2 → Deepgram
+      let transcription: string;
+      let usedGroqKey = groqApiKey; // Track which key worked
+
+      try {
+        // Primary: Groq Whisper Key 1
+        console.log('Trying Groq Whisper (Key 1)...');
+        transcription = await transcribeWithGroqWhisper(fileData, mimeType, groqApiKey);
+      } catch (groqError1: any) {
+        console.warn('Groq Key 1 failed:', groqError1.message);
+
+        // Try Key 2
+        if (groqApiKey2) {
+          try {
+            console.log('Trying Groq Whisper (Key 2)...');
+            transcription = await transcribeWithGroqWhisper(fileData, mimeType, groqApiKey2);
+            usedGroqKey = groqApiKey2; // Use Key 2 for Llama too
+          } catch (groqError2: any) {
+            console.warn('Groq Key 2 failed:', groqError2.message);
+
+            // Final fallback: Deepgram
+            if (!deepgramApiKey) {
+              throw new Error('All Groq keys rate limited and no DEEPGRAM_API_KEY configured');
+            }
+            console.log('Using Deepgram Nova-3 fallback...');
+            transcription = await transcribeWithDeepgram(fileData, mimeType, deepgramApiKey);
+          }
+        } else {
+          // No Key 2, try Deepgram
+          if (!deepgramApiKey) {
+            throw new Error('Groq rate limited and no fallback configured');
+          }
+          console.log('Using Deepgram Nova-3 fallback...');
+          transcription = await transcribeWithDeepgram(fileData, mimeType, deepgramApiKey);
+        }
+      }
 
       if (!transcription || transcription.trim().length === 0) {
         throw new Error('No speech detected in audio. Please try again.');
       }
 
-      parsedData = await extractWithGroqLlama(transcription, context, groqApiKey);
+      // EXTRACTION: Try Groq Llama (with working key) → Gemini Flash fallback
+      try {
+        console.log('Extracting with Groq Llama 3.3...');
+        parsedData = await extractWithGroqLlama(transcription, context, usedGroqKey);
+      } catch (llamaError: any) {
+        console.warn('Groq Llama failed, trying Gemini Flash:', llamaError.message);
+
+        // Fallback to Gemini Flash for extraction
+        if (!geminiKey) {
+          throw new Error('Groq Llama rate limited and no GEMINI_API_KEY configured');
+        }
+
+        const { GoogleGenerativeAI } = await import('npm:@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(geminiKey);
+        const geminiModel = genAI.getGenerativeModel({
+          model: 'gemini-1.5-flash-001',
+          generationConfig: { temperature: 0.1, maxOutputTokens: 2048 },
+        });
+
+        // Build prompt for Gemini
+        let geminiPrompt = AUDIO_EXTRACTION_PROMPT.replace('{TRANSCRIPTION}', transcription);
+        if (context?.workoutName) {
+          geminiPrompt += `\n\nCONTEXT: User is logging "${context.workoutName}"`;
+        }
+
+        console.log('Extracting with Gemini Flash...');
+        const geminiResult = await geminiModel.generateContent(geminiPrompt);
+        const geminiText = geminiResult.response?.text() || '{}';
+        parsedData = parseJSONSafely(geminiText);
+      }
+
       parsedData.transcription = transcription; // Include for debugging
 
     } else {

@@ -5,23 +5,23 @@
  * Creates coach profile in database and starts 14-day trial.
  */
 
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Platform,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
+  View,
 } from 'react-native';
-import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 
+import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, Radius, Typography } from '@/constants/theme';
 import { createCoachProfile } from '@/lib/services/coach';
 
 const SPECIALIZATIONS = [
@@ -230,7 +230,7 @@ export default function CoachOnboardingScreen() {
           </View>
           <Text style={styles.title}>Set Up Your Profile</Text>
           <Text style={styles.subtitle}>
-            Let's get you started with coaching
+            Let&apos;s get you started with coaching
           </Text>
         </View>
 

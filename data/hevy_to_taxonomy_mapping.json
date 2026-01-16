@@ -1,0 +1,2684 @@
+{
+  "source": "hevy.com",
+  "totalHevy": 429,
+  "totalTaxonomy": 3242,
+  "matched": 264,
+  "unmatched": 165,
+  "mapping": [
+    {
+      "hevy": "21s Bicep Curl",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Ab Wheel",
+      "taxonomyName": "Ab Wheel Kneeling Rollout",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Arnold Press (Dumbbell)",
+      "taxonomyName": "Double Dumbbell Arnold Press",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Behind the Back Bicep Wrist Curl (Barbell)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Forearms",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Belt Squat (Machine)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Bench Press (Barbell)",
+      "taxonomyName": "Barbell Bench Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bench Press (Cable)",
+      "taxonomyName": "Barbell Bench Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Bench Press (Dumbbell)",
+      "taxonomyName": "Barbell Bench Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Bench Press (Smith Machine)",
+      "taxonomyName": "Barbell Bench Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Bench Press - Close Grip (Barbell)",
+      "taxonomyName": "Barbell Close Grip Bench Press",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bench Press - Wide Grip (Barbell)",
+      "taxonomyName": "Barbell Close Grip Bench Press",
+      "matchType": "fuzzy(0.55)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bent Over Row (Band)",
+      "taxonomyName": "Barbell Bent Over Row",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Bent Over Row (Barbell)",
+      "taxonomyName": "Barbell Bent Over Row",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bent Over Row (Dumbbell)",
+      "taxonomyName": "Barbell Bent Over Row",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Bicep Curl (Barbell)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bicep Curl (Cable)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Bicep Curl (Dumbbell)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Bicep Curl (Machine)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Bicep Curl (Suspension)",
+      "taxonomyName": "Barbell Bicep Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Suspension"
+    },
+    {
+      "hevy": "Bicycle Crunch",
+      "taxonomyName": "Bodyweight Bicycle Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Bicycle Crunch Raised Legs",
+      "taxonomyName": "Bodyweight Bicycle Crunch",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Bird Dog",
+      "taxonomyName": "Bodyweight Bird Dog",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Box Jump",
+      "taxonomyName": "Bodyweight Box Jump",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Box Squat (Barbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Bulgarian Split Squat",
+      "taxonomyName": "Bodyweight Bulgarian Split Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Burpee",
+      "taxonomyName": "Bodyweight Burpee",
+      "matchType": "exact",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Burpee Over the Bar",
+      "taxonomyName": "Bodyweight Burpee",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Cable Core Palloff Press",
+      "taxonomyName": "Cable Pallof Press",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Cable Crunch",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Cable Pull Through",
+      "taxonomyName": "Cable Pull Through",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Chest Fly (Band)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Chest Fly (Dumbbell)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Chest Fly (Machine)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Chest Fly (Suspension)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Suspension"
+    },
+    {
+      "hevy": "Chest Press (Band)",
+      "taxonomyName": "Resistance Band Chest Press",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Chest",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Chest Press (Machine)",
+      "taxonomyName": "Resistance Band Chest Press",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Chest Supported Reverse Fly (Dumbbell)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Chest Supported Y Raise (Dumbbell)",
+      "taxonomyName": "Suspension Y Raise",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Chin Up",
+      "taxonomyName": "Ring Chin Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Chin Up (Assisted)",
+      "taxonomyName": "Ring Chin Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Chin Up (Weighted)",
+      "taxonomyName": "Ring Chin Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Clean",
+      "taxonomyName": "Clubbell Clean",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Cross Body Hammer Curl",
+      "taxonomyName": "Alternating Double Dumbbell Cross Body Hammer Curl",
+      "matchType": "fuzzy(0.57)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Crunch",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Crunch (Machine)",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Crunch (Weighted)",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Curtsy Lunge (Dumbbell)",
+      "taxonomyName": "Bodyweight Curtsy Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Dead Bug",
+      "taxonomyName": "Bodyweight Dead Bug",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Dead Hang",
+      "taxonomyName": "Ring Dead Hang",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Decline Bench Press (Barbell)",
+      "taxonomyName": "Barbell Decline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Decline Bench Press (Dumbbell)",
+      "taxonomyName": "Barbell Decline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Decline Bench Press (Machine)",
+      "taxonomyName": "Barbell Decline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Decline Bench Press (Smith Machine)",
+      "taxonomyName": "Barbell Decline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Decline Chest Fly (Dumbbell)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Decline Crunch",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Decline Crunch (Weighted)",
+      "taxonomyName": "Bodyweight Crunch",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Decline Push Up",
+      "taxonomyName": "Bodyweight Push Up",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Diamond Push Up",
+      "taxonomyName": "Bodyweight Diamond Push Up",
+      "matchType": "exact",
+      "muscleGroup": "Triceps",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Dragon Flag",
+      "taxonomyName": "Bodyweight Dragon Flag",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Dumbbell Row",
+      "taxonomyName": "Double Dumbbell Pendlay Row",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Dumbbell Snatch",
+      "taxonomyName": "Double Dumbbell Hang Snatch",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Dumbbell Step Up",
+      "taxonomyName": "Bodyweight Step Up",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "EZ Bar Biceps Curl",
+      "taxonomyName": "EZ Bar Spider Curl",
+      "matchType": "fuzzy(0.68)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Elbow to Knee",
+      "taxonomyName": "Bodyweight Copenhagen Plank Knee to Elbow",
+      "matchType": "fuzzy(0.60)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Face Pull",
+      "taxonomyName": "Cable Face Pull",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Feet Up Bench Press (Barbell)",
+      "taxonomyName": "Barbell Bench Press",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Floor Press (Barbell)",
+      "taxonomyName": "Barbell Floor Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Floor Press (Dumbbell)",
+      "taxonomyName": "Barbell Floor Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Flutter Kicks",
+      "taxonomyName": "Bodyweight Flutter Kicks",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Front Lever Raise",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Front Raise (Band)",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Front Raise (Barbell)",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Front Raise (Cable)",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Front Raise (Dumbbell)",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Front Raise (Suspension)",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Suspension"
+    },
+    {
+      "hevy": "Front Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Full Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Glute Bridge",
+      "taxonomyName": "Bodyweight Glute Bridge",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Glute Kickback (Machine)",
+      "taxonomyName": "Cable Glute Kickback",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Glute Kickback on Floor",
+      "taxonomyName": "Cable Glute Kickback",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Goblet Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Good Morning (Barbell)",
+      "taxonomyName": "Barbell Good Morning",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Gorilla Row (Kettlebell)",
+      "taxonomyName": "Double Kettlebell Gorilla Row",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Kettlebell"
+    },
+    {
+      "hevy": "Hack Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hack Squat (Machine)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Hammer Curl (Band)",
+      "taxonomyName": "Cable Rope Hammer Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Biceps",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Hammer Curl (Cable)",
+      "taxonomyName": "Cable Rope Hammer Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Hammer Curl (Dumbbell)",
+      "taxonomyName": "Cable Rope Hammer Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Handstand Push Up",
+      "taxonomyName": "Bodyweight Push Up",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Hang Clean",
+      "taxonomyName": "Barbell Hang Power Clean",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hang Snatch",
+      "taxonomyName": "Barbell Hang Power Snatch",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hanging Knee Raise",
+      "taxonomyName": "Ring Hanging Knee Raise ",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hanging Leg Raise",
+      "taxonomyName": "Ring Hanging Leg Raise ",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Heel Taps",
+      "taxonomyName": "Bodyweight Alternating Heel Taps",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hip Abduction (Machine)",
+      "taxonomyName": "Cable Hip Abduction",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Abductors",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Hip Adduction (Machine)",
+      "taxonomyName": "Cable Hip Adduction",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Adductors",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Hip Thrust",
+      "taxonomyName": "Bodyweight Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Hip Thrust (Barbell)",
+      "taxonomyName": "Bodyweight Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Hip Thrust (Machine)",
+      "taxonomyName": "Bodyweight Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Hip Thrust (Smith Machine)",
+      "taxonomyName": "Bodyweight Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Hollow Rock",
+      "taxonomyName": "Bodyweight Hollow Body Rock ",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Incline Bench Press (Barbell)",
+      "taxonomyName": "Barbell Incline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Incline Bench Press (Dumbbell)",
+      "taxonomyName": "Barbell Incline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Incline Bench Press (Smith Machine)",
+      "taxonomyName": "Barbell Incline Bench Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Incline Chest Fly (Dumbbell)",
+      "taxonomyName": "Ring Chest Fly",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Inverted Row",
+      "taxonomyName": "Barbell Inverted Row",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Iso-Lateral Low Row",
+      "taxonomyName": "Suspension Low Row",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Jackknife Sit Up",
+      "taxonomyName": "Bodyweight Sit Up",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Jump Squat",
+      "taxonomyName": "Bodyweight Squat Jump",
+      "matchType": "fuzzy(1.00)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Jumping Jack",
+      "taxonomyName": "Battle Rope Jumping Jack",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Around the World",
+      "taxonomyName": "Single Arm Kettlebell Around the World",
+      "matchType": "fuzzy(0.60)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Clean",
+      "taxonomyName": "Double Kettlebell Clean",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Curl",
+      "taxonomyName": "Double Kettlebell Spider Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Goblet Squat",
+      "taxonomyName": "Kettlebell Goblet Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Halo",
+      "taxonomyName": "Kettlebell Alternating Halo",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell High Pull",
+      "taxonomyName": "Double Kettlebell High Pull",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Snatch",
+      "taxonomyName": "Double Kettlebell Snatch",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Swing",
+      "taxonomyName": "Kettlebell Swing",
+      "matchType": "exact",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kettlebell Turkish Get Up",
+      "taxonomyName": "Double Kettlebell Turkish Get Up",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Kipping Pull Up",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Kneeling Push Up",
+      "taxonomyName": "Bodyweight Kneeling Push Up",
+      "matchType": "exact",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Landmine Row",
+      "taxonomyName": "Landmine V Grip Row",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Landmine Squat and Press",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Lat Pulldown - Close Grip (Cable)",
+      "taxonomyName": "Cable Wide Grip Lat Pulldown",
+      "matchType": "fuzzy(0.55)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Lateral Box Jump",
+      "taxonomyName": "Bodyweight Lateral Box Jump",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Lateral Lunge",
+      "taxonomyName": "Bodyweight Lateral Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Lateral Raise (Band)",
+      "taxonomyName": "Resistance Band Lateral Raise",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Lateral Raise (Cable)",
+      "taxonomyName": "Resistance Band Lateral Raise",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Lateral Raise (Dumbbell)",
+      "taxonomyName": "Resistance Band Lateral Raise",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Lateral Raise (Machine)",
+      "taxonomyName": "Resistance Band Lateral Raise",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Lateral Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Leg Press (Machine)",
+      "taxonomyName": "Tire Leg Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Leg Press Horizontal (Machine)",
+      "taxonomyName": "Tire Leg Press",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Leg Raise Parallel Bars",
+      "taxonomyName": "Bodyweight Supine Leg Raise",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Low Row (Suspension)",
+      "taxonomyName": "Suspension Low Row",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Suspension"
+    },
+    {
+      "hevy": "Lunge",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Lunge (Barbell)",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Lunge (Dumbbell)",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Lying Leg Raise",
+      "taxonomyName": "Bodyweight Supine Leg Raise",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Mountain Climber",
+      "taxonomyName": "Bodyweight Mountain Climber",
+      "matchType": "exact",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Muscle Up",
+      "taxonomyName": "Ring Strict Muscle Up",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Negative Pull Up",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Oblique Crunch",
+      "taxonomyName": "Bodyweight Oblique Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "One Arm Push Up",
+      "taxonomyName": "Bodyweight Push Up",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Overhead Dumbbell Lunge",
+      "taxonomyName": "Double Dumbbell Overhead Walking Lunge",
+      "matchType": "fuzzy(0.60)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Overhead Plate Raise",
+      "taxonomyName": "Plate Overhead March",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Overhead Press (Barbell)",
+      "taxonomyName": "Barbell Overhead Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Overhead Press (Dumbbell)",
+      "taxonomyName": "Barbell Overhead Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Overhead Press (Smith Machine)",
+      "taxonomyName": "Barbell Overhead Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Overhead Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Partial Glute Bridge (Barbell)",
+      "taxonomyName": "Bodyweight Glute Bridge",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Pause Squat (Barbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Pendlay Row (Barbell)",
+      "taxonomyName": "Barbell Pendlay Row",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Pendulum Squat (Machine)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Pistol Squat",
+      "taxonomyName": "Bodyweight Pistol Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Plank",
+      "taxonomyName": "Bodyweight Side Plank",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Plate Front Raise",
+      "taxonomyName": "Barbell Front Raise",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Power Clean",
+      "taxonomyName": "Barbell Power Clean",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Power Snatch",
+      "taxonomyName": "Barbell Power Snatch",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Pull Up",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Pull Up (Assisted)",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Pull Up (Band)",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Pull Up (Weighted)",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Pullover (Dumbbell)",
+      "taxonomyName": "Clubbell Pullover",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Lats",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Pullover (Machine)",
+      "taxonomyName": "Clubbell Pullover",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Push Press",
+      "taxonomyName": "Barbell Push Press",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Push Up",
+      "taxonomyName": "Bodyweight Push Up",
+      "matchType": "exact",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Push Up (Weighted)",
+      "taxonomyName": "Bodyweight Push Up",
+      "matchType": "exact",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Push Up - Close Grip",
+      "taxonomyName": "Parallette Close Grip Push Up",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Rack Pull",
+      "taxonomyName": "Barbell Rack Pull",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Rear Delt Reverse Fly (Cable)",
+      "taxonomyName": "Suspension Reverse Fly",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Rear Delt Reverse Fly (Dumbbell)",
+      "taxonomyName": "Suspension Reverse Fly",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Rear Delt Reverse Fly (Machine)",
+      "taxonomyName": "Suspension Reverse Fly",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Renegade Row (Dumbbell)",
+      "taxonomyName": "Double Dumbbell Renegade Row ",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Reverse Crunch",
+      "taxonomyName": "Bodyweight Reverse Crunch",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Reverse Fly Single Arm (Cable)",
+      "taxonomyName": "Single Arm Clubbell Reverse Mill",
+      "matchType": "fuzzy(0.55)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Reverse Grip Concentration Curl",
+      "taxonomyName": "Suspension Reverse Grip Bicep Curl",
+      "matchType": "fuzzy(0.55)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Reverse Grip Lat Pulldown (Cable)",
+      "taxonomyName": "Cable Reverse Grip Lat Pulldown",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Reverse Hyperextension",
+      "taxonomyName": "Bodyweight Reverse Hyperextension",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Reverse Lunge",
+      "taxonomyName": "Bodyweight Reverse Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Reverse Lunge (Barbell)",
+      "taxonomyName": "Bodyweight Reverse Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Reverse Lunge (Dumbbell)",
+      "taxonomyName": "Bodyweight Reverse Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Reverse Plank",
+      "taxonomyName": "Bodyweight Reverse Plank",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Ring Dips",
+      "taxonomyName": "Ring Dips",
+      "matchType": "exact",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Ring Pull Up",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "exact",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Ring Push Up",
+      "taxonomyName": "Ring Push Up",
+      "matchType": "exact",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Romanian Deadlift (Barbell)",
+      "taxonomyName": "Miniband Romanian Deadlift",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Romanian Deadlift (Dumbbell)",
+      "taxonomyName": "Miniband Romanian Deadlift",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Rope Cable Curl",
+      "taxonomyName": "Cable Rope Hammer Curl",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Russian Twist (Bodyweight)",
+      "taxonomyName": "Bodyweight Russian Twist",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Russian Twist (Weighted)",
+      "taxonomyName": "Bodyweight Russian Twist",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Seated Cable Row - Bar Grip",
+      "taxonomyName": "Cable V Grip Seated Low Row",
+      "matchType": "fuzzy(0.62)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Seated Cable Row - Bar Wide Grip",
+      "taxonomyName": "Cable V Grip Seated Low Row",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Seated Cable Row - V Grip (Cable)",
+      "taxonomyName": "Cable V Grip Seated Low Row",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Seated Calf Raise",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Seated Lateral Raise (Dumbbell)",
+      "taxonomyName": "Double Dumbbell Seated Lateral Raise",
+      "matchType": "fuzzy(0.60)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Seated Overhead Press (Barbell)",
+      "taxonomyName": "Barbell Seated Overhead Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Seated Overhead Press (Dumbbell)",
+      "taxonomyName": "Barbell Seated Overhead Press",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Seated Palms Up Wrist Curl",
+      "taxonomyName": "Barbell Seated Wrist Curl",
+      "matchType": "fuzzy(0.62)",
+      "muscleGroup": "Forearms",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Shrug (Barbell)",
+      "taxonomyName": "Barbell Shrug",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Traps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Shrug (Cable)",
+      "taxonomyName": "Barbell Shrug",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Traps",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Shrug (Dumbbell)",
+      "taxonomyName": "Barbell Shrug",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Traps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Shrug (Machine)",
+      "taxonomyName": "Barbell Shrug",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Traps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Shrug (Smith Machine)",
+      "taxonomyName": "Barbell Shrug",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Traps",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Side Plank",
+      "taxonomyName": "Bodyweight Side Plank",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Arm Cable Crossover",
+      "taxonomyName": "Single Arm Cable Front Raise",
+      "matchType": "fuzzy(0.55)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Arm Cable Row",
+      "taxonomyName": "Single Arm Cable Shotgun Row",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Arm Curl (Cable)",
+      "taxonomyName": "Single Arm Cable Bicep Curl",
+      "matchType": "fuzzy(0.60)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Single Arm Landmine Press (Barbell)",
+      "taxonomyName": "Single Arm Landmine Shoulder Press",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Single Arm Lat Pulldown",
+      "taxonomyName": "Single Arm Cable Half Kneeling Lat Pulldown",
+      "matchType": "fuzzy(0.57)",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Arm Lateral Raise (Cable)",
+      "taxonomyName": "Single Arm Cable Lateral Raise",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "hevy": "Single Arm Tricep Extension (Dumbbell)",
+      "taxonomyName": "Bodyweight Tricep Extension",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Single Leg Glute Bridge",
+      "taxonomyName": "Bodyweight Single Leg Glute Bridge",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Leg Hip Thrust",
+      "taxonomyName": "Bodyweight Single Leg Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Leg Hip Thrust (Dumbbell)",
+      "taxonomyName": "Bodyweight Single Leg Hip Thrust",
+      "matchType": "exact",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Single Leg Press (Machine)",
+      "taxonomyName": "Tire Leg Press",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Single Leg Romanian Deadlift (Barbell)",
+      "taxonomyName": "Bodyweight Single Leg Romanian Deadlift Jump",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Single Leg Romanian Deadlift (Dumbbell)",
+      "taxonomyName": "Bodyweight Single Leg Romanian Deadlift Jump",
+      "matchType": "fuzzy(0.80)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Single Leg Standing Calf Raise",
+      "taxonomyName": "Bodyweight Single Leg Calf Raise",
+      "matchType": "fuzzy(0.90)",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Single Leg Standing Calf Raise (Barbell)",
+      "taxonomyName": "Bodyweight Single Leg Calf Raise",
+      "matchType": "fuzzy(0.90)",
+      "muscleGroup": "Calves",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Single Leg Standing Calf Raise (Dumbbell)",
+      "taxonomyName": "Bodyweight Single Leg Calf Raise",
+      "matchType": "fuzzy(0.90)",
+      "muscleGroup": "Calves",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Single Leg Standing Calf Raise (Machine)",
+      "taxonomyName": "Bodyweight Single Leg Calf Raise",
+      "matchType": "fuzzy(0.90)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Sissy Squat (Weighted)",
+      "taxonomyName": "Bodyweight Sissy Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sit Up",
+      "taxonomyName": "Bodyweight Sit Up",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sit Up (Weighted)",
+      "taxonomyName": "Bodyweight Sit Up",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sled Push",
+      "taxonomyName": "Sled Push",
+      "matchType": "exact",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Spider Curl (Barbell)",
+      "taxonomyName": "Barbell Spider Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Spider Curl (Dumbbell)",
+      "taxonomyName": "Barbell Spider Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Split Jerk",
+      "taxonomyName": "Barbell Split Jerk",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Split Squat (Dumbbell)",
+      "taxonomyName": "Bodyweight Split Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Squat (Band)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Band"
+    },
+    {
+      "hevy": "Squat (Barbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Squat (Bodyweight)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Squat (Dumbbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Squat (Machine)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Squat (Smith Machine)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Smith Machine"
+    },
+    {
+      "hevy": "Squat (Suspension)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Suspension"
+    },
+    {
+      "hevy": "Squat Row",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Standing Cable Glute Kickbacks",
+      "taxonomyName": "Cable Glute Kickback",
+      "matchType": "fuzzy(0.53)",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Standing Calf Raise",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Standing Calf Raise (Barbell)",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Standing Calf Raise (Dumbbell)",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Standing Calf Raise (Machine)",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "hevy": "Standing Calf Raise (Smith)",
+      "taxonomyName": "Bodyweight Calf Raise",
+      "matchType": "fuzzy(0.83)",
+      "muscleGroup": "Calves",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Step Up",
+      "taxonomyName": "Bodyweight Step Up",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sternum Pull up (Gironda)",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Sumo Deadlift",
+      "taxonomyName": "Barbell Sumo Deadlift",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sumo Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Sumo Squat (Barbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Sumo Squat (Dumbbell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Sumo Squat (Kettlebell)",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Kettlebell"
+    },
+    {
+      "hevy": "Thruster (Barbell)",
+      "taxonomyName": "Barbell Thruster",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Barbell"
+    },
+    {
+      "hevy": "Thruster (Kettlebell)",
+      "taxonomyName": "Barbell Thruster",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Full Body",
+      "equipment": "Kettlebell"
+    },
+    {
+      "hevy": "Toes to Bar",
+      "taxonomyName": "Bar Hanging Toes to Bar",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "V Up",
+      "taxonomyName": "Bodyweight V Up",
+      "matchType": "exact",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Waiter Curl (Dumbbell)",
+      "taxonomyName": "Dumbbell Waiter Curl",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Walking",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Walking Lunge",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Walking Lunge (Dumbbell)",
+      "taxonomyName": "Bodyweight Walking Lunge",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "hevy": "Wall Ball",
+      "taxonomyName": "Wall Ball Toss",
+      "matchType": "fuzzy(0.67)",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Wall Sit",
+      "taxonomyName": "Bodyweight Wall Sit ",
+      "matchType": "exact",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Wide Pull Up",
+      "taxonomyName": "Ring Pull Up",
+      "matchType": "fuzzy(0.58)",
+      "muscleGroup": "Lats",
+      "equipment": "Bodyweight"
+    },
+    {
+      "hevy": "Zercher Squat",
+      "taxonomyName": "Bodyweight Squat",
+      "matchType": "fuzzy(0.75)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "hevy": "Zottman Curl (Dumbbell)",
+      "taxonomyName": "Double Dumbbell Zottman Curl",
+      "matchType": "fuzzy(0.50)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    }
+  ],
+  "gaps": [
+    {
+      "name": "Ab Scissors",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Aerobics",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Air Bike",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Around The World",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Assisted Pistol Squats",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Back Extension (Hyperextension)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Back Extension (Machine)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Back Extension (Weighted Hyperextension)",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Ball Slams",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Band Pullaparts",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Battle Ropes",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Behind the Back Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Bench Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Boxing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Butterfly (Pec Deck)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Fly Crossovers",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Twist (Down to up)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cable Twist (Up to down)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Calf Extension (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Calf Press (Machine)",
+      "muscleGroup": "Calves",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Chest Dip",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Chest Dip (Assisted)",
+      "muscleGroup": "Chest",
+      "equipment": "Assisted"
+    },
+    {
+      "name": "Chest Dip (Weighted)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Chest Supported Incline Row (Dumbbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Clamshell",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clap Push Ups",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Clean Pull",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clean and Jerk",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Clean and Press",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Climbing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Concentration Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Cycling",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Deadlift (Band)",
+      "muscleGroup": "Glutes",
+      "equipment": "Band"
+    },
+    {
+      "name": "Deadlift (Barbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Deadlift (Dumbbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Deadlift (Smith Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Smith Machine"
+    },
+    {
+      "name": "Deadlift (Trap bar)",
+      "muscleGroup": "Glutes",
+      "equipment": "Trap Bar"
+    },
+    {
+      "name": "Deadlift High Pull",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Downward Dog",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Drag Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dragonfly",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Dumbbell Squeeze Press",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Elliptical Trainer",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Farmers Walk",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Fire Hydrants",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Floor Triceps Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Frog Jumps",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Frog Pumps (Dumbbell)",
+      "muscleGroup": "Glutes",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Front Lever Hold",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Glute Ham Raise",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "HIIT",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Handstand Hold",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hex Press (Dumbbell)",
+      "muscleGroup": "Chest",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "High Knee Skips",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "High Knees",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Hiking",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Incline Chest Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Incline Push Ups",
+      "muscleGroup": "Chest",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Iso-Lateral Chest Press (Machine)",
+      "muscleGroup": "Chest",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Iso-Lateral High Row (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Iso-Lateral Row (Machine)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "JM Press (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Jack Knife (Suspension)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Jump Rope",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jump Shrug",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Jumping Lunge",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kettlebell Shoulder Press",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Knee Raise Parallel Bars",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Kneeling Pulldown (band)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "name": "L-Sit Hold",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Landmine 180",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lat Pulldown (Band)",
+      "muscleGroup": "Lats",
+      "equipment": "Band"
+    },
+    {
+      "name": "Lat Pulldown (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Lat Pulldown (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Lateral Band Walks",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lateral Leg Raises",
+      "muscleGroup": "Glutes",
+      "equipment": "Other"
+    },
+    {
+      "name": "Leg Extension (Machine)",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Low Cable Fly Crossovers",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Knee Raise",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Leg Curl (Machine)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Lying Neck Curls",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Curls (Weighted)",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Extension",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Lying Neck Extension (Weighted)",
+      "muscleGroup": "Neck",
+      "equipment": "Other"
+    },
+    {
+      "name": "Meadows Rows (Barbell)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Nordic Hamstrings Curls",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Overhead Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Overhead Triceps Extension (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Pike Pushup",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Pilates",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Pinwheel Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Plank Pushup",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Curl",
+      "muscleGroup": "Biceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Press",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Plate Squeeze (Svend Press)",
+      "muscleGroup": "Chest",
+      "equipment": "Other"
+    },
+    {
+      "name": "Preacher Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Preacher Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Preacher Curl (Machine)",
+      "muscleGroup": "Biceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Press Under",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Rear Kick (Machine)",
+      "muscleGroup": "Glutes",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Reverse Curl (Barbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Reverse Curl (Cable)",
+      "muscleGroup": "Biceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Reverse Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Rope Straight Arm Pulldown",
+      "muscleGroup": "Lats",
+      "equipment": "Other"
+    },
+    {
+      "name": "Rowing Machine",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Running",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Scapular Pull Ups",
+      "muscleGroup": "Upper Back",
+      "equipment": "Bodyweight"
+    },
+    {
+      "name": "Seated Chest Flys (Cable)",
+      "muscleGroup": "Chest",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Seated Dip Machine",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Incline Curl (Dumbbell)",
+      "muscleGroup": "Biceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Seated Leg Curl (Machine)",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Row (Machine)",
+      "muscleGroup": "Upper Back",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Shoulder Press (Machine)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Seated Triceps Press",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Seated Wrist Extension (Barbell)",
+      "muscleGroup": "Forearms",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Shoulder Press (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Shoulder Press (Machine Plates)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Shoulder Taps",
+      "muscleGroup": "Shoulders",
+      "equipment": "Other"
+    },
+    {
+      "name": "Side Bend",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Side Bend (Dumbbell)",
+      "muscleGroup": "Abdominals",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Single Arm Triceps Pushdown (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Single Leg Extensions",
+      "muscleGroup": "Quadriceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skating",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skiing",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Skullcrusher (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Skullcrusher (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Snatch",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Snowboarding",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Spiderman",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Spinning",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Sprints",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stair Machine (Floors)",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stair Machine (Steps)",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Leg Curls",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Standing Military Press (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Straight Arm Lat Pulldown (Cable)",
+      "muscleGroup": "Lats",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Straight Leg Deadlift",
+      "muscleGroup": "Hamstrings",
+      "equipment": "Other"
+    },
+    {
+      "name": "Stretching",
+      "muscleGroup": "Other",
+      "equipment": "Other"
+    },
+    {
+      "name": "Superman",
+      "muscleGroup": "Lower Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Swimming",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "T Bar Row",
+      "muscleGroup": "Upper Back",
+      "equipment": "Other"
+    },
+    {
+      "name": "Toe Touch",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Torso Rotation",
+      "muscleGroup": "Abdominals",
+      "equipment": "Other"
+    },
+    {
+      "name": "Treadmill",
+      "muscleGroup": "Cardio",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Dip",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Dip (Assisted)",
+      "muscleGroup": "Triceps",
+      "equipment": "Assisted"
+    },
+    {
+      "name": "Triceps Dip (Weighted)",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Extension (Barbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Triceps Extension (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Triceps Extension (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Triceps Extension (Machine)",
+      "muscleGroup": "Triceps",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Triceps Extension (Suspension)",
+      "muscleGroup": "Triceps",
+      "equipment": "Suspension"
+    },
+    {
+      "name": "Triceps Kickback (Cable)",
+      "muscleGroup": "Triceps",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Triceps Kickback (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Triceps Pressdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Pushdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Triceps Rope Pushdown",
+      "muscleGroup": "Triceps",
+      "equipment": "Other"
+    },
+    {
+      "name": "Upright Row (Barbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Barbell"
+    },
+    {
+      "name": "Upright Row (Cable)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Cable"
+    },
+    {
+      "name": "Upright Row (Dumbbell)",
+      "muscleGroup": "Shoulders",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Vertical Traction (Machine)",
+      "muscleGroup": "Lats",
+      "equipment": "Machine"
+    },
+    {
+      "name": "Warm Up",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    },
+    {
+      "name": "Wide-Elbow Triceps Press (Dumbbell)",
+      "muscleGroup": "Triceps",
+      "equipment": "Dumbbell"
+    },
+    {
+      "name": "Wrist Roller",
+      "muscleGroup": "Forearms",
+      "equipment": "Other"
+    },
+    {
+      "name": "Yoga",
+      "muscleGroup": "Full Body",
+      "equipment": "Other"
+    }
+  ]
+}

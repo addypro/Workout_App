@@ -94,17 +94,21 @@ export const Colors = {
     textSecondary: '#3C3C43',
     textTertiary: '#3C3C4399',
     textInverse: '#FFFFFF',
+    textMuted: '#3C3C43',  // Alias for textSecondary
 
     // Surfaces - Pure, minimal
     background: '#FFFFFF',
     groupedBackground: '#F2F2F7',
     card: '#FFFFFF',
+    cardBackground: '#FFFFFF',  // Alias for card
     elevated: '#FFFFFF',
 
     // Interactive - Sky Blue (calm achievement)
     tint: activePalette.primary,           // #5DADE2 - Sky blue
     tintMuted: activePalette.primary + '18',
     tintSoft: activePalette.primaryMuted,  // #7EC8E3 - Softer for completions
+    primary: activePalette.primary,        // Alias for tint
+    primaryDark: activePalette.primaryDark, // Alias
 
     // Semantic workout colors
     completion: activePalette.completion,
@@ -119,6 +123,7 @@ export const Colors = {
     // Borders & Dividers - Subtle, not demanding
     separator: '#3C3C4326',    // Slightly softer than before
     separatorOpaque: '#E5E5EA',
+    border: '#3C3C4326',       // Alias for separator
 
     // Tab bar
     icon: '#8E8E93',
@@ -138,17 +143,21 @@ export const Colors = {
     textSecondary: '#EBEBF5CC',  // Slightly more visible
     textTertiary: '#EBEBF54D',
     textInverse: '#000000',
+    textMuted: '#EBEBF5CC',  // Alias for textSecondary
 
     // Surfaces - Deep blacks, no muddy grays
     background: '#000000',
     groupedBackground: '#000000',
     card: '#1C1C1E',
+    cardBackground: '#1C1C1E',  // Alias for card
     elevated: '#2C2C2E',
 
     // Interactive - Sky Blue (slightly brighter for dark mode)
     tint: activePalette.primaryDark,           // Adjusted for dark mode
     tintMuted: activePalette.primaryDark + '20',
     tintSoft: activePalette.primaryMuted,
+    primary: activePalette.primaryDark,        // Alias for tint
+    primaryDark: activePalette.primaryDark,    // Alias
 
     // Semantic workout colors
     completion: activePalette.completion,
@@ -163,6 +172,7 @@ export const Colors = {
     // Borders & Dividers
     separator: '#54545866',
     separatorOpaque: '#38383A',
+    border: '#54545866',       // Alias for separator
 
     // Tab bar
     icon: '#8E8E93',

@@ -2,12 +2,17 @@
  * Auth Stack Layout
  *
  * Provides navigation structure for authentication screens.
- * Modal-style presentation for login flow.
+ * Landing page is the entry point for new users.
  */
 
-import { Stack } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Stack } from 'expo-router';
+
+// Force landing as the initial route for the auth group
+export const unstable_settings = {
+  initialRouteName: 'landing',
+};
 
 export default function AuthLayout() {
   const colorScheme = useColorScheme();
@@ -21,6 +26,14 @@ export default function AuthLayout() {
         animation: 'slide_from_bottom',
       }}
     >
+      <Stack.Screen name="index" />
+      <Stack.Screen
+        name="landing"
+        options={{
+          animation: 'fade',
+          gestureEnabled: false,
+        }}
+      />
       <Stack.Screen
         name="login"
         options={{
@@ -33,6 +46,18 @@ export default function AuthLayout() {
         options={{
           presentation: 'modal',
           gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="select-role"
+        options={{
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="privacy-policy"
+        options={{
+          presentation: 'modal',
         }}
       />
     </Stack>

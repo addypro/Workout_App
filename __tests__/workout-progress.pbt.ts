@@ -78,7 +78,7 @@ const setArbitrary = fc.record({
 
 const exerciseArbitrary = fc.record({
     id: fc.uuid(),
-    name: fc.stringOf(fc.alpha(), { minLength: 3, maxLength: 20 }),
+    name: fc.string({ minLength: 3, maxLength: 20 }).filter(s => /^[a-zA-Z]+$/.test(s)),
     sets: fc.array(setArbitrary, { minLength: 1, maxLength: 10 }),
     currentSetIndex: fc.constant(0),
 });
@@ -151,7 +151,7 @@ describe('Workout Progress Properties', () => {
                 fc.array(
                     fc.record({
                         id: fc.uuid(),
-                        name: fc.stringOf(fc.alpha(), { minLength: 3, maxLength: 10 }),
+                        name: fc.string({ minLength: 3, maxLength: 10 }).filter(s => /^[a-zA-Z]+$/.test(s)),
                         sets: fc.array(
                             fc.record({
                                 id: fc.uuid(),

@@ -4,4 +4,5 @@
  */
 
 export { ExerciseCard } from './exercise-card';
+export { ExerciseGif } from './exercise-gif';
 

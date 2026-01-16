@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BlurView } from 'expo-blur';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -79,6 +80,12 @@ export function WorkoutPickerModal({
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
+        <BlurView
+          intensity={25}
+          tint={colorScheme === 'dark' ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+        />
         <Pressable style={styles.backdrop} onPress={onClose} />
         <ThemedView
           style={[
@@ -192,7 +199,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.2)',
   },
   sheet: {
     borderTopLeftRadius: 20,
@@ -302,4 +309,3 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 });
-

@@ -123,6 +123,7 @@ const MAPPING = {
   'person.circle.fill': 'account-circle',
   'person.badge.shield.checkmark.fill': 'verified-user',
   'person.badge.shield.checkmark': 'verified-user',
+  'person.badge.plus': 'person-add',
 
   // Charts & Data
   'chart.bar.fill': 'bar-chart',
@@ -153,6 +154,12 @@ const MAPPING = {
   'square.and.arrow.down': 'download',
   'square.and.arrow.up': 'upload',
   'doc.text': 'description',
+
+  // Tribunal & Verification
+  'checkmark.seal.fill': 'verified',
+  'checkmark.seal': 'verified',
+  'trophy.fill': 'emoji-events',
+  'trophy': 'emoji-events',
 
   // Grid & Layout
   'rectangle.3.group': 'view-module',

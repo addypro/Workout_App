@@ -1,7 +1,8 @@
 // Exercise Database Service
-// Using JSON file for React Native compatibility
+// Using Hevy-based exercise database for optimal latency
+// Format: "Exercise Name (Equipment)" - matches Hevy/Strong app conventions
 
-import exercisesData from '@/data/exercises-v2.9.json';
+import exercisesData from '@/data/hevy-primary-database.json';
 import {
   BODY_REGIONS,
   DIFFICULTY_LEVELS,
@@ -46,6 +47,57 @@ export {
 // Cache for exercise database
 let exerciseDatabaseCache: ExerciseDatabaseEntry[] | null = null;
 
+// ============================================
+// O(1) LOOKUP INDEXES (HashMaps)
+// ============================================
+
+/**
+ * Lazy-initialized HashMaps for O(1) exercise lookup.
+ * Built once on first access after database load.
+ */
+let _exerciseByIdIndex: Map<string, ExerciseDatabaseEntry> | null = null;
+let _exerciseByNameIndex: Map<string, ExerciseDatabaseEntry> | null = null;
+
+function buildExerciseIndexes(database: ExerciseDatabaseEntry[]): void {
+  _exerciseByIdIndex = new Map();
+  _exerciseByNameIndex = new Map();
+
+  for (const exercise of database) {
+    _exerciseByIdIndex.set(exercise.id, exercise);
+    _exerciseByNameIndex.set(exercise.name.toLowerCase(), exercise);
+
+    // Also index by aliases for fast lookup
+    for (const alias of exercise.aliases) {
+      _exerciseByNameIndex.set(alias.toLowerCase(), exercise);
+    }
+  }
+}
+
+/**
+ * Get exercise by ID - O(1) lookup using HashMap
+ * @complexity Time: O(1), Space: O(1) per lookup
+ */
+export async function getExerciseById(id: string): Promise<ExerciseDatabaseEntry | null> {
+  const database = await getExerciseDatabase();
+  if (!_exerciseByIdIndex) {
+    buildExerciseIndexes(database);
+  }
+  return _exerciseByIdIndex!.get(id) ?? null;
+}
+
+/**
+ * Get exercise by name (case-insensitive) - O(1) lookup using HashMap
+ * Also checks aliases.
+ * @complexity Time: O(1), Space: O(1) per lookup
+ */
+export async function getExerciseByName(name: string): Promise<ExerciseDatabaseEntry | null> {
+  const database = await getExerciseDatabase();
+  if (!_exerciseByNameIndex) {
+    buildExerciseIndexes(database);
+  }
+  return _exerciseByNameIndex!.get(name.toLowerCase()) ?? null;
+}
+
 export async function getExerciseDatabase(): Promise<ExerciseDatabaseEntry[]> {
   if (exerciseDatabaseCache) {
     return exerciseDatabaseCache;
@@ -82,6 +134,8 @@ export async function getExerciseDatabase(): Promise<ExerciseDatabaseEntry[]> {
 
 export function clearExerciseDatabaseCache(): void {
   exerciseDatabaseCache = null;
+  _exerciseByIdIndex = null;
+  _exerciseByNameIndex = null;
 }
 
 /**
@@ -262,9 +316,4 @@ export async function getExerciseCounts(): Promise<{
 // Legacy search function for compatibility
 export async function searchExercises(query: string): Promise<ExerciseDatabaseEntry[]> {
   return filterExercises({ search: query });
-}
-
-export async function getExerciseById(id: string): Promise<ExerciseDatabaseEntry | null> {
-  const database = await getExerciseDatabase();
-  return database.find(ex => ex.id === id) || null;
 }

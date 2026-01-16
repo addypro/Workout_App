@@ -39,7 +39,7 @@ import { VoiceRecorder } from './voice-recorder';
 export interface VoiceLoggingModalProps {
   visible: boolean;
   onClose: () => void;
-  onExercisesExtracted: (exercises: ExtractedExercise[], supersets?: Array<{ type: 'superset' | 'giant_set' | 'circuit'; exerciseOrders: number[] }>) => void;
+  onExercisesExtracted: (exercises: ExtractedExercise[], supersets?: { type: 'superset' | 'giant_set' | 'circuit'; exerciseOrders: number[] }[]) => void;
   context?: AudioContext;
 }
 
@@ -177,20 +177,37 @@ export function VoiceLoggingModal({
                 )}
               </View>
 
-              <View style={styles.exerciseDetails}>
-                <ThemedText
-                  style={[styles.exerciseDetail, { color: colors.textSecondary }]}
-                >
-                  {exercise.sets} sets x {exercise.reps} reps
-                </ThemedText>
-                {exercise.weight && (
+              {/* Show per-set details if available, otherwise show summary */}
+              {exercise.perSetDetails && exercise.perSetDetails.length > 0 ? (
+                <View style={styles.perSetContainer}>
+                  {exercise.perSetDetails.map((set, setIndex) => (
+                    <View key={setIndex} style={styles.perSetRow}>
+                      <ThemedText style={[styles.setNumber, { color: colors.textTertiary }]}>
+                        {setIndex + 1}.
+                      </ThemedText>
+                      <ThemedText style={[styles.exerciseDetail, { color: colors.textSecondary }]}>
+                        {set.reps} reps
+                        {set.weight && ` @ ${set.weight} ${exercise.weightUnit || 'lbs'}`}
+                      </ThemedText>
+                    </View>
+                  ))}
+                </View>
+              ) : (
+                <View style={styles.exerciseDetails}>
                   <ThemedText
                     style={[styles.exerciseDetail, { color: colors.textSecondary }]}
                   >
-                    @ {exercise.weight} {exercise.weightUnit || 'lbs'}
+                    {exercise.sets} sets x {exercise.reps} reps
                   </ThemedText>
-                )}
-              </View>
+                  {exercise.weight && (
+                    <ThemedText
+                      style={[styles.exerciseDetail, { color: colors.textSecondary }]}
+                    >
+                      @ {exercise.weight} {exercise.weightUnit || 'lbs'}
+                    </ThemedText>
+                  )}
+                </View>
+              )}
 
               {exercise.notes && (
                 <ThemedText
@@ -649,6 +666,20 @@ const styles = StyleSheet.create({
   },
   processingStepText: {
     fontSize: 14,
+  },
+  perSetContainer: {
+    marginTop: 6,
+    gap: 4,
+  },
+  perSetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  setNumber: {
+    fontSize: 13,
+    fontWeight: '500',
+    minWidth: 18,
   },
 });
 

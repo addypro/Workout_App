@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  ScrollView,
-} from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import { useHeavyHaptics } from '@/lib/hooks/use-heavy-haptics';
+import { useCallback, useState } from 'react';
+import {
+  Modal,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity
+} from 'react-native';
 
 // Standard 1RM formulas
 const calculateOneRM = (weight: number, reps: number): Record<string, number> => {
@@ -47,6 +47,18 @@ export function OneRMCalculator() {
   const [unit, setUnit] = useState<'kg' | 'lbs'>('lbs');
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+
+  // ASTEROID PROOF: Schwarzenegger haptics for weight input
+  const triggerWeightHaptic = useHeavyHaptics();
+
+  // Wrap setWeight to trigger haptics
+  const handleWeightChange = useCallback((value: string) => {
+    setWeight(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      triggerWeightHaptic(numValue);
+    }
+  }, [triggerWeightHaptic]);
 
   const weightNum = parseFloat(weight);
   const repsNum = parseInt(reps);
@@ -123,7 +135,7 @@ export function OneRMCalculator() {
                   },
                 ]}
                 value={weight}
-                onChangeText={setWeight}
+                onChangeText={handleWeightChange}
                 keyboardType="decimal-pad"
                 placeholder={`e.g., 225 ${unit}`}
                 placeholderTextColor={colors.text + '60'}
@@ -203,12 +215,12 @@ export function OneRMCalculator() {
                             {percentage >= 90
                               ? 'Max Strength'
                               : percentage >= 85
-                              ? 'Power'
-                              : percentage >= 70
-                              ? 'Strength'
-                              : percentage >= 60
-                              ? 'Hypertrophy'
-                              : 'Endurance'}
+                                ? 'Power'
+                                : percentage >= 70
+                                  ? 'Strength'
+                                  : percentage >= 60
+                                    ? 'Hypertrophy'
+                                    : 'Endurance'}
                           </ThemedText>
                         </ThemedView>
                         <ThemedText style={styles.percentageWeight}>

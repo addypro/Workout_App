@@ -41,6 +41,28 @@ const ALL_CURATED_PROGRAMS: WorkoutProgram[] = [
 ];
 
 // ============================================
+// O(1) LOOKUP INDEX (HashMap)
+// ============================================
+
+/**
+ * Lazy-initialized HashMap for O(1) program lookup by ID.
+ * Trading O(n) space for O(1) lookup time.
+ * Initialized on first access, not on module load.
+ */
+let _programIndex: Map<string, WorkoutProgram> | null = null;
+
+function getProgramIndex(): Map<string, WorkoutProgram> {
+  if (!_programIndex) {
+    // Build index once: O(n) time, O(n) space
+    _programIndex = new Map();
+    for (const program of ALL_CURATED_PROGRAMS) {
+      _programIndex.set(program.id, program);
+    }
+  }
+  return _programIndex;
+}
+
+// ============================================
 // PROGRAM ACCESS
 // ============================================
 
@@ -59,10 +81,11 @@ export function getProgramCount(): number {
 }
 
 /**
- * Get a program by ID
+ * Get a program by ID - O(1) lookup using HashMap
+ * @complexity Time: O(1), Space: O(1) per lookup
  */
 export function getProgramById(id: string): WorkoutProgram | undefined {
-  return getAllPrograms().find(p => p.id === id);
+  return getProgramIndex().get(id);
 }
 
 /**
@@ -416,90 +439,45 @@ function getWorkoutTemplates(type: ProgramType, daysPerWeek: number): WorkoutTem
 }
 
 /**
- * Convert a program to storage format (for saving to My Programs)
+ * Get full workout data for a program (with multi-week data from cache or embedded fallback)
  *
- * Attempts to load full workout data from Kaggle dataset (real multi-week data).
- * Falls back to expanding week 1 template if Kaggle data not available.
+ * LOOKUP ORDER:
+ * 1. SQLite cache (preloaded at startup - INSTANT)
+ * 2. Embedded workouts (fallback if cache miss)
+ *
+ * IMPORTANT: This function NO LONGER loads Kaggle at runtime.
+ * The preloader handles Kaggle loading ONCE at startup.
+ *
+ * @complexity Time: O(1) for cache hit, O(n) for expansion
  */
-export function toStorageFormat(program: WorkoutProgram) {
-  // Try to get full workouts from Kaggle data (has real week-by-week progression)
-  let fullWorkouts: any[] | null = null;
-
+export async function getFullWorkouts(program: WorkoutProgram) {
+  // 1. Try SQLite cache first (preloaded at startup with accurate Kaggle data)
   try {
-    // Dynamically import to avoid circular dependency
-    const { getKagglePrograms } = require('./kaggle-loader');
-    const kagglePrograms = getKagglePrograms() as WorkoutProgram[];
-
-    // Try to match by ID first, then by name
-    const kaggleProgram = kagglePrograms.find(
-      p => p.id === program.id || p.name.toLowerCase() === program.name.toLowerCase()
-    );
-
-    if (kaggleProgram && kaggleProgram.workouts.length > 0) {
-      // Check if Kaggle version has multi-week data
-      const kaggleMaxWeek = Math.max(...kaggleProgram.workouts.map(w => w.week || 1), 1);
-      if (kaggleMaxWeek > 1) {
-        fullWorkouts = kaggleProgram.workouts.map(workout => ({
-          week: workout.week,
-          day: workout.day,
-          name: workout.name,
-          exercises: workout.exercises.map(ex => ({
-            name: ex.name,
-            sets: ex.sets,
-            reps: ex.reps,
-            restTime: ex.restTime || 60,
-            notes: ex.notes,
-          })),
-        }));
-      }
+    const { getCachedProgramWorkouts } = await import('./curated-preloader');
+    const cached = await getCachedProgramWorkouts(program.id, program.duration);
+    if (cached && cached.workouts.length > 0) {
+      return cached.workouts;
     }
   } catch (e) {
-    // Kaggle loader not available or error - continue with fallback
+    // Cache not available - use embedded fallback
   }
 
-  // If no Kaggle data, use original workouts with expansion
-  if (!fullWorkouts) {
-    const originalWorkouts = program.workouts;
+  // 2. Fallback: use embedded workouts as-is (no week expansion)
+  // NO KAGGLE LOADING HERE - that's done by the preloader at startup
+  return program.workouts;
+}
 
-    // Check if we need to expand (only has week 1 but duration > 1)
-    const maxWeek = Math.max(...originalWorkouts.map(w => w.week || 1), 1);
-    const needsExpansion = maxWeek === 1 && program.duration > 1;
-
-    if (needsExpansion) {
-      // Expand week 1 template across all weeks
-      fullWorkouts = [];
-      for (let week = 1; week <= program.duration; week++) {
-        for (const workout of originalWorkouts) {
-          fullWorkouts.push({
-            week,
-            day: workout.day,
-            name: workout.name,
-            exercises: workout.exercises.map(ex => ({
-              name: ex.name,
-              sets: ex.sets,
-              reps: ex.reps,
-              restTime: ex.restTime || 60,
-              notes: ex.notes,
-            })),
-          });
-        }
-      }
-    } else {
-      // Keep original multi-week structure
-      fullWorkouts = originalWorkouts.map(workout => ({
-        week: workout.week,
-        day: workout.day,
-        name: workout.name,
-        exercises: workout.exercises.map(ex => ({
-          name: ex.name,
-          sets: ex.sets,
-          reps: ex.reps,
-          restTime: ex.restTime || 60,
-          notes: ex.notes,
-        })),
-      }));
-    }
-  }
+/**
+ * Convert a program to storage format (for saving to My Programs)
+ *
+ * Uses getFullWorkouts() which reads from SQLite cache (preloaded at startup).
+ * NO LONGER loads Kaggle at runtime.
+ *
+ * @complexity Time: O(1) for cache hit, O(n) for expansion
+ */
+export async function toStorageFormat(program: WorkoutProgram) {
+  // Get full workouts from SQLite cache or embedded fallback
+  const fullWorkouts = await getFullWorkouts(program);
 
   return {
     name: program.name,

@@ -2,9 +2,10 @@
  * Preferences Context
  *
  * User preferences for app behavior, including weight units and home gym.
- * Persisted via AsyncStorage.
+ * Persisted via AsyncStorage and synced to Supabase for gym membership.
  */
 
+import { joinGym, leaveCurrentGym } from '@/lib/services/gym/gym-membership-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
@@ -71,12 +72,21 @@ export function PreferencesProvider({ children }: PreferencesProviderProps) {
     AsyncStorage.setItem(WEIGHT_UNIT_KEY, unit);
   }, []);
 
-  const setHomeGym = useCallback((gym: GymInfo | null) => {
+  const setHomeGym = useCallback(async (gym: GymInfo | null) => {
     setHomeGymState(gym);
     if (gym) {
       AsyncStorage.setItem(HOME_GYM_KEY, JSON.stringify(gym));
+      // Sync to Supabase - create gym record and membership
+      // This runs in background, doesn't block UI
+      joinGym(gym).catch((err) => {
+        console.warn('[Preferences] Failed to sync gym to Supabase:', err);
+      });
     } else {
       AsyncStorage.removeItem(HOME_GYM_KEY);
+      // Leave current gym in Supabase
+      leaveCurrentGym().catch((err) => {
+        console.warn('[Preferences] Failed to leave gym in Supabase:', err);
+      });
     }
   }, []);
 

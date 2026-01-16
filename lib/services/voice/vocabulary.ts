@@ -5,9 +5,9 @@
  * Uses global popularity rankings (Top 250 most logged exercises) for priority ordering
  */
 
+import taxonomyData from '@/data/legacy/exercise-taxonomy.json';
+import { ALL_GLOBAL_RANKINGS, getAllVoiceAliases, TOP_20_EXERCISES } from '@/lib/services/popularity/global-rankings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import taxonomyData from '@/data/exercise-taxonomy.json';
-import { getAllVoiceAliases, TOP_20_EXERCISES, ALL_GLOBAL_RANKINGS } from '@/lib/services/popularity/global-rankings';
 import { getAllIntentCommands } from './intent-mapping';
 
 const VOCABULARY_CACHE_KEY = '@voice_vocabulary_cache';

@@ -10,8 +10,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.yourname.workoutapp",
+      "usesAppleSignIn": true,
       "infoPlist": {
-        "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to use speech recognition.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use the microphone."
       }
     },
@@ -23,8 +23,6 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
@@ -49,20 +47,25 @@
         }
       ],
       "expo-secure-store",
-      "expo-speech-recognition",
       "expo-audio",
-      [
-        "react-native-vosk",
-        {
-          "models": [
-            "assets/models/model-en-us"
-          ],
-          "iOSMicrophonePermission": "This app needs microphone access to transcribe your voice commands for adding exercises to workouts."
-        }
-      ]
+      "expo-apple-authentication",
+      "expo-web-browser",
+      "expo-asset",
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/your-project-id"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
     }
   }
 }

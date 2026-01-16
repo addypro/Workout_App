@@ -64,13 +64,23 @@ export interface WorkoutSet {
   rpe?: number; // Rate of Perceived Exertion (1-10)
   setType?: SetType; // Type of set for visual hierarchy and RPE context
   parentSetId?: SetId; // For drop sets, references the parent set
+  /**
+   * Inline rest timer configuration for this set.
+   * Timer starts after this set is completed.
+   * Not shown after the last set of an exercise.
+   */
+  restAfter?: {
+    enabled: boolean;
+    duration: number; // seconds
+  };
 }
 
 export interface WorkoutExercise {
   id: WorkoutExerciseId;
   name: string;
   sets: WorkoutSet[];
-  restTime: number; // seconds between sets
+  restTime: number; // seconds between sets (default)
+  restTimerEnabled?: boolean; // Toggle for inline rest timers (default: true)
   notes?: string;
   videoUrl?: string;
   muscleGroups?: string[];

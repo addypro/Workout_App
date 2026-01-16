@@ -7,35 +7,35 @@
  * - Email: Direct invitation
  */
 
-import React, { useState, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  Alert,
-  Share,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import { router } from 'expo-router';
-import * as Clipboard from 'expo-clipboard';
-import { Ionicons } from '@expo/vector-icons';
 
+import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, Radius, Typography } from '@/constants/theme';
 import { useAuth } from '@/lib/context/auth-context';
 import {
+  canAddAthlete,
+  CoachInvite,
   createCodeInvite,
-  createLinkInvite,
   createEmailInvite,
-  getMyInvites,
+  createLinkInvite,
   deactivateInvite,
   getInviteUrl,
-  CoachInvite,
-  canAddAthlete,
+  getMyInvites,
   InviteMethod as InviteMethodEnum,
 } from '@/lib/services/coach';
 
@@ -613,7 +613,7 @@ export default function InviteAthletesScreen() {
           <View style={styles.devBanner}>
             <Ionicons name="construct-outline" size={18} color="#FF9500" />
             <Text style={styles.devBannerText}>
-              Dev Mode: Using mock data. Invites won't be saved to database.
+              Dev Mode: Using mock data. Invites won&apos;t be saved to database.
             </Text>
           </View>
         )}

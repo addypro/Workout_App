@@ -13,6 +13,7 @@ import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useExerciseDbMapping } from '@/lib/hooks/use-exercisedb-mapping';
 import {
   BODY_REGIONS,
   EQUIPMENT_CATEGORIES,
@@ -63,6 +64,9 @@ export default function ExercisePickerScreen() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState<string | null>(null); // Track which exercise shows suggestions
   const [showCreateCustom, setShowCreateCustom] = useState(false); // Custom exercise creation modal
+
+  // ExerciseDB Media Hook - provides GIF URLs and instructions
+  const { getMedia } = useExerciseDbMapping();
 
   // Refs for tracking state without causing re-renders
   const mountedRef = useRef(true);
@@ -311,24 +315,31 @@ export default function ExercisePickerScreen() {
   );
 
   // Add db- prefix to key to avoid duplicate key conflicts with taxonomy results
-  const renderExerciseCard = (exercise: SearchResult, showScore = false, keyPrefix = '') => (
-    <View key={`${keyPrefix}${exercise.id}`} style={{ marginBottom: Spacing.sm }}>
-      <ExerciseCard
-        exercise={exercise}
-        expanded={expandedId === exercise.id}
-        onPress={() => toggleExpand(exercise.id)}
-        onSelect={handleSelectExercise}
-        showSelectButton={expandedId !== exercise.id}
-      />
-      {showScore && exercise.matchReason && (
-        <View style={[styles.matchReason, { backgroundColor: colors.tintMuted }]}>
-          <ThemedText style={[styles.matchReasonText, { color: colors.tint }]}>
-            {exercise.matchReason}
-          </ThemedText>
-        </View>
-      )}
-    </View>
-  );
+  const renderExerciseCard = (exercise: SearchResult, showScore = false, keyPrefix = '') => {
+    // Get ExerciseDB media (GIF + instructions) for this exercise
+    const media = getMedia(exercise.name);
+
+    return (
+      <View key={`${keyPrefix}${exercise.id}`} style={{ marginBottom: Spacing.sm }}>
+        <ExerciseCard
+          exercise={exercise}
+          expanded={expandedId === exercise.id}
+          onPress={() => toggleExpand(exercise.id)}
+          onSelect={handleSelectExercise}
+          showSelectButton={expandedId !== exercise.id}
+          gifUrl={media?.gifUrl}
+          instructions={media?.instructions}
+        />
+        {showScore && exercise.matchReason && (
+          <View style={[styles.matchReason, { backgroundColor: colors.tintMuted }]}>
+            <ThemedText style={[styles.matchReasonText, { color: colors.tint }]}>
+              {exercise.matchReason}
+            </ThemedText>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   // Render taxonomy exercise with smart suggestions
   const renderTaxonomyExercise = (result: EnhancedSearchResults['taxonomyMatches'][0]) => {
@@ -530,7 +541,8 @@ export default function ExercisePickerScreen() {
             </ThemedText>
           </View>
         </View>
-        {searchResults.taxonomyMatches.map(result => renderTaxonomyExercise(result))}
+        {/* Limit to 30 for performance - search already caps at ~30 */}
+        {searchResults.taxonomyMatches.slice(0, 30).map(result => renderTaxonomyExercise(result))}
       </View>
     );
   };
@@ -543,7 +555,13 @@ export default function ExercisePickerScreen() {
     const allResults = [
       ...(searchResults?.taxonomyMatches || []),
     ];
-    const databaseResults = searchResults?.databaseMatches || [];
+    // Deduplicate database results by ID to prevent React key conflicts
+    const seenIds = new Set<string>();
+    const databaseResults = (searchResults?.databaseMatches || []).filter(ex => {
+      if (seenIds.has(ex.id)) return false;
+      seenIds.add(ex.id);
+      return true;
+    });
 
     if (allResults.length === 0 && databaseResults.length === 0) return null;
 
@@ -574,8 +592,9 @@ export default function ExercisePickerScreen() {
             </ThemedText>
           </View>
         </View>
-        {allResults.map(result => renderTaxonomyExercise(result))}
-        {databaseResults.slice(0, 15).map(ex => renderExerciseCard(ex, false, 'db-'))}
+        {/* Limit to 30 for performance */}
+        {allResults.slice(0, 30).map(result => renderTaxonomyExercise(result))}
+        {databaseResults.slice(0, 15).map((ex, idx) => renderExerciseCard(ex, false, `db-${idx}-`))}
         {databaseResults.length > 15 && (
           <ThemedText style={[styles.moreText, { color: colors.textTertiary }]}>
             +{databaseResults.length - 15} more exercises
@@ -669,7 +688,7 @@ export default function ExercisePickerScreen() {
             </ThemedText>
           </View>
         </View>
-        {searchResults.databaseMatches.slice(0, 10).map(ex => renderExerciseCard(ex, false, 'db-'))}
+        {searchResults.databaseMatches.slice(0, 10).map((ex, idx) => renderExerciseCard(ex, false, `more-${idx}-`))}
         {searchResults.databaseMatches.length > 10 && (
           <ThemedText style={[styles.moreText, { color: colors.textTertiary }]}>
             +{searchResults.databaseMatches.length - 10} more exercises
@@ -698,7 +717,8 @@ export default function ExercisePickerScreen() {
       <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
         Most commonly used exercises
       </ThemedText>
-      {popularExercises.map(ex => renderExerciseCard(ex))}
+      {/* Limit to 30 for performance - API already caps at 30 */}
+      {popularExercises.slice(0, 30).map((ex, idx) => renderExerciseCard(ex, false, `pop-${idx}-`))}
     </View>
   );
 
@@ -811,6 +831,7 @@ export default function ExercisePickerScreen() {
           style={styles.scrollView}
           contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + 20 }]}
           showsVerticalScrollIndicator={false}
+          removeClippedSubviews={true}
         >
           {/* Results Header */}
           <ThemedText style={[styles.resultsCount, { color: colors.textSecondary }]}>
