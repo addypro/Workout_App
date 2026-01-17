@@ -91,14 +91,16 @@ export async function getMyPendingReviewLogs(): Promise<ServiceResult<ClassWorko
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('[ClassLogs] Get pending error:', error);
-            return { data: null, error: error.message };
+            // Graceful degradation: log warning but return empty
+            console.warn('[ClassLogs] Get pending query failed (DB may not be ready):', error.message);
+            return { data: [], error: null };
         }
 
         return { data: (data ?? []).map(mapDbToLog), error: null };
     } catch (e: any) {
-        console.error('[ClassLogs] Get pending exception:', e);
-        return { data: null, error: e.message };
+        // Graceful degradation: log warning but return empty
+        console.warn('[ClassLogs] Get pending exception (DB may not be ready):', e.message);
+        return { data: [], error: null };
     }
 }
 

@@ -21,10 +21,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/theme';
 import { isFeatureEnabled } from '@/lib/config/feature-flags';
-import {
-    ClassTemplate,
-    getMyClassTemplates,
-} from '@/lib/services/classes';
+import { ClassTemplate, getMyClassTemplates } from '@/lib/services/classes';
 
 export default function ClassesIndexScreen() {
     const router = useRouter();
@@ -32,8 +29,39 @@ export default function ClassesIndexScreen() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    // Feature gate check
-    if (!isFeatureEnabled('workout_classes')) {
+    // Check feature flag (must be stored before hooks)
+    const featureEnabled = isFeatureEnabled('workout_classes');
+
+    const loadTemplates = async () => {
+        try {
+            const result = await getMyClassTemplates();
+            if (result.data) {
+                setTemplates(result.data.items);
+            }
+        } catch (e) {
+            console.warn('[CoachClasses] Load error (DB may not be ready):', e);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        if (featureEnabled) {
+            loadTemplates();
+        } else {
+            setLoading(false);
+        }
+    }, [featureEnabled]);
+
+    const onRefresh = () => {
+        if (!featureEnabled) return;
+        setRefreshing(true);
+        loadTemplates();
+    };
+
+    // Feature gate check (AFTER hooks per Rules of Hooks)
+    if (!featureEnabled) {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.centered}>
@@ -43,24 +71,6 @@ export default function ClassesIndexScreen() {
             </SafeAreaView>
         );
     }
-
-    const loadTemplates = async () => {
-        const result = await getMyClassTemplates();
-        if (result.data) {
-            setTemplates(result.data.items);
-        }
-        setLoading(false);
-        setRefreshing(false);
-    };
-
-    useEffect(() => {
-        loadTemplates();
-    }, []);
-
-    const onRefresh = () => {
-        setRefreshing(true);
-        loadTemplates();
-    };
 
     const handleCreateTemplate = () => {
         router.push('/coach/classes/builder');
@@ -90,6 +100,7 @@ export default function ClassesIndexScreen() {
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={Colors.dark.textSecondary} />
             </View>
+
             <View style={styles.templateMeta}>
                 <View style={styles.metaItem}>
                     <Ionicons name="barbell-outline" size={14} color={Colors.dark.textSecondary} />
@@ -121,6 +132,18 @@ export default function ClassesIndexScreen() {
         </View>
     );
 
+    // ✅ Feature gate return must come AFTER hooks
+    if (!featureEnabled) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.centered}>
+                    <Ionicons name="lock-closed" size={48} color={Colors.dark.textSecondary} />
+                    <Text style={styles.disabledText}>Workout Classes coming soon!</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container} edges={['top']}>
             {/* Header */}
@@ -147,7 +170,10 @@ export default function ClassesIndexScreen() {
                     contentContainerStyle={styles.listContent}
                     ListEmptyComponent={renderEmpty}
                     refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.dark.primary}
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor={Colors.dark.primary}
                         />
                     }
                 />

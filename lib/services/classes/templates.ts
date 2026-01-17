@@ -5,6 +5,7 @@
  * Templates are reusable workout blueprints that can be scheduled as sessions.
  */
 
+import { isFeatureEnabled } from '../../config/feature-flags';
 import { supabase } from '../../supabase/client';
 import type {
     ClassExercise,
@@ -78,10 +79,15 @@ export async function getMyClassTemplates(
     page: number = 1,
     pageSize: number = 20
 ): Promise<ServiceResult<PaginatedResult<ClassTemplate>>> {
+    // Graceful degradation when feature is disabled
+    if (!isFeatureEnabled('workout_classes')) {
+        return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
+    }
+
     try {
         const { data: user } = await supabase.auth.getUser();
         if (!user?.user?.id) {
-            return { data: null, error: 'Not authenticated' };
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         // Get coach profile
@@ -92,7 +98,8 @@ export async function getMyClassTemplates(
             .single();
 
         if (coachError || !coach) {
-            return { data: null, error: 'Coach profile not found' };
+            // Not a coach - return empty gracefully
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         // Get count
@@ -113,8 +120,9 @@ export async function getMyClassTemplates(
             .range(from, to);
 
         if (error) {
-            console.error('[ClassTemplates] List error:', error);
-            return { data: null, error: error.message };
+            // Graceful degradation: log warning but return empty
+            console.warn('[ClassTemplates] List query failed (DB may not be ready):', error.message);
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         return {
@@ -128,8 +136,9 @@ export async function getMyClassTemplates(
             error: null,
         };
     } catch (e: any) {
-        console.error('[ClassTemplates] List exception:', e);
-        return { data: null, error: e.message };
+        // Graceful degradation: log warning but return empty
+        console.warn('[ClassTemplates] List exception (DB may not be ready):', e.message);
+        return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
     }
 }
 

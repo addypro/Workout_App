@@ -184,14 +184,16 @@ export async function getMyJoinedSessions(): Promise<ServiceResult<ClassSession[
             .order('start_at', { ascending: true });
 
         if (error) {
-            console.error('[ClassSessions] Joined list error:', error);
-            return { data: null, error: error.message };
+            // Graceful degradation: log warning but return empty instead of erroring
+            console.warn('[ClassSessions] Joined list query failed (DB may not be ready):', error.message);
+            return { data: [], error: null };
         }
 
         return { data: (data ?? []).map(mapDbToSession), error: null };
     } catch (e: any) {
-        console.error('[ClassSessions] Joined list exception:', e);
-        return { data: null, error: e.message };
+        // Graceful degradation: log warning but return empty
+        console.warn('[ClassSessions] Joined list exception (DB may not be ready):', e.message);
+        return { data: [], error: null };
     }
 }
 
