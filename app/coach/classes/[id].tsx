@@ -20,12 +20,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Colors } from '@/constants/theme';
 import {
+    cancelClassSession,
     ClassSession,
     ClassTemplate,
+    completeClassSession,
     createClassSession,
+    deleteClassSession,
     deleteClassTemplate,
     getClassTemplate,
     getMyUpcomingSessions,
+    startClassSession,
 } from '@/lib/services/classes';
 
 export default function ClassDetailScreen() {
@@ -105,6 +109,81 @@ export default function ClassDetailScreen() {
             Alert.alert('Scheduled!', `Class scheduled for ${tomorrow.toLocaleDateString()}`);
             loadData();
         }
+    };
+
+    const handleStartSession = async (sessionId: string) => {
+        Alert.alert('Start Class', 'Mark this class as "In Progress"?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Start',
+                onPress: async () => {
+                    const result = await startClassSession(sessionId);
+                    if (result.error) {
+                        Alert.alert('Error', result.error);
+                    } else {
+                        loadData();
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleEndSession = async (sessionId: string) => {
+        Alert.alert('End Class', 'Mark this class as "Completed"? This will create workout logs for all checked-in athletes.', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'End Class',
+                onPress: async () => {
+                    const result = await completeClassSession(sessionId);
+                    if (result.error) {
+                        Alert.alert('Error', result.error);
+                    } else {
+                        Alert.alert('Class Ended', 'Workout logs have been created for participants.');
+                        loadData();
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleCancelSession = (sessionId: string) => {
+        Alert.alert('Cancel Class', 'Are you sure you want to cancel this session? Participants will be notified.', [
+            { text: 'Keep', style: 'cancel' },
+            {
+                text: 'Cancel Class',
+                style: 'destructive',
+                onPress: async () => {
+                    const result = await cancelClassSession(sessionId);
+                    if (result.error) {
+                        Alert.alert('Error', result.error);
+                    } else {
+                        loadData();
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleDeleteSession = (sessionId: string) => {
+        Alert.alert('Delete Session', 'Permanently delete this session?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: async () => {
+                    const result = await deleteClassSession(sessionId);
+                    if (result.error) {
+                        Alert.alert('Error', result.error);
+                    } else {
+                        loadData();
+                    }
+                },
+            },
+        ]);
+    };
+
+    const handleViewRoster = (sessionId: string) => {
+        router.push(`/coach/classes/roster?id=${sessionId}`);
     };
 
     if (loading) {
@@ -198,23 +277,88 @@ export default function ClassDetailScreen() {
                             <Text style={styles.emptySessionText}>No sessions scheduled</Text>
                         </View>
                     ) : (
-                        sessions.map((session) => (
-                            <View key={session.id} style={styles.sessionCard}>
-                                <Ionicons name="calendar-outline" size={18} color={Colors.dark.primary} />
-                                <Text style={styles.sessionDate}>
-                                    {new Date(session.startAt).toLocaleDateString('en-US', {
-                                        weekday: 'short',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: 'numeric',
-                                        minute: '2-digit',
-                                    })}
-                                </Text>
-                                <Text style={styles.sessionCount}>
-                                    {session.currentParticipantCount}/{session.capacity}
-                                </Text>
-                            </View>
-                        ))
+                        sessions.map((session) => {
+                            const isInProgress = session.status === 'in_progress';
+                            return (
+                                <View key={session.id} style={styles.sessionCard}>
+                                    <View style={styles.sessionHeader}>
+                                        <View style={styles.sessionDateRow}>
+                                            <Ionicons
+                                                name={isInProgress ? "pulse" : "calendar-outline"}
+                                                size={18}
+                                                color={isInProgress ? Colors.dark.success : Colors.dark.primary}
+                                            />
+                                            <Text style={styles.sessionDate}>
+                                                {new Date(session.startAt).toLocaleDateString('en-US', {
+                                                    weekday: 'short',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: '2-digit',
+                                                })}
+                                            </Text>
+                                        </View>
+                                        <View style={[
+                                            styles.statusBadge,
+                                            isInProgress && styles.statusBadgeActive,
+                                        ]}>
+                                            <Text style={[
+                                                styles.statusText,
+                                                isInProgress && styles.statusTextActive,
+                                            ]}>
+                                                {isInProgress ? 'In Progress' : 'Scheduled'}
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.sessionMeta}>
+                                        <TouchableOpacity
+                                            style={styles.rosterLink}
+                                            onPress={() => handleViewRoster(session.id)}
+                                        >
+                                            <Ionicons name="people" size={16} color={Colors.dark.primary} />
+                                            <Text style={styles.rosterText}>
+                                                {session.currentParticipantCount}/{session.capacity} joined
+                                            </Text>
+                                            <Ionicons name="chevron-forward" size={14} color={Colors.dark.textSecondary} />
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <View style={styles.sessionActions}>
+                                        {!isInProgress && (
+                                            <TouchableOpacity
+                                                style={styles.startButton}
+                                                onPress={() => handleStartSession(session.id)}
+                                            >
+                                                <Ionicons name="play" size={16} color="#fff" />
+                                                <Text style={styles.startButtonText}>Start</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        {isInProgress && (
+                                            <TouchableOpacity
+                                                style={styles.endButton}
+                                                onPress={() => handleEndSession(session.id)}
+                                            >
+                                                <Ionicons name="stop" size={16} color="#fff" />
+                                                <Text style={styles.endButtonText}>End Class</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        <TouchableOpacity
+                                            style={styles.cancelButton}
+                                            onPress={() => handleCancelSession(session.id)}
+                                        >
+                                            <Ionicons name="close-circle-outline" size={16} color={Colors.dark.warning} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.deleteButton}
+                                            onPress={() => handleDeleteSession(session.id)}
+                                        >
+                                            <Ionicons name="trash-outline" size={16} color={Colors.dark.error} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            );
+                        })
                     )}
                 </View>
             </ScrollView>
@@ -358,24 +502,106 @@ const styles = StyleSheet.create({
         color: Colors.dark.textSecondary,
     },
     sessionCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
         backgroundColor: Colors.dark.card,
         padding: 14,
         borderRadius: 10,
         marginBottom: 8,
         borderWidth: 1,
         borderColor: Colors.dark.border,
-        gap: 10,
+    },
+    sessionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    sessionDateRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
     },
     sessionDate: {
-        flex: 1,
         color: Colors.dark.text,
         fontSize: 14,
     },
     sessionCount: {
         color: Colors.dark.textSecondary,
         fontSize: 13,
+    },
+    statusBadge: {
+        backgroundColor: Colors.dark.border,
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 10,
+    },
+    statusBadgeActive: {
+        backgroundColor: Colors.dark.success + '20',
+    },
+    statusText: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: Colors.dark.textSecondary,
+    },
+    statusTextActive: {
+        color: Colors.dark.success,
+    },
+    sessionMeta: {
+        borderTopWidth: 1,
+        borderTopColor: Colors.dark.border,
+        paddingTop: 10,
+        marginBottom: 10,
+    },
+    rosterLink: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    rosterText: {
+        color: Colors.dark.primary,
+        fontSize: 13,
+        flex: 1,
+    },
+    sessionActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        borderTopWidth: 1,
+        borderTopColor: Colors.dark.border,
+        paddingTop: 10,
+    },
+    startButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.dark.success,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 14,
+        gap: 4,
+    },
+    startButtonText: {
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    endButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.dark.primary,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 14,
+        gap: 4,
+    },
+    endButtonText: {
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: '600',
+    },
+    cancelButton: {
+        padding: 6,
+    },
+    deleteButton: {
+        padding: 6,
     },
     footer: {
         padding: 16,

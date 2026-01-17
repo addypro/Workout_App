@@ -22,7 +22,8 @@ import { Colors } from '@/constants/theme';
 import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import {
     ClassSession,
-    getMyJoinedSessions
+    getMyJoinedSessions,
+    getMyPendingReviewLogs,
 } from '@/lib/services/classes';
 
 export default function MyClassesScreen() {
