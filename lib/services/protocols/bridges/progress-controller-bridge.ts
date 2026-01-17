@@ -10,9 +10,9 @@
 
 import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { protocolRegistry } from '../registry';
-import { evaluateProtocol, buildEvaluationContext } from '../engine';
+import { evaluateProtocol } from '../engine';
 import type { PlanDelta, PlanDeltaType, NormalizedExercise, UserLiftStats } from '@/lib/services/paths/types';
-import type { Protocol, RuleEvaluationContext, ProtocolEvaluationResult, AppliedEffect } from '../types';
+import type { Protocol, RuleEvaluationContext, AppliedEffect, LiftType, MovementPattern } from '../types';
 
 // ============================================
 // TYPES
@@ -67,7 +67,6 @@ function legacyGeneratePlanDeltas(
 
         if (!newStat) continue;
 
-        // No previous data - no recommendation
         if (!oldStat) {
             continue;
         }
@@ -75,7 +74,6 @@ function legacyGeneratePlanDeltas(
         const oldE1rm = oldStat.e1rmKg ?? 0;
         const newE1rm = newStat.e1rmKg ?? 0;
 
-        // Significant improvement (>5%) - suggest weight increase
         if (newE1rm > oldE1rm * 1.05) {
             deltas.push({
                 type: 'increase_weight',
@@ -83,9 +81,7 @@ function legacyGeneratePlanDeltas(
                 reason: `E1RM improved from ${oldE1rm.toFixed(1)} to ${newE1rm.toFixed(1)}`,
                 suggestedValue: Math.ceil((newStat.trainingMaxKg ?? 0) / 2.5) * 2.5,
             });
-        }
-        // Significant regression (>10%) - suggest weight decrease
-        else if (newE1rm < oldE1rm * 0.9) {
+        } else if (newE1rm < oldE1rm * 0.9) {
             deltas.push({
                 type: 'decrease_weight',
                 exerciseKey: key,
@@ -95,7 +91,6 @@ function legacyGeneratePlanDeltas(
         }
     }
 
-    // If no specific recommendations, add a "none" delta
     if (deltas.length === 0) {
         deltas.push({
             type: 'none',
@@ -114,59 +109,62 @@ function legacyGeneratePlanDeltas(
  * Convert protocol effect to PlanDelta
  */
 function effectToPlanDelta(effect: AppliedEffect, exerciseKey?: string): PlanDelta {
+    const reason = effect.message ?? effect.description ?? `Effect: ${effect.effectType}`;
+    const newValue = typeof effect.newValue === 'number' ? effect.newValue : undefined;
+    const prevValue = typeof effect.previousValue === 'number' ? effect.previousValue : undefined;
+
     switch (effect.effectType) {
         case 'ADD_WEIGHT':
             return {
                 type: 'increase_weight',
                 exerciseKey,
-                reason: effect.description ?? 'Weight increased per protocol',
-                suggestedValue: effect.newValue,
+                reason,
+                suggestedValue: newValue,
             };
 
         case 'MULTIPLY_WEIGHT':
-            // If factor < 1, it's a decrease (deload)
-            if (effect.newValue && effect.oldValue && effect.newValue < effect.oldValue) {
+            if (newValue !== undefined && prevValue !== undefined && newValue < prevValue) {
                 return {
                     type: 'decrease_weight',
                     exerciseKey,
-                    reason: effect.description ?? 'Deload triggered per protocol',
-                    suggestedValue: effect.newValue,
+                    reason,
+                    suggestedValue: newValue,
                 };
             }
             return {
                 type: 'increase_weight',
                 exerciseKey,
-                reason: effect.description ?? 'Weight adjusted per protocol',
-                suggestedValue: effect.newValue,
+                reason,
+                suggestedValue: newValue,
             };
 
         case 'HOLD':
             return {
                 type: 'none',
                 exerciseKey,
-                reason: effect.description ?? 'Weight maintained per protocol',
+                reason,
             };
 
         case 'ADD_SETS':
             return {
                 type: 'add_set',
                 exerciseKey,
-                reason: effect.description ?? 'Volume increased per protocol',
-                suggestedValue: effect.newValue,
+                reason,
+                suggestedValue: newValue,
             };
 
         case 'TRIGGER_DELOAD':
             return {
                 type: 'rest_day',
                 exerciseKey,
-                reason: effect.description ?? 'Deload week triggered',
+                reason,
             };
 
         default:
             return {
                 type: 'none',
                 exerciseKey,
-                reason: effect.description ?? `Protocol effect: ${effect.effectType}`,
+                reason,
             };
     }
 }
@@ -183,15 +181,13 @@ function buildContextFromBridge(
     const newStat = bridgeContext.newStats.get(exerciseKey);
     const oldStat = bridgeContext.oldStats.get(exerciseKey);
 
-    // Get historical sessions for this exercise
     const historicalSessions = bridgeContext.sessionHistory?.filter(
         s => s.exerciseKey === exerciseKey
     ) ?? [];
 
-    // Count consecutive failures at same weight
     let consecutiveFailures = 0;
     let consecutiveSuccesses = 0;
-    let lastWeight = newStat?.trainingMaxKg ?? 0;
+    const lastWeight = newStat?.trainingMaxKg ?? 0;
 
     for (let i = historicalSessions.length - 1; i >= 0; i--) {
         const session = historicalSessions[i];
@@ -214,37 +210,42 @@ function buildContextFromBridge(
         }
     }
 
+    // Convert null to undefined for compatibility
+    const previousE1rm = oldStat?.e1rmKg ?? undefined;
+    const currentE1rm = newStat?.e1rmKg ?? undefined;
+    const ewmaE1rm = newStat?.ewmaE1rmKg ?? undefined;
+
+    // Filter out undefined reps
+    const reps = (exercise?.sets?.map(s => s.reps) ?? []).filter((r): r is number => r !== undefined);
+
     return {
-        // Exercise data
         exerciseKey,
         exerciseName: exercise?.exerciseName ?? exerciseKey,
         liftType: determineLiftType(exerciseKey),
         movementPattern: determineMovementPattern(exerciseKey),
 
-        // Current workout
+        currentWeight: newStat?.trainingMaxKg ?? 0,
+        currentReps: reps,
         setsCompleted: exercise?.sets?.length ?? 0,
-        repsPerSet: exercise?.sets?.map(s => s.reps) ?? [],
-        weightKg: newStat?.trainingMaxKg ?? 0,
+        targetSets: 5,
+        targetReps: 5,
         rpe: exercise?.sets?.[exercise.sets.length - 1]?.rpe ?? undefined,
 
-        // Historical context
         sessionsAtCurrentWeight: consecutiveFailures + consecutiveSuccesses,
         consecutiveSuccesses,
         consecutiveFailures,
-        previousE1rmKg: oldStat?.e1rmKg,
-        currentE1rmKg: newStat?.e1rmKg,
-        ewmaE1rmKg: newStat?.ewmaE1rmKg,
+        previousE1rmKg: previousE1rm,
+        currentE1rmKg: currentE1rm,
+        ewmaE1rmKg: ewmaE1rm,
 
-        // Protocol defaults
+        protocolDefaults: protocol.defaults,
         defaults: protocol.defaults,
 
-        // Periodization state
         currentWeek: 1,
         currentCycle: 1,
         currentStage: undefined,
         currentTier: 'T1',
 
-        // User state
         userId: bridgeContext.userId,
         programId: bridgeContext.programId,
         workoutId: bridgeContext.workoutId,
@@ -254,7 +255,7 @@ function buildContextFromBridge(
 /**
  * Determine lift type from exercise key
  */
-function determineLiftType(exerciseKey: string): 'UPPER' | 'LOWER' | 'FULL' {
+function determineLiftType(exerciseKey: string): LiftType {
     const lowerPatterns = ['squat', 'deadlift', 'leg', 'hamstring', 'calf', 'glute', 'lunge'];
     const key = exerciseKey.toLowerCase();
 
@@ -268,17 +269,17 @@ function determineLiftType(exerciseKey: string): 'UPPER' | 'LOWER' | 'FULL' {
 /**
  * Determine movement pattern from exercise key
  */
-function determineMovementPattern(exerciseKey: string): string {
+function determineMovementPattern(exerciseKey: string): MovementPattern | undefined {
     const key = exerciseKey.toLowerCase();
 
     if (key.includes('squat')) return 'SQUAT';
-    if (key.includes('deadlift')) return 'HINGE';
-    if (key.includes('bench') || key.includes('press') && !key.includes('leg')) return 'HORIZONTAL_PUSH';
+    if (key.includes('deadlift')) return 'HIP_HINGE';
+    if (key.includes('bench') || (key.includes('press') && !key.includes('leg'))) return 'HORIZONTAL_PUSH';
     if (key.includes('row')) return 'HORIZONTAL_PULL';
     if (key.includes('pullup') || key.includes('pull-up') || key.includes('chinup')) return 'VERTICAL_PULL';
     if (key.includes('overhead') || key.includes('ohp') || key.includes('military')) return 'VERTICAL_PUSH';
 
-    return 'ACCESSORY';
+    return undefined;
 }
 
 /**
@@ -293,22 +294,15 @@ function protocolGeneratePlanDeltas(
 
     for (const exercise of bridgeContext.exercises) {
         const key = exercise.exerciseKey;
-
-        // Build context for this exercise
         const context = buildContextFromBridge(bridgeContext, protocol, key);
-
-        // Evaluate protocol
         const result = evaluateProtocol(protocol, context);
 
-        // Collect applied effects
         allAppliedEffects.push(...result.appliedEffects);
 
-        // Convert each applied effect to a plan delta
         for (const effect of result.appliedEffects) {
             planDeltas.push(effectToPlanDelta(effect, key));
         }
 
-        // If recommendation exists but no effects, use recommendation
         if (result.appliedEffects.length === 0 && result.recommendation) {
             planDeltas.push({
                 type: mapRecommendationAction(result.recommendation.action),
@@ -319,7 +313,6 @@ function protocolGeneratePlanDeltas(
         }
     }
 
-    // If no deltas generated, add a "none"
     if (planDeltas.length === 0) {
         planDeltas.push({
             type: 'none',
@@ -357,16 +350,10 @@ function mapRecommendationAction(action: string): PlanDeltaType {
 
 /**
  * Generate plan deltas with protocol engine integration
- *
- * Falls back to legacy behavior when:
- * - Feature flag is disabled
- * - No protocol is configured for the program
- * - Protocol evaluation fails
  */
 export async function generatePlanDeltasWithProtocol(
     bridgeContext: BridgeContext
 ): Promise<BridgeResult> {
-    // Check feature flag
     if (!isFeatureEnabled('protocol_engine')) {
         return {
             planDeltas: legacyGeneratePlanDeltas(
@@ -379,11 +366,9 @@ export async function generatePlanDeltasWithProtocol(
         };
     }
 
-    // Try to get protocol for this program
     const protocol = protocolRegistry.getForProgram(bridgeContext.programId);
 
     if (!protocol) {
-        // No protocol configured - fall back to legacy
         return {
             planDeltas: legacyGeneratePlanDeltas(
                 bridgeContext.exercises,
@@ -396,7 +381,6 @@ export async function generatePlanDeltasWithProtocol(
     }
 
     try {
-        // Use protocol engine
         return protocolGeneratePlanDeltas(bridgeContext, protocol);
     } catch (error) {
         console.warn('[ProtocolBridge] Protocol evaluation failed, falling back to legacy:', error);

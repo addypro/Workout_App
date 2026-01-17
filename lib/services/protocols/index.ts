@@ -130,3 +130,23 @@ export { evaluateCondition, evaluateAllConditions, type ConditionResult } from '
 
 // Effects
 export { executeEffect, resolveIncrement, roundToPlate, type EffectResult } from './effects';
+
+// Bridges (integration with existing services)
+export {
+    // Progress Controller Bridge
+    generatePlanDeltasWithProtocol,
+    hasProtocolForProgram,
+    getProtocolInfo,
+    type BridgeContext,
+    type BridgeResult,
+    type SessionHistoryEntry,
+
+    // Paths Engine Bridge
+    enrichPathNodeWithProtocol,
+    getProtocolDisplayInfo,
+    calculateTargetWeight,
+    getRepScheme,
+    type PathNodeProtocolMetadata,
+    type EnrichedPathNode,
+    type ProtocolDisplayInfo,
+} from './bridges';

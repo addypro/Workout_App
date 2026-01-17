@@ -190,6 +190,73 @@ export async function getMyJoinedSessions(): Promise<ServiceResult<ClassSession[
 }
 
 /**
+ * Get available sessions for an athlete to discover and join
+ * Returns upcoming sessions with capacity that the athlete hasn't joined
+ */
+export async function getAvailableSessions(
+    filter: 'all' | 'today' | 'week' = 'all'
+): Promise<ServiceResult<ClassSession[]>> {
+    try {
+        const { data: user } = await supabase.auth.getUser();
+        if (!user?.user?.id) {
+            return { data: null, error: 'Not authenticated' };
+        }
+
+        const now = new Date();
+        let endDate: Date | undefined;
+
+        // Calculate filter bounds
+        if (filter === 'today') {
+            endDate = new Date(now);
+            endDate.setHours(23, 59, 59, 999);
+        } else if (filter === 'week') {
+            endDate = new Date(now);
+            endDate.setDate(endDate.getDate() + 7);
+        }
+
+        // Get sessions athlete has already joined
+        const { data: joinedSessions } = await supabase
+            .from('class_participants')
+            .select('session_id')
+            .eq('athlete_user_id', user.user.id)
+            .eq('status', 'joined');
+
+        const joinedIds = (joinedSessions ?? []).map((p) => p.session_id);
+
+        // Build query for available sessions
+        let query = supabase
+            .from('class_sessions')
+            .select('*')
+            .eq('status', 'scheduled')
+            .gte('start_at', now.toISOString())
+            .order('start_at', { ascending: true })
+            .limit(50);
+
+        if (endDate) {
+            query = query.lte('start_at', endDate.toISOString());
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            console.error('[ClassSessions] Available list error:', error);
+            return { data: null, error: error.message };
+        }
+
+        // Filter out already joined and at-capacity sessions
+        const available = (data ?? [])
+            .filter((s) => !joinedIds.includes(s.id))
+            .filter((s) => s.current_participant_count < s.capacity)
+            .map(mapDbToSession);
+
+        return { data: available, error: null };
+    } catch (e: any) {
+        console.error('[ClassSessions] Available list exception:', e);
+        return { data: null, error: e.message };
+    }
+}
+
+/**
  * Get a single session by ID
  */
 export async function getClassSession(

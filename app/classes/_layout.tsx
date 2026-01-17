@@ -15,6 +15,7 @@ export default function ClassesLayout() {
             }}
         >
             <Stack.Screen name="index" />
+            <Stack.Screen name="discover" />
             <Stack.Screen name="[id]" />
             <Stack.Screen name="review" />
         </Stack>

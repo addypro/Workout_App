@@ -514,15 +514,22 @@ export interface Stage {
 // PERIODIZATION
 // ============================================
 
-export type PeriodizationType = 'LINEAR' | 'UNDULATING' | 'BLOCK' | 'CONJUGATE';
+export type PeriodizationType = 'LINEAR' | 'UNDULATING' | 'BLOCK' | 'CONJUGATE' | 'PERCENTAGE_CYCLE';
 
 export interface Phase {
+    id?: string;
     name: string;
-    durationWeeks: number;
-    focus: 'VOLUME' | 'INTENSITY' | 'PEAKING' | 'DELOAD';
-    volumeMultiplier: number;
-    intensityMultiplier: number;
+    week?: number; // Week number in cycle (for 5/3/1-style programs)
+    durationWeeks?: number;
+    focus?: 'VOLUME' | 'INTENSITY' | 'PEAKING' | 'DELOAD';
+    volumeMultiplier?: number;
+    intensityMultiplier?: number;
     activeRules?: string[]; // Rule IDs active in this phase
+    scheme?: {
+        sets: number;
+        reps: (number | string)[];
+        percentages: number[];
+    };
 }
 
 export interface PeriodizationConfig {
@@ -600,6 +607,7 @@ export interface Protocol {
 export interface RuleEvaluationContext {
     userId: string;
     programId: string;
+    workoutId?: string;
     exerciseKey: string;
     exerciseName: string;
     liftType: LiftType;
@@ -607,8 +615,14 @@ export interface RuleEvaluationContext {
 
     // Current session data
     currentWeight: number;
+    /** @alias currentWeight - for bridge compatibility */
+    weightKg?: number;
     currentReps: number[];
+    /** @alias currentReps - for bridge compatibility */
+    repsPerSet?: number[];
     currentRpe?: number[];
+    /** @alias currentRpe[0] - for bridge compatibility */
+    rpe?: number;
     setsCompleted: number;
     targetSets: number;
     targetReps: number;
@@ -620,6 +634,15 @@ export interface RuleEvaluationContext {
     consecutiveFailures: number;
     sessionsAtCurrentWeight: number;
 
+    // E1RM tracking (for bridge compatibility)
+    previousE1rmKg?: number;
+    currentE1rmKg?: number;
+    ewmaE1rmKg?: number;
+
+    // Periodization state
+    currentWeek?: number;
+    currentCycle?: number;
+
     // For tiered programs
     currentStage?: string;
     currentTier?: 'T1' | 'T2' | 'T3';
@@ -629,6 +652,8 @@ export interface RuleEvaluationContext {
 
     // Protocol configuration
     protocolDefaults: Protocol['defaults'];
+    /** @alias protocolDefaults - for bridge compatibility */
+    defaults?: Protocol['defaults'];
 }
 
 /** Result of evaluating a single rule */
@@ -653,8 +678,25 @@ export interface AppliedEffect {
     appliedAt: Date;
     previousValue: unknown;
     newValue: unknown;
+    /** @deprecated Use previousValue */
+    oldValue?: unknown;
     success: boolean;
     message?: string;
+    /** @deprecated Use message */
+    description?: string;
+}
+
+/** Progression recommendation for display */
+export interface ProgressionRecommendation {
+    action: 'PROGRESS' | 'HOLD' | 'DELOAD' | 'RESET' | 'ADVANCE_STAGE' | 'REGRESS_STAGE' | 'CHANGE_VARIATION' | 'NOTIFY' | 'NONE';
+    message: string;
+    newWeight?: number;
+    newReps?: number;
+    newSets?: number;
+    newStage?: string;
+    newVariation?: string;
+    confidence?: number;
+    evidenceGrade?: EvidenceGrade;
 }
 
 // ============================================

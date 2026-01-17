@@ -22,7 +22,7 @@ import { Colors } from '@/constants/theme';
 import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import {
     ClassSession,
-    getMyJoinedSessions,
+    getMyJoinedSessions
 } from '@/lib/services/classes';
 
 export default function MyClassesScreen() {
@@ -30,6 +30,7 @@ export default function MyClassesScreen() {
     const [sessions, setSessions] = useState<ClassSession[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [pendingReviewCount, setPendingReviewCount] = useState(0);
 
     // Feature gate check
     if (!isFeatureEnabled('workout_classes')) {
@@ -44,13 +45,20 @@ export default function MyClassesScreen() {
     }
 
     useEffect(() => {
-        loadSessions();
+        loadData();
     }, []);
 
-    const loadSessions = async () => {
-        const result = await getMyJoinedSessions();
-        if (result.data) {
-            setSessions(result.data);
+    const loadData = async () => {
+        const [sessionsResult, pendingResult] = await Promise.all([
+            getMyJoinedSessions(),
+            getMyPendingReviewLogs(),
+        ]);
+
+        if (sessionsResult.data) {
+            setSessions(sessionsResult.data);
+        }
+        if (pendingResult.data) {
+            setPendingReviewCount(pendingResult.data.length);
         }
         setLoading(false);
         setRefreshing(false);
@@ -58,11 +66,15 @@ export default function MyClassesScreen() {
 
     const onRefresh = () => {
         setRefreshing(true);
-        loadSessions();
+        loadData();
     };
 
     const handleSessionPress = (session: ClassSession) => {
         router.push(`/classes/${session.id}`);
+    };
+
+    const handleDiscoverPress = () => {
+        router.push('/classes/discover');
     };
 
     const formatSessionTime = (session: ClassSession) => {
@@ -139,8 +151,12 @@ export default function MyClassesScreen() {
             <Ionicons name="people-outline" size={64} color={Colors.dark.textSecondary} />
             <Text style={styles.emptyTitle}>No Upcoming Classes</Text>
             <Text style={styles.emptySubtitle}>
-                Your coach hasn't scheduled any classes for you yet
+                Discover and join classes from your coaches
             </Text>
+            <TouchableOpacity style={styles.discoverButton} onPress={handleDiscoverPress}>
+                <Ionicons name="compass-outline" size={20} color="#fff" />
+                <Text style={styles.discoverButtonText}>Discover Classes</Text>
+            </TouchableOpacity>
         </View>
     );
 
@@ -152,7 +168,14 @@ export default function MyClassesScreen() {
                     <Ionicons name="arrow-back" size={24} color={Colors.dark.text} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Classes</Text>
-                <View style={styles.headerRight} />
+                <TouchableOpacity onPress={handleDiscoverPress} style={styles.discoverHeaderButton}>
+                    <Ionicons name="compass-outline" size={22} color={Colors.dark.primary} />
+                    {pendingReviewCount > 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{pendingReviewCount}</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
             </View>
 
             {/* Content */}
@@ -293,5 +316,40 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: Colors.dark.textSecondary,
         textAlign: 'center',
+    },
+    discoverButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.dark.primary,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 24,
+        marginTop: 20,
+        gap: 8,
+    },
+    discoverButtonText: {
+        color: '#fff',
+        fontWeight: '600',
+        fontSize: 16,
+    },
+    discoverHeaderButton: {
+        padding: 4,
+        position: 'relative',
+    },
+    badge: {
+        position: 'absolute',
+        top: -2,
+        right: -2,
+        backgroundColor: Colors.dark.error,
+        width: 18,
+        height: 18,
+        borderRadius: 9,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: '#fff',
+        fontSize: 11,
+        fontWeight: '700',
     },
 });
