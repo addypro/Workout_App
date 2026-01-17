@@ -33,8 +33,41 @@ export default function MyClassesScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [pendingReviewCount, setPendingReviewCount] = useState(0);
 
-    // Feature gate check
-    if (!isFeatureEnabled('workout_classes')) {
+    // Check feature flag (must be stored in variable for hook dependency)
+    const featureEnabled = isFeatureEnabled('workout_classes');
+
+    useEffect(() => {
+        if (featureEnabled) {
+            loadData();
+        } else {
+            setLoading(false);
+        }
+    }, [featureEnabled]);
+
+    const loadData = async () => {
+        try {
+            const [sessionsResult, pendingResult] = await Promise.all([
+                getMyJoinedSessions(),
+                getMyPendingReviewLogs(),
+            ]);
+
+            if (sessionsResult.data) {
+                setSessions(sessionsResult.data);
+            }
+            if (pendingResult.data) {
+                setPendingReviewCount(pendingResult.data.length);
+            }
+        } catch (e) {
+            // Graceful degradation - show empty state instead of crashing
+            console.log('[MyClasses] Load error (likely DB not ready):', e);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    // Feature gate check (AFTER hooks per Rules of Hooks)
+    if (!featureEnabled) {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.centered}>
@@ -44,26 +77,6 @@ export default function MyClassesScreen() {
             </SafeAreaView>
         );
     }
-
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
-        const [sessionsResult, pendingResult] = await Promise.all([
-            getMyJoinedSessions(),
-            getMyPendingReviewLogs(),
-        ]);
-
-        if (sessionsResult.data) {
-            setSessions(sessionsResult.data);
-        }
-        if (pendingResult.data) {
-            setPendingReviewCount(pendingResult.data.length);
-        }
-        setLoading(false);
-        setRefreshing(false);
-    };
 
     const onRefresh = () => {
         setRefreshing(true);

@@ -5,6 +5,7 @@
  * Sessions are instances of templates scheduled for specific times.
  */
 
+import { isFeatureEnabled } from '../../config/feature-flags';
 import { supabase } from '../../supabase/client';
 import type {
     ClassExercise,
@@ -157,10 +158,15 @@ export async function getMyUpcomingSessions(
  * Get sessions for an athlete (joined sessions)
  */
 export async function getMyJoinedSessions(): Promise<ServiceResult<ClassSession[]>> {
+    // Graceful degradation when feature is disabled or DB not ready
+    if (!isFeatureEnabled('workout_classes')) {
+        return { data: [], error: null };
+    }
+
     try {
         const { data: user } = await supabase.auth.getUser();
         if (!user?.user?.id) {
-            return { data: null, error: 'Not authenticated' };
+            return { data: [], error: null }; // Return empty instead of error for guest users
         }
 
         const now = new Date().toISOString();

@@ -5,6 +5,7 @@
  * Handles auto-log creation, athlete review, and auto-complete.
  */
 
+import { isFeatureEnabled } from '../../config/feature-flags';
 import { supabase } from '../../supabase/client';
 import type {
     ClassExercise,
@@ -71,10 +72,15 @@ export async function createLogsForCheckedInAthletes(
  * Get pending review logs for an athlete
  */
 export async function getMyPendingReviewLogs(): Promise<ServiceResult<ClassWorkoutLog[]>> {
+    // Graceful degradation when feature is disabled
+    if (!isFeatureEnabled('workout_classes')) {
+        return { data: [], error: null };
+    }
+
     try {
         const { data: user } = await supabase.auth.getUser();
         if (!user?.user?.id) {
-            return { data: null, error: 'Not authenticated' };
+            return { data: [], error: null }; // Return empty for guest users
         }
 
         const { data, error } = await supabase
