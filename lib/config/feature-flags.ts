@@ -21,11 +21,12 @@ export type FeatureFlagName =
     | 'voice_vad'
     | 'voice_streaming'
     // P0: UX Redesign
-    | 'new_tab_bar'
     | 'smart_fab'
     // P1: UX Redesign
     | 'resume_hero'
-    | 'voice_first';
+    | 'voice_first'
+    // Weight Suggestion Engine (Phase 3)
+    | 'weight_suggestions';
 
 export interface FeatureFlag {
     enabled: boolean;
@@ -59,9 +60,6 @@ export const FEATURES: Record<FeatureFlagName, FeatureFlag> = {
     voice_streaming: { enabled: false, rolloutPercent: 0 },
 
     // ========== P0: UX REDESIGN ==========
-    /** 4-tab navigation (Workout, Browse, Progress, You) */
-    new_tab_bar: { enabled: true, rolloutPercent: 100 },
-
     /** Smart FAB with gesture controls */
     smart_fab: { enabled: true, rolloutPercent: 100 },
 
@@ -71,6 +69,10 @@ export const FEATURES: Record<FeatureFlagName, FeatureFlag> = {
 
     /** Voice-first prompt on quick workout */
     voice_first: { enabled: false, rolloutPercent: 0 },
+
+    // ========== WEIGHT SUGGESTION ENGINE ==========
+    /** Weight suggestions based on E1RM/EWMA progression */
+    weight_suggestions: { enabled: __DEV__, rolloutPercent: 100 },
 };
 
 // ============================================

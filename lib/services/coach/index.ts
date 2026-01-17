@@ -48,7 +48,7 @@ export {
   // Quick workouts
   createQuickWorkout, deleteProgram,
   // Assigned workouts
-  getAssignedWorkouts, getAthleteAssignments, getAthleteCalendarWorkouts, getMyAssignments, getMyPrograms, getMyQuickWorkouts, getProgram, getTodaysWorkout, getUpcomingWorkouts, skipWorkout, startWorkout, updateAssignmentStatus, updateProgram
+  getAssignedWorkouts, getAthleteAssignments, getAthleteCalendarWorkouts, getMyAssignments, getMyPrograms, getMyQuickWorkouts, getOverdueWorkouts, getProgram, getTodaysWorkouts, getUpcomingWorkouts, skipWorkout, startWorkout, updateAssignmentStatus, updateProgram
 } from './programs';
 
 // ============================================

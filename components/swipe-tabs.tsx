@@ -26,14 +26,13 @@ import * as Haptics from 'expo-haptics';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { useAuth } from '@/lib/context/auth-context';
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type TabName = 'index' | 'browse' | 'explore' | 'stats' | 'tools' | 'upload' | 'you' | 'coach';
+type TabName = 'index' | 'explore' | 'stats' | 'you' | 'coach';
 
 interface SwipeTabsProps {
   current: TabName;
@@ -48,8 +47,7 @@ interface SwipeTabsProps {
 // CONSTANTS
 // ============================================================================
 
-const TAB_ORDER_NEW: TabName[] = ['index', 'explore', 'stats', 'you'];
-const TAB_ORDER_OLD: TabName[] = ['index', 'browse', 'explore', 'stats', 'tools'];
+const TAB_ORDER: TabName[] = ['index', 'explore', 'stats', 'you'];
 
 const EDGE_ZONE = 28; // Trigger zone from screen edge
 const SWIPE_THRESHOLD = 70; // Distance to trigger tab change
@@ -98,13 +96,12 @@ export function SwipeTabs({
   const colors = Colors[colorScheme ?? 'light'];
   const { width } = useWindowDimensions();
   const { isCoach } = useAuth();
-  const useNewTabBar = isFeatureEnabled('new_tab_bar');
 
   const tabOrder = useMemo(() => {
-    const base = useNewTabBar ? [...TAB_ORDER_NEW] : [...TAB_ORDER_OLD];
+    const base = [...TAB_ORDER];
     if (isCoach) base.push('coach');
     return base;
-  }, [useNewTabBar, isCoach]);
+  }, [isCoach]);
 
   const startXRef = useRef<number>(0);
   const hasTriggeredHaptic = useRef(false);
@@ -281,4 +278,3 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
 });
-

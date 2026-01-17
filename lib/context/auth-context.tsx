@@ -57,6 +57,42 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function getParamValue(params: URLSearchParams, key: string): string | null {
+  const value = params.get(key);
+  return value && value.length > 0 ? value : null;
+}
+
+async function completeOAuthSession(resultUrl: string): Promise<void> {
+  const url = new URL(resultUrl);
+  const hashParams = new URLSearchParams(url.hash.startsWith('#') ? url.hash.slice(1) : url.hash);
+  const queryParams = url.searchParams;
+
+  const accessToken = getParamValue(hashParams, 'access_token') ?? getParamValue(queryParams, 'access_token');
+  const refreshToken = getParamValue(hashParams, 'refresh_token') ?? getParamValue(queryParams, 'refresh_token') ?? '';
+  const code = getParamValue(queryParams, 'code') ?? getParamValue(hashParams, 'code');
+  const errorDescription =
+    getParamValue(queryParams, 'error_description') ?? getParamValue(hashParams, 'error_description');
+
+  if (errorDescription) {
+    throw new Error(errorDescription);
+  }
+
+  if (accessToken) {
+    await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+    return;
+  }
+
+  if (code && typeof supabase.auth.exchangeCodeForSession === 'function') {
+    await supabase.auth.exchangeCodeForSession(code);
+    return;
+  }
+
+  throw new Error('OAuth sign-in did not return a session.');
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
@@ -432,18 +468,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
         if (result.type === 'success' && result.url) {
-          // Extract tokens from the URL and set session
-          const url = new URL(result.url);
-          const params = new URLSearchParams(url.hash.substring(1)); // Remove #
-          const accessToken = params.get('access_token');
-          const refreshToken = params.get('refresh_token');
-
-          if (accessToken) {
-            await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
-          }
+          await completeOAuthSession(result.url);
         }
       }
     } catch (error: any) {
@@ -481,17 +506,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
         if (result.type === 'success' && result.url) {
-          const url = new URL(result.url);
-          const params = new URLSearchParams(url.hash.substring(1));
-          const accessToken = params.get('access_token');
-          const refreshToken = params.get('refresh_token');
-
-          if (accessToken) {
-            await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
-          }
+          await completeOAuthSession(result.url);
         }
       }
     } catch (error: any) {
@@ -530,17 +545,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
         if (result.type === 'success' && result.url) {
-          const url = new URL(result.url);
-          const params = new URLSearchParams(url.hash.substring(1));
-          const accessToken = params.get('access_token');
-          const refreshToken = params.get('refresh_token');
-
-          if (accessToken) {
-            await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
-          }
+          await completeOAuthSession(result.url);
         }
       }
     } catch (error: any) {
@@ -579,17 +584,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
 
         if (result.type === 'success' && result.url) {
-          const url = new URL(result.url);
-          const params = new URLSearchParams(url.hash.substring(1));
-          const accessToken = params.get('access_token');
-          const refreshToken = params.get('refresh_token');
-
-          if (accessToken) {
-            await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || '',
-            });
-          }
+          await completeOAuthSession(result.url);
         }
       }
     } catch (error: any) {

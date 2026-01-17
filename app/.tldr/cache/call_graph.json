@@ -1,0 +1,374 @@
+{
+  "edges": [
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "loadPrograms",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "getWorkoutDayStart"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleUpdateExercise",
+      "to_file": "workout/quick.tsx",
+      "to_func": "saveExercises"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "updateSetTarget",
+      "to_file": "workout/[id].tsx",
+      "to_func": "updateAnySet"
+    },
+    {
+      "from_file": "browse/index.tsx",
+      "from_func": "handleAddSingleProgram",
+      "to_file": "browse/index.tsx",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "confirmDeleteProgram",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "handleDeleteProgram"
+    },
+    {
+      "from_file": "coach/athletes.tsx",
+      "from_func": "handleRemoveAthlete",
+      "to_file": "coach/athletes.tsx",
+      "to_func": "loadAthletes"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleVoiceExercisesExtracted",
+      "to_file": "workout/quick.tsx",
+      "to_func": "normalizeMatchKey"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "completeSet",
+      "to_file": "workout/[id].tsx",
+      "to_func": "handleSupersetSetCompletion"
+    },
+    {
+      "from_file": "coach/programs/workout-editor.tsx",
+      "from_func": "renderExerciseRow",
+      "to_file": "coach/programs/workout-editor.tsx",
+      "to_func": "handleMoveExercise"
+    },
+    {
+      "from_file": "exercise-picker.tsx",
+      "from_func": "toggleBodyRegion",
+      "to_file": "exercise-picker.tsx",
+      "to_func": "triggerSearch"
+    },
+    {
+      "from_file": "program/[id]/edit.tsx",
+      "from_func": "deleteWorkout",
+      "to_file": "program/[id]/edit.tsx",
+      "to_func": "confirmDelete"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handlePickFile",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "handlePDFUpload"
+    },
+    {
+      "from_file": "exercise-picker.tsx",
+      "from_func": "toggleEquipment",
+      "to_file": "exercise-picker.tsx",
+      "to_func": "triggerSearch"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "loadPrograms",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "getDayStart"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleGenerateCode",
+      "to_file": "coach/invite.tsx",
+      "to_func": "generateMockInvite"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleSendEmail",
+      "to_file": "coach/invite.tsx",
+      "to_func": "loadRecentInvites"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "loadPrograms",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "getWorkoutsFromParsedData"
+    },
+    {
+      "from_file": "exercise-picker.tsx",
+      "from_func": "handleSearchChange",
+      "to_file": "exercise-picker.tsx",
+      "to_func": "triggerSearch"
+    },
+    {
+      "from_file": "challenges/index.tsx",
+      "from_func": "onRefresh",
+      "to_file": "challenges/index.tsx",
+      "to_func": "loadActiveProgress"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "handleSupersetSetCompletion",
+      "to_file": "workout/[id].tsx",
+      "to_func": "moveToNextRoundOrFinish"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handleUpload",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "readFileContent"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleClearAll",
+      "to_file": "workout/quick.tsx",
+      "to_func": "doClear"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "loadWorkout",
+      "to_file": "workout/[id].tsx",
+      "to_func": "loadAssignedWorkout"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleRemoveExercise",
+      "to_file": "workout/quick.tsx",
+      "to_func": "saveExercises"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "loadAssignedWorkout",
+      "to_file": "workout/[id].tsx",
+      "to_func": "mapAssignedWorkoutRow"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "handleDeleteProgram",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "loadPrograms"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleGenerateLink",
+      "to_file": "coach/invite.tsx",
+      "to_func": "generateMockInvite"
+    },
+    {
+      "from_file": "coach/programs/workout-editor.tsx",
+      "from_func": "renderExerciseRow",
+      "to_file": "coach/programs/workout-editor.tsx",
+      "to_func": "handleRemoveExercise"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "checkForSelectedExercise",
+      "to_file": "workout/[id].tsx",
+      "to_func": "addExerciseToSession"
+    },
+    {
+      "from_file": "browse/[id].tsx",
+      "from_func": "installProgram",
+      "to_file": "browse/[id].tsx",
+      "to_func": "doInstall"
+    },
+    {
+      "from_file": "_layout.tsx",
+      "from_func": "NavigationGuard",
+      "to_file": "_layout.tsx",
+      "to_func": "checkLandingState"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "loadAssignedWorkout",
+      "to_file": "workout/[id].tsx",
+      "to_func": "restoreSessionFromState"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "storeVoiceConfirmation",
+      "to_file": "workout/quick.tsx",
+      "to_func": "normalizeMatchKey"
+    },
+    {
+      "from_file": "history/[id].tsx",
+      "from_func": "HistoryDetailScreen",
+      "to_file": "history/[id].tsx",
+      "to_func": "loadRecord"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "finishEarly",
+      "to_file": "workout/[id].tsx",
+      "to_func": "handleWorkoutComplete"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "discardWorkout",
+      "to_file": "workout/[id].tsx",
+      "to_func": "doDiscard"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "loadPrograms",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "uniqueById"
+    },
+    {
+      "from_file": "program/[id]/edit.tsx",
+      "from_func": "beforeRemoveListener",
+      "to_file": "program/[id]/edit.tsx",
+      "to_func": "handleSave"
+    },
+    {
+      "from_file": "_layout.tsx",
+      "from_func": "RootLayoutNav",
+      "to_file": "_layout.tsx",
+      "to_func": "hydrateCuratedPrograms"
+    },
+    {
+      "from_file": "browse/index.tsx",
+      "from_func": "load",
+      "to_file": "browse/index.tsx",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleSendEmail",
+      "to_file": "coach/invite.tsx",
+      "to_func": "generateMockInvite"
+    },
+    {
+      "from_file": "(tabs)/index.tsx",
+      "from_func": "getWorkoutDayStart",
+      "to_file": "(tabs)/index.tsx",
+      "to_func": "getDayStart"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handlePDFUpload",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "showAlert"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "loadWorkout",
+      "to_file": "workout/[id].tsx",
+      "to_func": "restoreSessionFromState"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handlePickFile",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "showAlert"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "doSave",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "resetUpload"
+    },
+    {
+      "from_file": "(auth)/callback.tsx",
+      "from_func": "AuthCallbackScreen",
+      "to_file": "(auth)/callback.tsx",
+      "to_func": "handleCallback"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleVoiceExercisesExtracted",
+      "to_file": "workout/quick.tsx",
+      "to_func": "saveExercises"
+    },
+    {
+      "from_file": "workout/[id]/summary.tsx",
+      "from_func": "handleSave",
+      "to_file": "workout/[id]/summary.tsx",
+      "to_func": "buildAssignedResults"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handleUpload",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "doSave"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "handleUnlinkSuperset",
+      "to_file": "workout/[id].tsx",
+      "to_func": "doUnlink"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleGenerateCode",
+      "to_file": "coach/invite.tsx",
+      "to_func": "loadRecentInvites"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handleSavePDFProgram",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "doSave"
+    },
+    {
+      "from_file": "(tabs)/explore.tsx",
+      "from_func": "handleRefresh",
+      "to_file": "(tabs)/explore.tsx",
+      "to_func": "loadData"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "handleClearAll",
+      "to_file": "workout/quick.tsx",
+      "to_func": "saveExercises"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handleUpload",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "resetUpload"
+    },
+    {
+      "from_file": "workout/quick.tsx",
+      "from_func": "doClear",
+      "to_file": "workout/quick.tsx",
+      "to_func": "saveExercises"
+    },
+    {
+      "from_file": "settings/program-import.tsx",
+      "from_func": "handleSavePDFProgram",
+      "to_file": "settings/program-import.tsx",
+      "to_func": "resetUpload"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleDeactivate",
+      "to_file": "coach/invite.tsx",
+      "to_func": "loadRecentInvites"
+    },
+    {
+      "from_file": "workout/[id].tsx",
+      "from_func": "cycleSetType",
+      "to_file": "workout/[id].tsx",
+      "to_func": "updateSetType"
+    },
+    {
+      "from_file": "coach/invite.tsx",
+      "from_func": "handleGenerateLink",
+      "to_file": "coach/invite.tsx",
+      "to_func": "loadRecentInvites"
+    }
+  ],
+  "languages": [
+    "typescript"
+  ],
+  "timestamp": 1768612202.7306812
+}

@@ -1,0 +1,5870 @@
+{
+  "edges": [
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "ensureCacheDirectory",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCacheDirectory"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseById",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticToggle",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "useOptimistic"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "upsertProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "templatesKey"
+    },
+    {
+      "from_file": "services/paths/storage.ts",
+      "from_func": "upsertLiftStats",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "liftStatsToDb"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "updateExerciseStats",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "calculateE1RM"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.forceSync",
+      "to_file": "services/sync/index.ts",
+      "to_func": "syncAllPending"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCacheKey",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "hashString"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "syncPendingWorkouts",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getPendingCompletions"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "initializeTierSystem"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "allWordsMatch",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "getWords"
+    },
+    {
+      "from_file": "hooks/use-direct-voice.ts",
+      "from_func": "useDirectVoice",
+      "to_file": "hooks/use-direct-voice.ts",
+      "to_func": "stopDurationTracking"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "joinChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallenges"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getLocalDateString",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "pad2"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getProgram",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToCoachProgram"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "updateCoachProfile",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "mapToCoachProfile"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getProgressions",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "processWorkoutCompleted",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "generatePlanDeltas"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getWorkoutHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseRepRangeCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "getExercisesByCategory",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "getPopularityScore"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "submitPRForVerification",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "savePendingPR"
+    },
+    {
+      "from_file": "services/gym/gym-service.ts",
+      "from_func": "searchGymsByName",
+      "to_file": "services/gym/gym-service.ts",
+      "to_func": "extractGymName"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "queryExerciseSearchIndex",
+      "to_file": "services/exercise/search-index.ts",
+      "to_func": "ensureExerciseSearchIndex"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordWorkoutExercises",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseDatabase",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "normalizeCategory"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordExercisePerformed",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "groupByDifficulty",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "calculateMatchScore",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "normalize"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "reindexEmbeddings",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "initializeEmbeddings"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionIndex",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "canAddAthlete",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "findStaticScore",
+      "to_file": "services/popularity/normalizer.ts",
+      "to_func": "createCanonicalKey"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deserializeCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "ensureDate"
+    },
+    {
+      "from_file": "services/paths/catalog.ts",
+      "from_func": "getAllPaths",
+      "to_file": "services/paths/catalog.ts",
+      "to_func": "generatePathFromChallenge"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseExerciseWithDropSet",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "isDynamicPopularityActive",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "getLocalStats"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "isValidDateParts"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getTopExercises",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "services/popularity/global-rankings.ts",
+      "from_func": "getGlobalPopularityScore",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "initRankingMaps"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "roundToPlate",
+      "to_file": "utils/weight.ts",
+      "to_func": "kg"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getPopularityScores",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "syncPopularity"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "customExerciseExists",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "useSyncStatus",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "subscribeSyncStatus"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.getById",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "buildLookupMaps"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "createWorkoutExercise",
+      "to_file": "types/workout-session.ts",
+      "to_func": "createWorkoutSet"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "useTabState",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "useTabContext"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "matchExerciseRobust",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "lookupExerciseByAlias"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "initializeEmbeddings",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "buildEmbeddings"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseCsvToTable",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "pushField"
+    },
+    {
+      "from_file": "machines/use-workout-machine.ts",
+      "from_func": "useWorkoutSessionAdapter",
+      "to_file": "machines/use-workout-machine.ts",
+      "to_func": "useWorkoutMachine"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "updateUserChallenge"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "bulkImportExercises",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgramTemplates",
+      "to_file": "db/storage.ts",
+      "to_func": "loadProgramTemplatesFromAsyncStorage"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getTemplateForProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getProgramTemplates"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "replaceWithContext",
+      "to_file": "utils/navigation.ts",
+      "to_func": "encodeParams"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "useNavigationContext",
+      "to_file": "utils/navigation.ts",
+      "to_func": "navigateWithContext"
+    },
+    {
+      "from_file": "services/exercise/resolver.ts",
+      "from_func": "resolveExerciseName",
+      "to_file": "services/exercise/resolver.ts",
+      "to_func": "resolveExercise"
+    },
+    {
+      "from_file": "services/gym/gym-service.ts",
+      "from_func": "searchGymsByName",
+      "to_file": "services/gym/gym-service.ts",
+      "to_func": "calculateDistance"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "checkWorkoutForPRs",
+      "to_file": "services/stats/pr-detector.ts",
+      "to_func": "buildHistoricalPRs"
+    },
+    {
+      "from_file": "services/parser/excel.ts",
+      "from_func": "parseExcel",
+      "to_file": "services/parser/excel.ts",
+      "to_func": "normalizeColumnName"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "pendingEditsKey"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "getLocalStats"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "clearOldCache",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCacheDirectory"
+    },
+    {
+      "from_file": "hooks/use-exercisedb-mapping.ts",
+      "from_func": "useExerciseDbMapping",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "getExerciseMedia"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "createPathInstance"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "updateProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "mapProgramRow"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "scoreExercises",
+      "to_file": "services/voice/ufire/scoring-engine.ts",
+      "to_func": "normalizeSemanticScore"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "submitVote",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "updatePRHistory"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "getProgress",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "progressKey"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "createSupersetGroup",
+      "to_file": "types/brands.ts",
+      "to_func": "createSupersetGroupId"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveWorkoutToHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "convertToSyncableWorkout"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "darken",
+      "to_file": "utils/colors.ts",
+      "to_func": "hexToRgb"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "generateAssignedWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "navigation/types.ts",
+      "from_func": "safeReplace",
+      "to_file": "navigation/types.ts",
+      "to_func": "buildUrl"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "scoreModifierOverlap",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "areModifiersSynonymous"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "scoreExercises",
+      "to_file": "services/voice/ufire/scoring-engine.ts",
+      "to_func": "getPopularityScore"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureStorageTables",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/voice/vocabulary.ts",
+      "from_func": "getVocabularyBias",
+      "to_file": "services/voice/vocabulary.ts",
+      "to_func": "addTerm"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "saveUserChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallenges"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createCodeInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "createInvite"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "createProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "loadProgramsFromAsyncStorage"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "preloadCuratedPrograms",
+      "to_file": "services/programs/curated-preloader.ts",
+      "to_func": "getMaxWeek"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "getCurrentSet",
+      "to_file": "types/workout-session.ts",
+      "to_func": "getCurrentExercise"
+    },
+    {
+      "from_file": "context/preferences-context.tsx",
+      "from_func": "PreferencesProvider",
+      "to_file": "context/preferences-context.tsx",
+      "to_func": "convertFromKg"
+    },
+    {
+      "from_file": "services/sync/popularity-sync.ts",
+      "from_func": "syncPopularity",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "fetchPopularityFromServer"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getSyncQueue",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "serializeCustomExercise"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getUploadedPrograms",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "completeNode"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.queueWorkout",
+      "to_file": "services/sync/index.ts",
+      "to_func": "syncAllPending"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "sha1",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "rotl"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "percentMatch",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "stringSimilarity"
+    },
+    {
+      "from_file": "context/sync-context.tsx",
+      "from_func": "SyncProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "useUserId"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.extractWorkout",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "uploadSingle"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.checkPopularityUpdates",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "syncPopularity"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getPending",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "get",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "findHeaderByKey"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "loadProgramTemplatesFromAsyncStorage",
+      "to_file": "db/storage.ts",
+      "to_func": "templatesKey"
+    },
+    {
+      "from_file": "services/voice/intent-mapping.ts",
+      "from_func": "matchVoiceIntent",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "matchByKeyword"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveWorkoutToHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "syncCallback"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "formatInPreferredUnit",
+      "to_file": "utils/weight.ts",
+      "to_func": "formatWeight"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getUserId"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "detectPRsLocal",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "getHistoricalMaxes"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "getFailedPathsSyncJobs",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "startWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToAssignedWorkout"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "sha1",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "toHex"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "saveLocalMergedCache"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDF",
+      "to_file": "services/parser/pdf/service.ts",
+      "to_func": "readPDFAsBase64"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "processWorkoutCompleted",
+      "to_file": "services/paths/types.ts",
+      "to_func": "normalizeExerciseKey"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.initialize",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "makeIso"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "getChallengeProgress",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getPathStats"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureStorageTables",
+      "to_file": "db/sqlite.ts",
+      "to_func": "addHistoryColumnIfMissing"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "mergeParams",
+      "to_file": "utils/navigation.ts",
+      "to_func": "encodeParams"
+    },
+    {
+      "from_file": "services/parser/csv.ts",
+      "from_func": "parseCSV",
+      "to_file": "utils/parser-utils.ts",
+      "to_func": "parseSetType"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getTodaysWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "services/workout/pr-detector.ts",
+      "from_func": "getHistoricalPRs",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "parseReps"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "activeWorkoutRowId"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "getLiftStats"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "matchExerciseRobust",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "matchesActionCategory"
+    },
+    {
+      "from_file": "services/paths/catalog.ts",
+      "from_func": "getPath",
+      "to_file": "services/paths/catalog.ts",
+      "to_func": "generatePathFromChallenge"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "calculateMatchScore",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "stringSimilarity"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getRecommendedNext",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getProgressions"
+    },
+    {
+      "from_file": "services/exercise/nlp-enrichment.ts",
+      "from_func": "getRegression",
+      "to_file": "services/exercise/nlp-enrichment.ts",
+      "to_func": "getExerciseNLP"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/mode-context.tsx",
+      "to_func": "getCachedKeys"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "initFilterCache",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "taxonomyMatchesFilter"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseCounts",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "getDifficultyLevel"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.forceSync",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "syncPopularity"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseWorkoutCreation",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "lookupSlang"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "findExerciseMatch",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "lookupExerciseByAlias"
+    },
+    {
+      "from_file": "services/workout/voice-parser.ts",
+      "from_func": "parseWorkoutEntry",
+      "to_file": "services/workout/voice-parser.ts",
+      "to_func": "findBestExerciseMatch"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "findExerciseMatch",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "extractMuscleGroups"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "startNetworkMonitoring",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "hasPendingCompletions"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "extractFromExcel"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "createCoachProfile",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "searchPrograms",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "upsertProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "mapProgramTemplateRow"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "activeWorkoutRowId"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "customExerciseExists",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "navigation/types.ts",
+      "from_func": "buildRoute",
+      "to_file": "navigation/types.ts",
+      "to_func": "buildUrl"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "createDropSetResult"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordWorkoutExercises",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "saveFrequencyStore"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "completeNode",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "savePath"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "buildSearchIndex",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "generateCanonicalSlug"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "semanticSearch",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "generateCanonicalSlug"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "findHeaderByKey"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "enqueuePathsSync"
+    },
+    {
+      "from_file": "services/parser/pdf/normalizer.ts",
+      "from_func": "findBestMatch",
+      "to_file": "services/parser/pdf/normalizer.ts",
+      "to_func": "calculateSimilarity"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCachedLLMResponse",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "getCacheKey"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.addWorkout",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "linkMultipleExercisesAsSuperset",
+      "to_file": "types/workout-session.ts",
+      "to_func": "createSupersetGroup"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "getCacheStats",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCacheDirectory"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.markFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deleteCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "queueDeletionForSync"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "getExercise",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "mapToCoachExercise"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "pendingEditsRowId"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildDownward",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildDownward"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "ensureExerciseSearchIndex",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "startSyncService",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "performSync"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.addWorkout",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "flushPathsSyncQueue",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "saveQueue"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "createProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.getPreviousTier",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "getById"
+    },
+    {
+      "from_file": "hooks/use-exercise-media.ts",
+      "from_func": "fetchMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getExerciseMedia"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "isSimilar",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "stringSimilarity"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "getLastResultForWorkout",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLastResultCache"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "ensureCuratedProgramsReady",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureCuratedProgramsTable"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getCompletedWorkouts",
+      "to_file": "db/storage.ts",
+      "to_func": "getWorkoutHistory"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "updateExerciseStats",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "calculateVolatility"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "mergeLiftStatsCache"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "linkExercisesAsSuperset",
+      "to_file": "types/workout-session.ts",
+      "to_func": "linkMultipleExercisesAsSuperset"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "buildVocabulary",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "extractWords"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getSkillTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "useFeatureFlag",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "isFeatureEnabled"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "addWeights",
+      "to_file": "utils/weight.ts",
+      "to_func": "toWeightKg"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "assignProgram",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToProgramAssignment"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extractFromExcel",
+      "to_file": "services/parser/excel.ts",
+      "to_func": "parseExcelFromUri"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getProgressionCategory",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.initialize",
+      "to_file": "services/sync/index.ts",
+      "to_func": "syncAllPending"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "lookupInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "mapToCoachInvite"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureCuratedProgramsTable",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "buildStrongMapping",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "headerKey"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "pressedColor",
+      "to_file": "utils/colors.ts",
+      "to_func": "lighten"
+    },
+    {
+      "from_file": "services/parser/excel.ts",
+      "from_func": "parseExcel",
+      "to_file": "utils/parser-utils.ts",
+      "to_func": "parseSetType"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "getRecentPRs",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "calculateStats"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "useFeatureFlagWithLoading",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "isFeatureEnabled"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticCounter",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "useOptimistic"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createEmailInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "createInvite"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "activeWorkoutKey"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseCsvToTable",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "sniffDelimiter"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "scoreModifierOverlap",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "extractCandidateModifiers"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "sniffDelimiter",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "countDelimiterOutsideQuotes"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "syncExistingWorkoutsToServer"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "migrateLocalData",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureStorageTables"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "findPath",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCacheKey",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "normalizeTranscript"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "rgbToHex",
+      "to_file": "utils/colors.ts",
+      "to_func": "toHex"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "buildMergedPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "mergeScores"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getPath"
+    },
+    {
+      "from_file": "services/voice/vocabulary.ts",
+      "from_func": "getVocabularyBias",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "getAllIntentCommands"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseBasicCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "searchCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseSupersetCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "calculateSupersetConfidence"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "buildUnifiedExercise",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "canonicalizeExerciseName"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildStrongMapping"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "processWorkoutCompleted",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "updateExerciseStats"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getUpcomingWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseAthleteId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "utils/parser-utils.ts",
+      "from_func": "resolveMuscleGroup",
+      "to_file": "utils/parser-utils.ts",
+      "to_func": "normalizeMuscleGroup"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "completeNode",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "saveProgress"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseWorkoutCreation"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "getExerciseById",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.matchExercises",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "getSuggestions"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "detectPRsFromWorkout",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "parseReps"
+    },
+    {
+      "from_file": "services/wolfpack/scoring.ts",
+      "from_func": "calculateBreakdown",
+      "to_file": "services/wolfpack/scoring.ts",
+      "to_func": "calculateAverageRpe"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "generatePathFromProgram",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "calculateNodePosition"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "initializeSyncService",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "createWorkoutSet",
+      "to_file": "types/brands.ts",
+      "to_func": "createSetId"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseSupersetCommand"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "getBodyParts",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getCustomExerciseDb",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureCustomExerciseTables"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "transformFullProgram",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "inferCategory"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/handle-workout-completed.ts",
+      "to_func": "writeToSupabase"
+    },
+    {
+      "from_file": "services/parser/csv.ts",
+      "from_func": "parseCSV",
+      "to_file": "services/parser/csv.ts",
+      "to_func": "parseCSVLine"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildUpward",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildUpward"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "mapCustomExerciseRow"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseRepRangeCommand"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "templatesKey"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "searchExerciseDb",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.destroy",
+      "to_file": "services/sync/index.ts",
+      "to_func": "networkUnsubscribe"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "getCachedFilterResults",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "buildFilterCacheKey"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getStorageDb",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCacheStats",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "updateStats"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.clearFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "getExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "fetchExerciseMedia"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "stringSimilarity",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "levenshteinDistanceOptimized"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "incrementUsageCount",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "queueForSync"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.startRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "prewarmEdgeFunction"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "flushPathsSyncQueue",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "findExerciseByAnyName",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "levenshteinDistanceOptimized"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "canonicalizeExerciseName",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeWhitespace"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createSetId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseIntentMatch",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "getClarificationOptions"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "buildHeaderIndex",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "headerKey"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "findTopMatches",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "calculateMatchScore"
+    },
+    {
+      "from_file": "services/popularity/global-rankings.ts",
+      "from_func": "buildPopularityMap",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "initRankingMaps"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "getRow"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.markFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getRegressions",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "extractFromCSV"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "getActiveChallenges",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallenges"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createWorkoutExerciseId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "weightsEqual",
+      "to_file": "utils/weight.ts",
+      "to_func": "compareWeights"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDF",
+      "to_file": "services/parser/pdf/normalizer.ts",
+      "to_func": "normalizeProgram"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "getPopularExercises",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "getPopularityScore"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "searchSimilar",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "createSparseVector"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "calculateRelevanceScore",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "levenshteinDistance"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "enqueuePathsSync",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "saveQueue"
+    },
+    {
+      "from_file": "services/stats/pr-detector.ts",
+      "from_func": "buildHistoricalPRs",
+      "to_file": "services/stats/pr-detector.ts",
+      "to_func": "estimateOneRepMax"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "getPath",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getAllPaths"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "useFeatureFlag",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "syncFlags"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.clearFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPrograms",
+      "to_file": "db/storage.ts",
+      "to_func": "loadProgramsFromAsyncStorage"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildUpward",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getRegressions"
+    },
+    {
+      "from_file": "utils/csv-export.ts",
+      "from_func": "exportProgramToExcel",
+      "to_file": "utils/csv-export.ts",
+      "to_func": "downloadExcel"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "mapToCoachInvite"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getCustomExerciseDb",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/voice/intent-mapping.ts",
+      "from_func": "matchByKeyword",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "hasExcludeTerm"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeWhitespace"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "migrateLocalData",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "syncExistingWorkoutsToServer"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.setUserId",
+      "to_file": "services/sync/index.ts",
+      "to_func": "syncAllPending"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "mapProgramRow"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "getChallengeProgress",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallenges"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "preloadCuratedPrograms",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "saveProgress",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "progressKey"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getMyAssignments",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToProgramAssignment"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseCsvToTable",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "pushRow"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "searchSimilar",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "cosineSimilarity"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "findExerciseByAnyName",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "stableWorkoutId"
+    },
+    {
+      "from_file": "services/exercise/resolver.ts",
+      "from_func": "resolveExercise",
+      "to_file": "services/exercise/resolver.ts",
+      "to_func": "scoreModifierMatch"
+    },
+    {
+      "from_file": "services/popularity/global-rankings.ts",
+      "from_func": "getRankingByAlias",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "initRankingMaps"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "searchCustomExercises"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getPendingCount",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "flush"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseSupersetGroupId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCachedLLMResponse",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "updateHitRate"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.resetRetries",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseDatabase",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "getMovementCategory"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseUnifiedWorkoutsFromMultipleCsv",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseUnifiedWorkoutsFromCsv"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "isValidDateParts"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "isWorkoutCompleted",
+      "to_file": "db/storage.ts",
+      "to_func": "getWorkoutHistory"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "setLastResultCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLastResultKey"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordWorkoutExercises",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "toWeightKg",
+      "to_file": "utils/weight.ts",
+      "to_func": "toKg"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "semanticSearch",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "logPerformance"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getEffectiveProgramData",
+      "to_file": "db/storage.ts",
+      "to_func": "getTemplateForProgram"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "mapCustomExerciseRow"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getTemplateForProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "pendingEditsKey"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "calculateUFIREScore",
+      "to_file": "services/voice/ufire/scoring-engine.ts",
+      "to_func": "normalizeSemanticScore"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "getContextualFlowScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "getWorkoutTypeMuscles"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeWhitespace"
+    },
+    {
+      "from_file": "services/import/history-importer.ts",
+      "from_func": "importWorkouts",
+      "to_file": "db/storage.ts",
+      "to_func": "saveWorkoutToHistory"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.useFallback",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "buildLookupMaps"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "getCachedFilterResults"
+    },
+    {
+      "from_file": "services/popularity/normalizer.ts",
+      "from_func": "exerciseNamesMatch",
+      "to_file": "services/popularity/normalizer.ts",
+      "to_func": "createCanonicalKey"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesAdvanced",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "fetchExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "findExerciseDbMatch"
+    },
+    {
+      "from_file": "utils/csv-export.ts",
+      "from_func": "downloadTemplate",
+      "to_file": "utils/csv-export.ts",
+      "to_func": "downloadCSV"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "formatInPreferredUnit",
+      "to_file": "utils/weight.ts",
+      "to_func": "convertTo"
+    },
+    {
+      "from_file": "hooks/use-exercise-media.ts",
+      "from_func": "useExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getExerciseMedia"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "queueDeletionForSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getProgramsByCategory",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "isControlCommand"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureExerciseSearchTables",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/parser/excel.ts",
+      "from_func": "parseExcelFromUri",
+      "to_file": "services/parser/excel.ts",
+      "to_func": "parseExcel"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "clearCache",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "resetStats"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "calculateUFIREScore",
+      "to_file": "services/voice/ufire/scoring-engine.ts",
+      "to_func": "getPopularityScore"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "clearOldCache",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "ensureCacheDirectory"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "findExerciseMatch",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "searchExercisesEnhanced"
+    },
+    {
+      "from_file": "hooks/use-pending-workout.ts",
+      "from_func": "usePendingWorkout",
+      "to_file": "hooks/use-pending-workout.ts",
+      "to_func": "checkForPendingWorkout"
+    },
+    {
+      "from_file": "services/workout/voice-parser.ts",
+      "from_func": "parseWorkoutEntry",
+      "to_file": "services/workout/voice-parser.ts",
+      "to_func": "calculateConfidence"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "resetPathsSyncRetries",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "saveQueue"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "updatePathProgressCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getPathProgressCache"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "loadProgramsFromAsyncStorage"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getWorkoutRecordById",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/programs/programs-service.ts",
+      "from_func": "ProgramsService.listCatalog",
+      "to_file": "services/programs/programs-service.ts",
+      "to_func": "ensureIndex"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.extractWorkout",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "uploadChunk"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "generateLinkToken"
+    },
+    {
+      "from_file": "services/voice/vocabulary.ts",
+      "from_func": "getVocabularyBias",
+      "to_file": "services/voice/vocabulary.ts",
+      "to_func": "extractTaxonomyVocabulary"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "mergeLiftStatsCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "setLiftStatsCache"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getTemplateForProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "mapProgramTemplateRow"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "tabContextReducer",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "getTabLabel"
+    },
+    {
+      "from_file": "context/program-import-context.tsx",
+      "from_func": "importReducer",
+      "to_file": "context/program-import-context.tsx",
+      "to_func": "countTotalExercises"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getExerciseFrequencyScore",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "calculateStats",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "calculateLongestStreak"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "enqueuePathsSync",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "writeToSupabase",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "upsertNodeProgress"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "incrementUsageCount",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "mapCustomExerciseRow"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPrograms",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "checkFlag",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "isFeatureEnabled"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "queueDeletionForSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "loadSyncQueueFromAsyncStorage"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "downloadAndCache",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCachePathForUrl"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getRecommendedNext",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getRegressions"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "getPopularExercises",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "detectPRsLocal",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "parseReps"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.resetRetries",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "createVector",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "extractWords"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseSetId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "calculateMatchScore",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "allWordsMatch"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "contrastRatio",
+      "to_file": "utils/colors.ts",
+      "to_func": "luminance"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getPathProgressCache"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "getContextualFlowScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "areMusclesRelated"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "getKagglePrograms",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "ensureIndicesAsync"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "ensureExerciseSearchIndex",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "ensureExerciseSearchIndex",
+      "to_file": "services/exercise/search-index.ts",
+      "to_func": "buildSearchRow"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "detectPRsLocal",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "calculateVolume"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseCounts",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "getExerciseMedia",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadMapping"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.markSynced",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "utils/csv-export.ts",
+      "from_func": "exportProgramToCSV",
+      "to_file": "utils/csv-export.ts",
+      "to_func": "programToCSV"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "db/storage.ts",
+      "to_func": "getLatestActiveWorkoutState"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.syncAllPending",
+      "to_file": "services/sync/index.ts",
+      "to_func": "updateState"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "safeNumber"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "clearPopularityCache",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "invalidateMemoryCache"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "initAuth",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "migrateLocalData"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getProgramCounts",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "semanticSearch",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "calculateSimilarity"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getRecencyScore",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "buildMergedPopularityScores"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getLatestActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "updateExercise",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "mapToCoachExercise"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "getExerciseBySlug",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseCoachId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/wolfpack/scoring.ts",
+      "from_func": "getMovementFromRank",
+      "to_file": "services/wolfpack/scoring.ts",
+      "to_func": "getLeagueThresholds"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "loadWorkoutHistoryFromAsyncStorage",
+      "to_file": "db/storage.ts",
+      "to_func": "workoutHistoryKey"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgramByName",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "updateUserChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallengeKey"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extractFromPDF",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "convertExtractedToParsed"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "getCacheStats",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/mode-context.tsx",
+      "to_func": "usePendingVerifications"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "refreshPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "getLocalStats"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLastResultCache"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getExerciseFrequencyScores",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "hooks/use-pending-workout.ts",
+      "from_func": "usePendingWorkout",
+      "to_file": "db/storage.ts",
+      "to_func": "clearActiveWorkoutState"
+    },
+    {
+      "from_file": "hooks/use-async-data.ts",
+      "from_func": "useAsyncData",
+      "to_file": "hooks/use-async-data.ts",
+      "to_func": "fetch"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "luminance",
+      "to_file": "utils/colors.ts",
+      "to_func": "toLinear"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteWorkoutTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "updateSubscriptionTier",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "mapToCoachProfile"
+    },
+    {
+      "from_file": "data/program-install.repo.ts",
+      "from_func": "AsyncStorageProgramInstallRepo.getInstalledKeys",
+      "to_file": "data/program-install.repo.ts",
+      "to_func": "getInstalledPrograms"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "getHistoricalMaxes",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "createSparseVector",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "extractWords"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getProcessedWorkoutsCache"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseUnifiedWorkoutsFromCsv",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseCsvToTable"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "disabledColor",
+      "to_file": "utils/colors.ts",
+      "to_func": "withOpacity"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "getNodeProgress"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDF",
+      "to_file": "services/parser/pdf/service.ts",
+      "to_func": "extractProgram"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "buildMergedPopularityScores",
+      "to_file": "services/popularity/normalizer.ts",
+      "to_func": "createCanonicalKey"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "initializeSyncService",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "startSyncService"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "getEquipmentList",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "matchExerciseRobust",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "lookupSlang"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "deletePath",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getAllPaths"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "warmSearchIndex",
+      "to_file": "services/exercise/search-index.ts",
+      "to_func": "ensureExerciseSearchIndex"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "resetPathsSyncRetries",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "completeNode",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "calculateWorkoutXP"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "ensureCuratedProgramsReady",
+      "to_file": "services/programs/curated-preloader.ts",
+      "to_func": "getCachedProgramIds"
+    },
+    {
+      "from_file": "hooks/use-exercise-media.ts",
+      "from_func": "useExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "hasMediaCached"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getProgressions"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesAdvanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "calculateRelevanceScore"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "completeWorkout",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "countTotalSets"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "matchTaxonomyExercises",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "extractActionWordPatterns"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.checkPopularityUpdates",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "hasNewerPopularityData"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.buildLookupMaps",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "getTiers"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "withOpacity",
+      "to_file": "utils/colors.ts",
+      "to_func": "hexToRgb"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "initAuth"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseByName",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "buildExerciseIndexes"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDFWithSelection",
+      "to_file": "services/parser/pdf/service.ts",
+      "to_func": "readPDFAsBase64"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "preloadCache",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "syncCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "getCachePathForUrl",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCacheDirectory"
+    },
+    {
+      "from_file": "services/voice/intent-mapping.ts",
+      "from_func": "matchVoiceIntent",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "findSpecificVariation"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "useSyncStatus",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "performSync"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "multiplyWeight",
+      "to_file": "utils/weight.ts",
+      "to_func": "lbs"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "getExerciseMedia",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "syncPathsJob",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "updateProcessedWorkoutXP"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "checkWorkoutForPRs",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "matchExercises"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "getExerciseById",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.clearFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "get"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "scoreExercises",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "getContextualFlowScore"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "getContextualFlowScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "areMusclesAntagonist"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseBasicCommand"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "initializeSyncService",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "updateStatus"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "migrateLocalData"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "useUserId"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "lookupInviteByToken",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "mapToCoachInvite"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "queueForSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "updatePathProgressCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "setPathProgressCache"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.addWorkout",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "searchExercisesAdvanced"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "useNavigationContext",
+      "to_file": "utils/navigation.ts",
+      "to_func": "encodeParams"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.initialize",
+      "to_file": "services/sync/index.ts",
+      "to_func": "updateState"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "toWeightLbs",
+      "to_file": "utils/weight.ts",
+      "to_func": "toLbs"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getAthleteAssignments",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToProgramAssignment"
+    },
+    {
+      "from_file": "context/sync-context.tsx",
+      "from_func": "SyncProvider",
+      "to_file": "db/storage.ts",
+      "to_func": "unregisterWorkoutSyncCallback"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/mode-context.tsx",
+      "to_func": "checkActiveWorkout"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildUnifiedExercise"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getBeginnerPrograms",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "computeDurationSeconds"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.initialize",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "useFallback"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordExercisePerformed",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "getPendingPathsSyncCount",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "ensureCuratedProgramsReady",
+      "to_file": "services/programs/curated-preloader.ts",
+      "to_func": "preloadCuratedPrograms"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "queueForSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "loadSyncQueueFromAsyncStorage"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "findHeaderByKey",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "headerKey"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "cacheResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "pruneStorageCache"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "queryExerciseSearchIndex",
+      "to_file": "services/exercise/search-index.ts",
+      "to_func": "normalizeMatchQuery"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "extractFromImage"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "completeWorkout",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "calculateDuration"
+    },
+    {
+      "from_file": "services/voice/vocabulary.ts",
+      "from_func": "getVocabularyBias",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "getAllVoiceAliases"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getWorkoutRecordById",
+      "to_file": "db/storage.ts",
+      "to_func": "mapUnifiedHistoryRow"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureCustomExerciseTables",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "updatePathProgressCache"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createProgramId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPreviousExerciseData",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "markWorkoutCompleted",
+      "to_file": "db/storage.ts",
+      "to_func": "loadWorkoutHistoryFromAsyncStorage"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "updatePRHistory",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticList",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "update"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "getTopSuggestions",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deleteCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "weight",
+      "to_file": "utils/weight.ts",
+      "to_func": "lbs"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getAllUserExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "fetchPromotedExercises"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "filterExercises",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateLocalSyncStatus",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "mapCustomExerciseRow"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "isTrialExpired",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseUnifiedWorkoutsFromCsv",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "detectExportType"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseExerciseId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "getExercisesByCategory",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/sync/popularity-sync.ts",
+      "from_func": "syncPopularity",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "getCachedPopularity"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "syncPathsJob",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "upsertNodeProgress"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "writeToSupabase",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "insertPlanDelta"
+    },
+    {
+      "from_file": "types/workout-session.ts",
+      "from_func": "createWorkoutExercise",
+      "to_file": "types/brands.ts",
+      "to_func": "createWorkoutExerciseId"
+    },
+    {
+      "from_file": "context/preferences-context.tsx",
+      "from_func": "PreferencesProvider",
+      "to_file": "context/preferences-context.tsx",
+      "to_func": "convertToKg"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "buildMergedPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "meetsExerciseThreshold"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "setLastResultCache"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimistic",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "triggerHaptic"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "stopSyncService",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "netInfoUnsubscribe"
+    },
+    {
+      "from_file": "services/wolfpack/scoring.ts",
+      "from_func": "calculateBreakdown",
+      "to_file": "services/wolfpack/scoring.ts",
+      "to_func": "countUniqueMuscleGroups"
+    },
+    {
+      "from_file": "services/popularity/normalizer.ts",
+      "from_func": "extractBaseExercise",
+      "to_file": "services/popularity/normalizer.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "markWorkoutCompleted",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "createProgram",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToCoachProgram"
+    },
+    {
+      "from_file": "context/sync-context.tsx",
+      "from_func": "SyncProvider",
+      "to_file": "context/sync-context.tsx",
+      "to_func": "unsubscribe"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "hasPendingCompletions",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getPendingCompletions"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "findBestMatch",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "searchSimilar"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "loadFullProgramDetails",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "getProgramById"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "getContextualFlowScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "isCompoundExercise"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "safeParseWorkoutSessionId",
+      "to_file": "types/brands.ts",
+      "to_func": "parseWorkoutSessionId"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "ensureExerciseSearchIndex",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureExerciseSearchTables"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "warmSearchIndex",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initTaxonomyMaps"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "assignQuickWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "incrementUsageCount",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseStrongTimestampToIso"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "assignProgram",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "generateAssignedWorkouts"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "findMatches",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "levenshteinDistanceOptimized"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "warmSearchIndex",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initFilterCache"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "useBreadcrumbs",
+      "to_file": "utils/navigation.ts",
+      "to_func": "useNavigationContext"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "pendingEditsKey"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeWhitespace"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "getTribunalQueue",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPendingPRs"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "performSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "syncCustomExercises"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "clearFailedPathsSyncJobs",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "saveQueue"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "updateExercise",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "config/feature-flags.ts",
+      "from_func": "getAllFlags",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "isFeatureEnabled"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "legacyActiveWorkoutKey"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getUserId"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "getUserChallenges",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallengeKey"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "joinChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "saveUserChallenge"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "enqueueRequest",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "processQueue"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deleteCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "getExercisesByBodyPart",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseWorkoutExerciseId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "completeWorkout",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "detectPRs"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "isValidId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "addProcessedWorkoutCache"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "addWeights",
+      "to_file": "utils/weight.ts",
+      "to_func": "toWeightLbs"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "calculateStats",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "calculateCurrentStreak"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "upsertCachedWorkout",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getCachedWorkouts"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseExerciseWithDropSet"
+    },
+    {
+      "from_file": "services/voice/vocabulary.ts",
+      "from_func": "getVocabularyStats",
+      "to_file": "services/voice/vocabulary.ts",
+      "to_func": "extractTaxonomyVocabulary"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "mix",
+      "to_file": "utils/colors.ts",
+      "to_func": "rgbToHex"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.getMimeTypeFromUri",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "getFileExtensionFromUri"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "createCommandResult"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "useContextPills",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "getFilterPills"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDFWithSelection",
+      "to_file": "services/parser/pdf/normalizer.ts",
+      "to_func": "normalizeProgram"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "assignExercisesAsWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseBasicCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "enhanceExerciseMatch"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "preloadKaggleIndex",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "ensureIndicesAsync"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "stripAccents"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.extractWorkout",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "createError"
+    },
+    {
+      "from_file": "data/program-install.repo.ts",
+      "from_func": "AsyncStorageProgramInstallRepo.getInstalledPrograms",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "upsertProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getProgramTemplates"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.startRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "processVAD"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "activeWorkoutKey"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "processWorkoutCompleted"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "performSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "mapCustomExerciseRow",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "parseJsonArray"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "matchVoiceIntent"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "incrementUsageCount",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "completeOAuthSession",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "getParamValue"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "buildMergedPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "meetsGlobalThreshold"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "findBestMatch",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "calculateMatchScore"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "useSyncStatus",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "getSyncStatus"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "preloadCuratedPrograms",
+      "to_file": "services/programs/curated-preloader.ts",
+      "to_func": "isPreloadNeeded"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "matchTaxonomyExercises"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.clear",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "getCoachProfile",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "mapToCoachProfile"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseUnifiedWorkoutsFromCsv",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseStrongTableToUnified"
+    },
+    {
+      "from_file": "hooks/use-exercisedb-mapping.ts",
+      "from_func": "preloadExerciseMedia",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "preloadCache"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "getProgramById",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "ensureIndicesAsync"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "lighten",
+      "to_file": "utils/colors.ts",
+      "to_func": "hexToRgb"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "generatePathFromProgram",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "createCheckpointNode"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "writeToSupabase",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "updateProcessedWorkoutXP"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgramByName",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createInvite",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "canAddAthlete"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "suggestTextColor",
+      "to_file": "utils/colors.ts",
+      "to_func": "luminance"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "taxonomyMatchesFilter"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getAthleteCalendarWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseBasicCommand",
+      "to_file": "services/workout/voice-parser.ts",
+      "to_func": "parseWorkoutEntry"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getFailedItems",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "toItem"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getExerciseFrequencyScore",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getFrequencyStore"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "customExerciseToSearchResult"
+    },
+    {
+      "from_file": "services/parser/pdf/normalizer.ts",
+      "from_func": "findBestMatch",
+      "to_file": "services/parser/pdf/normalizer.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getPopularPrograms",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "preloadExerciseDatabase",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.forceSync",
+      "to_file": "services/sync/index.ts",
+      "to_func": "updateState"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "clearFailedPathsSyncJobs",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "loadQueue"
+    },
+    {
+      "from_file": "services/exercise/nlp-enrichment.ts",
+      "from_func": "getMovementPatternForExercise",
+      "to_file": "services/exercise/nlp-enrichment.ts",
+      "to_func": "buildPatternIndex"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.clear",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "buildVocabulary",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "generateNgrams"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "checkWorkoutForPRs",
+      "to_file": "services/stats/pr-detector.ts",
+      "to_func": "detectExercisePRs"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "stableWorkoutId",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "sha1"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getOverdueWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDayBounds"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "syncPendingWorkouts",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "removePendingCompletion"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "getActivePathInstance"
+    },
+    {
+      "from_file": "services/gym/gym-service.ts",
+      "from_func": "searchNearbyGyms",
+      "to_file": "services/gym/gym-service.ts",
+      "to_func": "extractGymName"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "getLocalMergedCache"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "convertTo",
+      "to_file": "utils/weight.ts",
+      "to_func": "toWeightKg"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "initFilterCache",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initTaxonomyMaps"
+    },
+    {
+      "from_file": "services/exercise/resolver.ts",
+      "from_func": "resolveExercise",
+      "to_file": "services/exercise/resolver.ts",
+      "to_func": "initializeAliasMap"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseHevyTimestampToIso"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "detectPRsFromWorkout",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/parser/excel.ts",
+      "from_func": "parseExcel",
+      "to_file": "services/parser/excel.ts",
+      "to_func": "getValue"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "findExerciseByAnyName",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "logPerformance"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "searchExercises",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.getPending",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "getCacheStats",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadMapping"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "updateProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLiftStatsCache"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/mode-context.tsx",
+      "to_func": "detectMode"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "initTaxonomyMaps",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "processQueue",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "request"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseWorkoutCreation",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "capitalize"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.addWorkout",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseWorkoutCreation",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "recordWorkoutForChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "updateUserChallenge"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "getContextualFlowScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "getPrimaryMuscleGroup"
+    },
+    {
+      "from_file": "services/voice/ufire/contextual-flow.ts",
+      "from_func": "inferWorkoutType",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "getPrimaryMuscleGroup"
+    },
+    {
+      "from_file": "services/gym/gym-service.ts",
+      "from_func": "searchNearbyGyms",
+      "to_file": "services/gym/gym-service.ts",
+      "to_func": "calculateDistance"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "savePath",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getAllPaths"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "cleanupExpiredEntries",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "saveStats"
+    },
+    {
+      "from_file": "services/wolfpack/scoring.ts",
+      "from_func": "calculateBreakdown",
+      "to_file": "services/wolfpack/scoring.ts",
+      "to_func": "countCompletedSets"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "completeWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToAssignedWorkout"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "acceptInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "mapToCoachAthlete"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "syncPathsJob",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "insertPlanDelta"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "semanticSearch",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "buildSearchIndex"
+    },
+    {
+      "from_file": "services/programs/programs-service.ts",
+      "from_func": "ProgramsService.installProgramsByCatalogIds",
+      "to_file": "services/programs/programs-service.ts",
+      "to_func": "getById"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesAdvanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initTaxonomyMaps"
+    },
+    {
+      "from_file": "services/gym/gym-service.ts",
+      "from_func": "searchNearbyGyms",
+      "to_file": "services/gym/gym-service.ts",
+      "to_func": "getBoundingBox"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "calculateMatchScore",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "levenshteinDistance"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "addWeights",
+      "to_file": "utils/weight.ts",
+      "to_func": "kg"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "getKaggleProgramCount",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "loadFullData"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "isCacheAvailable",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadExerciseDbCache"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "cacheResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "pruneMemoryCache"
+    },
+    {
+      "from_file": "services/sync/workout-sync.ts",
+      "from_func": "syncWorkoutBatch",
+      "to_file": "services/sync/workout-sync.ts",
+      "to_func": "syncWorkoutToServer"
+    },
+    {
+      "from_file": "services/exercise/nlp-enrichment.ts",
+      "from_func": "getSiblings",
+      "to_file": "services/exercise/nlp-enrichment.ts",
+      "to_func": "getExerciseNLP"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "markWorkoutCompleted",
+      "to_file": "db/storage.ts",
+      "to_func": "workoutHistoryKey"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateLocalSyncStatus",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "syncCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getSyncQueue"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "safeParseExerciseId",
+      "to_file": "types/brands.ts",
+      "to_func": "parseExerciseId"
+    },
+    {
+      "from_file": "services/recommendations/screener-service.ts",
+      "from_func": "getRecommendation",
+      "to_file": "services/recommendations/screener-service.ts",
+      "to_func": "getWizardRecommendation"
+    },
+    {
+      "from_file": "services/paths/storage.ts",
+      "from_func": "getLiftStats",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "liftStatsFromDb"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.stopRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "createError"
+    },
+    {
+      "from_file": "context/mode-context.tsx",
+      "from_func": "ModeProvider",
+      "to_file": "context/mode-context.tsx",
+      "to_func": "useGeofence"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "enhanceExerciseMatch",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCachedResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "getCacheKey"
+    },
+    {
+      "from_file": "services/exercise/static-exercisedb.ts",
+      "from_func": "preloadCache",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "loadMapping"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "createExercise",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "mapToCoachExercise"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDF",
+      "to_file": "services/parser/pdf/service.ts",
+      "to_func": "analyzePDF"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "buildSearchIndex",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/exercise/nlp-enrichment.ts",
+      "from_func": "getProgression",
+      "to_file": "services/exercise/nlp-enrichment.ts",
+      "to_func": "getExerciseNLP"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "scoreExercises",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getExerciseFrequencyScores"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.queueWorkout",
+      "to_file": "services/sync/index.ts",
+      "to_func": "updateState"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.getByName",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "buildLookupMaps"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getProgramById",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getProgramIndex"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "clearMediaCache",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getCacheDirectory"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "syncCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "updateLocalSyncStatus"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "matchExerciseRobust",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "scoreModifierOverlap"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "calculateUFIREScore",
+      "to_file": "services/voice/ufire/contextual-flow.ts",
+      "to_func": "getContextualFlowScore"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "refreshPopularityScores",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "syncPopularity"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.matchExercises",
+      "to_file": "services/exercise/resolver.ts",
+      "to_func": "resolveExerciseName"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "getSmartSuggestions"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "calculateStats",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.startRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "requestPermission"
+    },
+    {
+      "from_file": "services/parser/pdf/service.ts",
+      "from_func": "parsePDFWithSelection",
+      "to_file": "services/parser/pdf/service.ts",
+      "to_func": "extractProgram"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "upsertCachedWorkout",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "cacheAssignedWorkouts"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "darken",
+      "to_file": "utils/colors.ts",
+      "to_func": "rgbToHex"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "updateUserChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallenges"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "createCoachProfile",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "mapToCoachProfile"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseSupersetCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/programs/programs-service.ts",
+      "from_func": "ProgramsService.installProgramsByCatalogIds",
+      "to_file": "db/storage.ts",
+      "to_func": "saveProgram"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "submitVote",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPendingPRs"
+    },
+    {
+      "from_file": "services/import/history-importer.ts",
+      "from_func": "importWorkouts",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "detectPRs"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "refreshPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "invalidateMemoryCache"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "roundToPlate",
+      "to_file": "utils/weight.ts",
+      "to_func": "lbs"
+    },
+    {
+      "from_file": "services/sync/popularity-sync.ts",
+      "from_func": "syncPopularity",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "savePopularityCache"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseIntentMatch"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseCsvToTable",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "stripBom"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getStorageDb",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureStorageTables"
+    },
+    {
+      "from_file": "services/exercise/resolver.ts",
+      "from_func": "resolveExercise",
+      "to_file": "services/exercise/resolver.ts",
+      "to_func": "extractModifiers"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getUserExerciseFrequency",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "getCachedProgramIds",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.getFailedItems",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "stableWorkoutId"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "removePendingCompletion",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getPendingCompletions"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "startNetworkMonitoring",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "syncPendingWorkouts"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "stopNetworkMonitoring",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "unsubscribeNetInfo"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "determineMatchType"
+    },
+    {
+      "from_file": "services/voice/intent-mapping.ts",
+      "from_func": "matchVoiceIntent",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "hasExcludeTerm"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteWorkoutRecord",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getAllUserExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "recordWorkoutForChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getActiveChallenges"
+    },
+    {
+      "from_file": "services/parser/pdf/normalizer.ts",
+      "from_func": "findBestMatch",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "searchExercises"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateLocalSyncStatus",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExercises"
+    },
+    {
+      "from_file": "services/workout/pr-detector.ts",
+      "from_func": "detectPRs",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "parseReps"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "preloadExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "getExerciseMedia"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "findDatabaseMatch"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "downloadAndCache",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "ensureCacheDirectory"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticToggle",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "update"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "queueWorkoutCompletion",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getPendingCompletions"
+    },
+    {
+      "from_file": "services/paths/storage.ts",
+      "from_func": "createPathInstance",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "pathInstanceFromDb"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.clearFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "migrateLocalData",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "getWords",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "normalize"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureSyncQueueTable",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/offline/workout-cache.ts",
+      "from_func": "getCachedWorkoutById",
+      "to_file": "services/offline/workout-cache.ts",
+      "to_func": "getCachedWorkouts"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "useContextPills",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "useTabContext"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "searchExercises",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "filterExercises"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "sumPowerlifts"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearWorkoutHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/workout/pr-detector.ts",
+      "from_func": "detectPRs",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "calculateVolume"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.markFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "buildEmbeddings",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "buildVocabulary"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "safeParseProgramId",
+      "to_file": "types/brands.ts",
+      "to_func": "parseProgramId"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createSupersetGroupId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "compareWeights",
+      "to_file": "utils/weight.ts",
+      "to_func": "toWeightKg"
+    },
+    {
+      "from_file": "services/recommendations/screener-service.ts",
+      "from_func": "getRecommendation",
+      "to_file": "services/recommendations/screener-service.ts",
+      "to_func": "analyzeHistory"
+    },
+    {
+      "from_file": "services/coach/invites.ts",
+      "from_func": "createLinkInvite",
+      "to_file": "services/coach/invites.ts",
+      "to_func": "createInvite"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.markFailed",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "mergeLiftStatsCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLiftStatsCache"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "refreshPopularityScores",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "saveLocalMergedCache"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "detectPRsLocal",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseProgramId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "pressedColor",
+      "to_file": "utils/colors.ts",
+      "to_func": "darken"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deserializeSyncQueueItem",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "deserializeCustomExercise"
+    },
+    {
+      "from_file": "services/notifications/push-service.ts",
+      "from_func": "setupPushNotifications",
+      "to_file": "services/notifications/push-service.ts",
+      "to_func": "getExpoPushToken"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "getChallengeProgress",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getPath"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.stopRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "getFileExtensionFromUri"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getProgramsByDifficulty",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initTaxonomyMaps"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "lookupSlang"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "resolveExerciseName",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "matchExerciseRobust"
+    },
+    {
+      "from_file": "services/wolfpack/scoring.ts",
+      "from_func": "calculateEffortScore",
+      "to_file": "services/wolfpack/scoring.ts",
+      "to_func": "calculateBreakdown"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesEnhanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "initFilterCache"
+    },
+    {
+      "from_file": "context/theme-context.tsx",
+      "from_func": "AppThemeProvider",
+      "to_file": "context/theme-context.tsx",
+      "to_func": "getColorsForPalette"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.stopRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "getMimeTypeFromUri"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "isDynamicPopularityActive",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "meetsGlobalThreshold"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "searchExercises",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseSetsOfExercise"
+    },
+    {
+      "from_file": "services/workout/voice-parser.ts",
+      "from_func": "findBestExerciseMatch",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "searchExercisesAdvanced"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "luminance",
+      "to_file": "utils/colors.ts",
+      "to_func": "hexToRgb"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "useContextPills",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "clearFilters"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getSavedWorkoutTemplates",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "writeToSupabase",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "upsertLiftStats"
+    },
+    {
+      "from_file": "navigation/types.ts",
+      "from_func": "safeNavigate",
+      "to_file": "navigation/types.ts",
+      "to_func": "buildUrl"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseByName",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "quickScore",
+      "to_file": "services/voice/ufire/scoring-engine.ts",
+      "to_func": "calculateUFIREScore"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "updateProgram",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToCoachProgram"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticList",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "useOptimistic"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "startWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "sendCoachNotification"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "createVector",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "generateNgrams"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "handleAppStateChange",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "performSync"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "multiplyWeight",
+      "to_file": "utils/weight.ts",
+      "to_func": "kg"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createWorkoutSessionId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "saveUserChallenge",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getUserChallengeKey"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "deleteProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getProgramTemplates"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.getPendingCount",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/notifications/push-service.ts",
+      "from_func": "setupPushNotifications",
+      "to_file": "services/notifications/push-service.ts",
+      "to_func": "registerPushToken"
+    },
+    {
+      "from_file": "services/voice/modifier-matcher.ts",
+      "from_func": "matchExerciseRobust",
+      "to_file": "services/voice/modifier-matcher.ts",
+      "to_func": "extractComponents"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "calculateExerciseStats",
+      "to_file": "services/stats/pr-detector.ts",
+      "to_func": "buildHistoricalPRs"
+    },
+    {
+      "from_file": "services/coach/index.ts",
+      "from_func": "hasActiveSubscription",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "hooks/use-direct-voice.ts",
+      "from_func": "useDirectVoice",
+      "to_file": "hooks/use-direct-voice.ts",
+      "to_func": "startDurationTracking"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "processWorkoutCompleted",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "calculateXP"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveWorkoutToHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "findExerciseByAnyName",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "generateCanonicalSlug"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.markSynced",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "performSync",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "updateStatus"
+    },
+    {
+      "from_file": "services/popularity/global-rankings.ts",
+      "from_func": "findExerciseByVoice",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "initRankingMaps"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.markSynced",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureStorageTables"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getRecencyScore",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "context/preferences-context.tsx",
+      "from_func": "PreferencesProvider",
+      "to_file": "services/gym/gym-membership-service.ts",
+      "to_func": "joinGym"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "wordOverlapScore",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "getWords"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "fetchExerciseMedia",
+      "to_file": "services/exercise/media-service.ts",
+      "to_func": "downloadAndCache"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "getSiblings",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildProgressionIndex"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.ensureExerciseNames",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "getExerciseDatabase"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "updatePRHistory",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPRHistory"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "parseGiantSetCommand"
+    },
+    {
+      "from_file": "hooks/use-exercisedb-mapping.ts",
+      "from_func": "preloadExerciseMedia",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "getExerciseMedia"
+    },
+    {
+      "from_file": "services/stats/pr-detector.ts",
+      "from_func": "detectExercisePRs",
+      "to_file": "services/stats/pr-detector.ts",
+      "to_func": "estimateOneRepMax"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "searchCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseDatabase",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "getDifficultyLevel"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.startRecording",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "createError"
+    },
+    {
+      "from_file": "hooks/use-pending-workout.ts",
+      "from_func": "usePendingWorkout",
+      "to_file": "db/storage.ts",
+      "to_func": "getLatestActiveWorkoutState"
+    },
+    {
+      "from_file": "config/feature-flags.ts",
+      "from_func": "isInRollout",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "hashUserId"
+    },
+    {
+      "from_file": "services/coach/index.ts",
+      "from_func": "isCoach",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "getCachedResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "updateHitRate"
+    },
+    {
+      "from_file": "hooks/use-exercise-media.ts",
+      "from_func": "useExerciseMedia",
+      "to_file": "hooks/use-exercise-media.ts",
+      "to_func": "fetchMedia"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "createQuickWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "mapToQuickWorkout"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "upsertProgramTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "getExerciseFrequencyScores",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getTodaysWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDayBounds"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "updateExerciseStats",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "calculateEWMA"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgramTemplates",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "joinChallenge",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "savePath"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "flushExercise",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildUnifiedExercise"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseUnifiedWorkoutsFromCsv",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseHevyTableToUnified"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "getTopSuggestions",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "logPerformance"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "buildWorkoutCompletedEvent",
+      "to_file": "services/paths/types.ts",
+      "to_func": "normalizeExerciseKey"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesAdvanced",
+      "to_file": "services/exercise/search-index.ts",
+      "to_func": "queryExerciseSearchIndex"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "createSparseVector",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "generateNgrams"
+    },
+    {
+      "from_file": "services/paths/storage.ts",
+      "from_func": "getActivePathInstance",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "pathInstanceFromDb"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.getPending",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getActiveChallenges"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "updateCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "queueForSync"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "flush",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildUnifiedExercise"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "tintedBackground",
+      "to_file": "utils/colors.ts",
+      "to_func": "withOpacity"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgramByName",
+      "to_file": "db/storage.ts",
+      "to_func": "mapProgramRow"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "getProgramsByType",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.getNextTier",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "getById"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "ensureIndicesAsync",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "loadFullData"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getPending",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "toItem"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkDailyProgress",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "updateUserChallenge"
+    },
+    {
+      "from_file": "services/coach/exercises.ts",
+      "from_func": "createExercise",
+      "to_file": "services/coach/exercises.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "config/feature-flags.ts",
+      "from_func": "initFeatureFlags",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "syncFlags"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "initFilterCache",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "buildFilterCacheKey"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "calculateStats",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "calculateExerciseStats"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "weight",
+      "to_file": "utils/weight.ts",
+      "to_func": "kg"
+    },
+    {
+      "from_file": "services/workout/pr-detector.ts",
+      "from_func": "getHistoricalPRs",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "calculateVolume"
+    },
+    {
+      "from_file": "services/popularity/global-rankings.ts",
+      "from_func": "getRankingByName",
+      "to_file": "services/popularity/global-rankings.ts",
+      "to_func": "initRankingMaps"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "cacheResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "updateStats"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "handleNetworkChange",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "updateStatus"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.resetRetries",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/sync/index.ts",
+      "from_func": "SyncService.syncAllPending",
+      "to_file": "services/sync/workout-sync.ts",
+      "to_func": "syncWorkoutToServer"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "updateProgram",
+      "to_file": "db/storage.ts",
+      "to_func": "getPrograms"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.resetRetries",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "legacyActiveWorkoutKey"
+    },
+    {
+      "from_file": "services/coach/profile.ts",
+      "from_func": "getTrialDaysRemaining",
+      "to_file": "services/coach/profile.ts",
+      "to_func": "getCoachProfile"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "triggerSync",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "performSync"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "deleteCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getUserId"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "flushPathsSyncQueue",
+      "to_file": "services/sync/paths-sync.ts",
+      "to_func": "syncPathsJob"
+    },
+    {
+      "from_file": "utils/string-distance.ts",
+      "from_func": "findBestMatch",
+      "to_file": "utils/string-distance.ts",
+      "to_func": "levenshteinDistanceOptimized"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SyncQueue.getPendingCount",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getBackend"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkDailyProgress",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getYesterday"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.processVAD",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "stopRecording"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getCustomExercises",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "loadCustomExercisesFromAsyncStorage"
+    },
+    {
+      "from_file": "hooks/use-pending-workout.ts",
+      "from_func": "usePendingWorkout",
+      "to_file": "db/storage.ts",
+      "to_func": "clearPendingWorkoutEdits"
+    },
+    {
+      "from_file": "services/programs/kaggle-loader.ts",
+      "from_func": "getKaggleProgramByName",
+      "to_file": "services/programs/kaggle-loader.ts",
+      "to_func": "ensureIndicesAsync"
+    },
+    {
+      "from_file": "services/voice/intent-mapping.ts",
+      "from_func": "matchVoiceIntent",
+      "to_file": "services/voice/intent-mapping.ts",
+      "to_func": "normalizeInput"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getSyncQueue",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "getCustomExerciseDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getUnifiedHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "hooks/use-exercisedb-mapping.ts",
+      "from_func": "useExerciseDbMapping",
+      "to_file": "services/exercise/static-exercisedb.ts",
+      "to_func": "preloadCache"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "activeWorkoutKey"
+    },
+    {
+      "from_file": "services/recommendations/screener-service.ts",
+      "from_func": "analyzeHistory",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPRHistory"
+    },
+    {
+      "from_file": "services/paths/handle-workout-completed.ts",
+      "from_func": "handleWorkoutCompleted",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "insertProcessedWorkout"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "ensureExerciseNames"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "groupByCategory",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getAllPrograms"
+    },
+    {
+      "from_file": "services/popularity/algorithm.ts",
+      "from_func": "buildMergedPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "findStaticScore"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "findExerciseMatch",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "getClarificationReason"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "searchExercisesAdvanced",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "parseSemanticIntent"
+    },
+    {
+      "from_file": "services/parser/pdf/normalizer.ts",
+      "from_func": "normalizeProgram",
+      "to_file": "services/parser/pdf/normalizer.ts",
+      "to_func": "findBestMatch"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getFailedItems",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getDb",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "initialize"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "mergeParams",
+      "to_file": "utils/navigation.ts",
+      "to_func": "decodeParams"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "lighten",
+      "to_file": "utils/colors.ts",
+      "to_func": "rgbToHex"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "getCachedProgramWorkouts",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "completeNode",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "getProgress"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildDownward"
+    },
+    {
+      "from_file": "services/exercise/semantic-search.ts",
+      "from_func": "getTopSuggestions",
+      "to_file": "services/exercise/semantic-search.ts",
+      "to_func": "calculateSimilarity"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildUnifiedExercise"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTimestampToIso",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "makeIso"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseUserId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "checkWorkoutForPRs",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "invalidateStatsCache"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "getExercisePopularity",
+      "to_file": "services/popularity/cache.ts",
+      "to_func": "getPopularityScores"
+    },
+    {
+      "from_file": "hooks/use-pending-workout.ts",
+      "from_func": "usePendingWorkout",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "useUserId"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.clear",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "getDb"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "getLastResultCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getLastResultKey"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "buildUpward"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.initialize",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "buildLookupMaps"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getUploadedPrograms",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "saveWorkoutTemplate",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getSyncQueue",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "loadSyncQueueFromAsyncStorage"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeWhitespace"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getUpcomingWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDayBounds"
+    },
+    {
+      "from_file": "services/offline/paths-cache.ts",
+      "from_func": "addProcessedWorkoutCache",
+      "to_file": "services/offline/paths-cache.ts",
+      "to_func": "getProcessedWorkoutsCache"
+    },
+    {
+      "from_file": "config/feature-flags.ts",
+      "from_func": "isFeatureEnabled",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "isInRollout"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseStrongTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "parseDurationToSeconds"
+    },
+    {
+      "from_file": "services/voice/ufire/frequency-tracker.ts",
+      "from_func": "recordExercisePerformed",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "saveFrequencyStore"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "createCustomExercise",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "queueForSync"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "clearWorkoutHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "workoutHistoryKey"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "AuthProvider",
+      "to_file": "context/auth-context.tsx",
+      "to_func": "completeOAuthSession"
+    },
+    {
+      "from_file": "utils/csv-export.ts",
+      "from_func": "downloadExcelTemplate",
+      "to_file": "utils/csv-export.ts",
+      "to_func": "downloadExcel"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "flushExercise"
+    },
+    {
+      "from_file": "hooks/use-optimistic.ts",
+      "from_func": "useOptimisticCounter",
+      "to_file": "hooks/use-optimistic.ts",
+      "to_func": "update"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkDailyProgress",
+      "to_file": "services/challenges/challenge-service.ts",
+      "to_func": "getActiveChallenges"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.initialize",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureSyncQueueTable"
+    },
+    {
+      "from_file": "utils/navigation.ts",
+      "from_func": "navigateWithContext",
+      "to_file": "utils/navigation.ts",
+      "to_func": "encodeParams"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "getHistoricalMaxes",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "findSimilarCached",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "normalizeTranscript"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.extractWorkout",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "splitIntoChunks"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "createExerciseId",
+      "to_file": "types/brands.ts",
+      "to_func": "generateId"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildProgressionTree",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getRegressions"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "utils/fuzzy.ts",
+      "from_func": "calculateMatchScore",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "wordOverlapScore"
+    },
+    {
+      "from_file": "services/workout/pr-detector.ts",
+      "from_func": "detectPRs",
+      "to_file": "services/workout/pr-detector.ts",
+      "to_func": "getHistoricalPRs"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "getDatabase",
+      "to_file": "db/sqlite.ts",
+      "to_func": "openDatabase"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "generateClarificationRequest",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "getUFIREExplanation"
+    },
+    {
+      "from_file": "db/sqlite.ts",
+      "from_func": "ensureCuratedProgramsTable",
+      "to_file": "db/sqlite.ts",
+      "to_func": "addColumnIfMissing"
+    },
+    {
+      "from_file": "services/sync/paths-sync.ts",
+      "from_func": "syncPathsJob",
+      "to_file": "services/paths/storage.ts",
+      "to_func": "upsertLiftStats"
+    },
+    {
+      "from_file": "context/sync-context.tsx",
+      "from_func": "SyncProvider",
+      "to_file": "db/storage.ts",
+      "to_func": "registerWorkoutSyncCallback"
+    },
+    {
+      "from_file": "services/voice/voice-direct-service.ts",
+      "from_func": "VoiceDirectService.processVAD",
+      "to_file": "services/voice/voice-direct-service.ts",
+      "to_func": "vadCallback"
+    },
+    {
+      "from_file": "services/sync/popularity-sync.ts",
+      "from_func": "hasNewerPopularityData",
+      "to_file": "services/sync/popularity-sync.ts",
+      "to_func": "getLocalCacheVersion"
+    },
+    {
+      "from_file": "services/paths/progress-controller.ts",
+      "from_func": "processWorkoutCompleted",
+      "to_file": "services/paths/progress-controller.ts",
+      "to_func": "findCompletedNodes"
+    },
+    {
+      "from_file": "services/recommendations/screener-service.ts",
+      "from_func": "analyzeHistory",
+      "to_file": "services/recommendations/screener-service.ts",
+      "to_func": "getMaxWeight"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseDatabase",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "getBodyRegionForMuscle"
+    },
+    {
+      "from_file": "services/tribunal/engine.ts",
+      "from_func": "detectPRsFromWorkout",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPRHistory"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "useFeatureFlag",
+      "to_file": "hooks/use-feature-flag.ts",
+      "to_func": "checkFlag"
+    },
+    {
+      "from_file": "hooks/use-paginated-data.ts",
+      "from_func": "usePaginatedData",
+      "to_file": "hooks/use-paginated-data.ts",
+      "to_func": "reset"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseSetsOfExercise",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "getOverdueWorkouts",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "getLocalDateString"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getActiveWorkoutState",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "preloadCuratedPrograms",
+      "to_file": "db/sqlite.ts",
+      "to_func": "ensureCuratedProgramsTable"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "getStorageDb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getWorkoutStats",
+      "to_file": "db/storage.ts",
+      "to_func": "getUnifiedHistory"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "safeNumber"
+    },
+    {
+      "from_file": "hooks/use-direct-voice.ts",
+      "from_func": "useDirectVoice",
+      "to_file": "hooks/use-direct-voice.ts",
+      "to_func": "stopRecordingInternal"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "mix",
+      "to_file": "utils/colors.ts",
+      "to_func": "hexToRgb"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "setPendingWorkoutEdits",
+      "to_file": "db/storage.ts",
+      "to_func": "pendingEditsRowId"
+    },
+    {
+      "from_file": "context/auth-context.tsx",
+      "from_func": "initAuth",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "initializeTierSystem"
+    },
+    {
+      "from_file": "services/stats/stats-service.ts",
+      "from_func": "getTopExercises",
+      "to_file": "services/stats/stats-service.ts",
+      "to_func": "calculateStats"
+    },
+    {
+      "from_file": "types/brands.ts",
+      "from_func": "parseWorkoutSessionId",
+      "to_file": "types/brands.ts",
+      "to_func": "isValidIdFormat"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseCsvToTable",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "normalizeBom"
+    },
+    {
+      "from_file": "services/exercise/sync-service.ts",
+      "from_func": "handleNetworkChange",
+      "to_file": "services/exercise/sync-service.ts",
+      "to_func": "performSync"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "getSyncQueue",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "deserializeCustomExercise"
+    },
+    {
+      "from_file": "context/preferences-context.tsx",
+      "from_func": "PreferencesProvider",
+      "to_file": "services/gym/gym-membership-service.ts",
+      "to_func": "leaveCurrentGym"
+    },
+    {
+      "from_file": "services/exercise/search-index.ts",
+      "from_func": "queryExerciseSearchIndex",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/notifications/push-service.ts",
+      "from_func": "getExpoPushToken",
+      "to_file": "services/notifications/push-service.ts",
+      "to_func": "requestNotificationPermissions"
+    },
+    {
+      "from_file": "services/programs/index.ts",
+      "from_func": "toStorageFormat",
+      "to_file": "services/programs/index.ts",
+      "to_func": "getFullWorkouts"
+    },
+    {
+      "from_file": "hooks/use-feature-flag.ts",
+      "from_func": "useFeatureFlagWithLoading",
+      "to_file": "config/feature-flags.ts",
+      "to_func": "syncFlags"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.extract",
+      "to_file": "services/parser/extractor-service.ts",
+      "to_func": "extractFromPDF"
+    },
+    {
+      "from_file": "services/exercise/exercisedb-client.ts",
+      "from_func": "getExercisesByEquipment",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "enqueueRequest"
+    },
+    {
+      "from_file": "constants/routes.ts",
+      "from_func": "isProtectedRoute",
+      "to_file": "constants/routes.ts",
+      "to_func": "isAuthRoute"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseDatabase",
+      "to_file": "services/exercise/categories.ts",
+      "to_func": "getEquipmentCategory"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "buildEmbeddings",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "createSparseVector"
+    },
+    {
+      "from_file": "services/voice/ufire/scoring-engine.ts",
+      "from_func": "calculateUFIREScore",
+      "to_file": "services/voice/ufire/frequency-tracker.ts",
+      "to_func": "getExerciseFrequencyScores"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "checkPRMilestones",
+      "to_file": "services/tribunal/engine.ts",
+      "to_func": "getPRHistory"
+    },
+    {
+      "from_file": "services/exercise/search.ts",
+      "from_func": "calculateRelevanceScore",
+      "to_file": "services/exercise/search.ts",
+      "to_func": "getPopularityScore"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "convertTo",
+      "to_file": "utils/weight.ts",
+      "to_func": "toWeightLbs"
+    },
+    {
+      "from_file": "services/leagues/tier-system.ts",
+      "from_func": "TierCacheClass.initialize",
+      "to_file": "services/leagues/tier-system.ts",
+      "to_func": "validateAgainstFallback"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "isPreloadNeeded",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "services/exercise/database.ts",
+      "from_func": "getExerciseById",
+      "to_file": "services/exercise/database.ts",
+      "to_func": "buildExerciseIndexes"
+    },
+    {
+      "from_file": "utils/csv-export.ts",
+      "from_func": "exportProgramToCSV",
+      "to_file": "utils/csv-export.ts",
+      "to_func": "downloadCSV"
+    },
+    {
+      "from_file": "services/paths/engine.ts",
+      "from_func": "completeNode",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "calculateStreak"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.markSynced",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "save"
+    },
+    {
+      "from_file": "services/exercise/media-service.ts",
+      "from_func": "findExerciseDbMatch",
+      "to_file": "services/exercise/exercisedb-client.ts",
+      "to_func": "searchExercises"
+    },
+    {
+      "from_file": "context/tab-context.tsx",
+      "from_func": "TabContextProvider",
+      "to_file": "context/tab-context.tsx",
+      "to_func": "getActiveFiltersCount"
+    },
+    {
+      "from_file": "services/import/unified-workout-parser.ts",
+      "from_func": "parseHevyTableToUnified",
+      "to_file": "services/import/unified-workout-parser.ts",
+      "to_func": "buildHeaderIndex"
+    },
+    {
+      "from_file": "utils/weight.ts",
+      "from_func": "addWeights",
+      "to_file": "utils/weight.ts",
+      "to_func": "lbs"
+    },
+    {
+      "from_file": "services/coach/programs.ts",
+      "from_func": "completeWorkout",
+      "to_file": "services/coach/programs.ts",
+      "to_func": "sendCoachNotification"
+    },
+    {
+      "from_file": "services/exercise/custom-exercises.ts",
+      "from_func": "queueForSync",
+      "to_file": "services/exercise/custom-exercises.ts",
+      "to_func": "serializeCustomExercise"
+    },
+    {
+      "from_file": "services/popularity/cache.ts",
+      "from_func": "refreshPopularityScores",
+      "to_file": "services/popularity/algorithm.ts",
+      "to_func": "buildMergedPopularityScores"
+    },
+    {
+      "from_file": "services/popularity/normalizer.ts",
+      "from_func": "createCanonicalKey",
+      "to_file": "services/popularity/normalizer.ts",
+      "to_func": "normalizeExerciseName"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseVoiceCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "isNavigationCommand"
+    },
+    {
+      "from_file": "services/voice/cache.ts",
+      "from_func": "cacheResult",
+      "to_file": "services/voice/cache.ts",
+      "to_func": "getCacheKey"
+    },
+    {
+      "from_file": "services/voice/embeddings.ts",
+      "from_func": "reindexEmbeddings",
+      "to_file": "services/voice/embeddings.ts",
+      "to_func": "clearEmbeddingsCache"
+    },
+    {
+      "from_file": "services/workout/pr-detector-local.ts",
+      "from_func": "getHistoricalMaxes",
+      "to_file": "services/workout/pr-detector-local.ts",
+      "to_func": "calculateVolume"
+    },
+    {
+      "from_file": "services/challenges/challenge-service.ts",
+      "from_func": "joinChallenge",
+      "to_file": "services/paths/engine.ts",
+      "to_func": "generatePathFromProgram"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "AsyncStorageQueueBackend.getFailedItems",
+      "to_file": "services/sync/queue.ts",
+      "to_func": "load"
+    },
+    {
+      "from_file": "services/exercise/progression-dag.ts",
+      "from_func": "buildDownward",
+      "to_file": "services/exercise/progression-dag.ts",
+      "to_func": "getProgressions"
+    },
+    {
+      "from_file": "utils/colors.ts",
+      "from_func": "meetsContrastRequirement",
+      "to_file": "utils/colors.ts",
+      "to_func": "contrastRatio"
+    },
+    {
+      "from_file": "db/storage.ts",
+      "from_func": "getWorkoutHistory",
+      "to_file": "db/storage.ts",
+      "to_func": "loadWorkoutHistoryFromAsyncStorage"
+    },
+    {
+      "from_file": "services/parser/extractor-service.ts",
+      "from_func": "ExtractorService.getSuggestions",
+      "to_file": "utils/fuzzy.ts",
+      "to_func": "findBestMatch"
+    },
+    {
+      "from_file": "services/parser/excel.ts",
+      "from_func": "parseExcelFromFile",
+      "to_file": "services/parser/excel.ts",
+      "to_func": "parseExcel"
+    },
+    {
+      "from_file": "services/programs/curated-preloader.ts",
+      "from_func": "getCachedProgramWorkouts",
+      "to_file": "services/programs/curated-preloader.ts",
+      "to_func": "getMaxWeek"
+    },
+    {
+      "from_file": "services/sync/queue.ts",
+      "from_func": "SQLiteQueueBackend.getDb",
+      "to_file": "db/sqlite.ts",
+      "to_func": "getDatabase"
+    },
+    {
+      "from_file": "hooks/use-direct-voice.ts",
+      "from_func": "useDirectVoice",
+      "to_file": "hooks/use-direct-voice.ts",
+      "to_func": "requestPermission"
+    },
+    {
+      "from_file": "services/voice/enhanced-parser.ts",
+      "from_func": "parseGiantSetCommand",
+      "to_file": "services/voice/enhanced-parser.ts",
+      "to_func": "findExerciseMatch"
+    }
+  ],
+  "languages": [
+    "typescript"
+  ],
+  "timestamp": 1768612200.183382
+}

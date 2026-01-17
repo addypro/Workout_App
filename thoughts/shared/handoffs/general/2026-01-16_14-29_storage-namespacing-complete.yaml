@@ -4,7 +4,6 @@ date: 2026-01-16
 status: complete
 outcome: SUCCEEDED
 ---
-
 goal: Implement Option 2 storage namespacing for active workout state (collision prevention)
 now: Ready for manual QA testing or commit workflow
 test: npm test -- __tests__/integration/workout-flow.test.tsx && npm test -- __tests__/integration/storage-collision.test.tsx
@@ -31,7 +30,14 @@ done_this_session:
         * Mitigation #5: Enhanced source inference (checks assignedWorkoutId, coachId)
 
   - task: "Phase 2: Update all call sites to pass source parameter"
-    files: [app/workout/[id].tsx, app/workout/[id]/summary.tsx, lib/hooks/use-pending-workout.ts, app/(tabs)/index.tsx, app/(tabs)/_layout.tsx]
+    files:
+      [
+        "app/workout/[id].tsx",
+        "app/workout/[id]/summary.tsx",
+        "lib/hooks/use-pending-workout.ts",
+        "app/(tabs)/index.tsx",
+        "app/(tabs)/_layout.tsx",
+      ]
     details: |
       Updated 13 call sites across 5 files:
       - app/workout/[id].tsx (4 sites): Lines 805, 914, 1271, 1760

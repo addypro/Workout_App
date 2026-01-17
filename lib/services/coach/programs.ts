@@ -21,6 +21,22 @@ import {
   WorkoutStatus,
 } from './types';
 
+function pad2(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
+export function getLocalDateString(date: Date): string {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+export function getLocalDayBounds(date: Date): { start: Date; end: Date } {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return { start, end };
+}
+
 // ============================================
 // PROGRAM MANAGEMENT
 // ============================================
@@ -335,17 +351,22 @@ async function generateAssignedWorkouts(
   startDate: Date
 ): Promise<void> {
   const assignedWorkouts = workouts.map((workout) => {
+    // Defensive bounds check for week/day - cap at reasonable values
+    const week = Math.max(1, Math.min(workout.week || 1, 52)); // Max 52 weeks
+    const day = Math.max(1, Math.min(workout.day || 1, 7));     // Max 7 days per week
+
     // Calculate scheduled date based on week and day
-    const daysFromStart = (workout.week - 1) * 7 + (workout.day - 1);
+    const daysFromStart = (week - 1) * 7 + (day - 1);
     const scheduledDate = new Date(startDate);
     scheduledDate.setDate(scheduledDate.getDate() + daysFromStart);
 
     return {
       assignment_id: assignmentId,
       athlete_user_id: athleteUserId,
-      scheduled_date: scheduledDate.toISOString().split('T')[0],
-      week_number: workout.week,
-      day_number: workout.day,
+      scheduled_date: getLocalDateString(scheduledDate),
+      scheduled_at: scheduledDate.toISOString(),
+      week_number: week,
+      day_number: day,
       workout_name: workout.name,
       exercises: JSON.stringify(workout.exercises),
       status: WorkoutStatus.PENDING,
@@ -548,20 +569,32 @@ export async function getUpcomingWorkouts(
     const today = new Date();
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + daysAhead);
+    const startDate = getLocalDateString(today);
+    const endDate = getLocalDateString(futureDate);
+    const { start } = getLocalDayBounds(today);
+    const { end } = getLocalDayBounds(futureDate);
 
     const { data, error } = await supabase
       .from('assigned_workouts')
       .select('*')
       .eq('athlete_user_id', user.id)
-      .gte('scheduled_date', today.toISOString().split('T')[0])
-      .lte('scheduled_date', futureDate.toISOString().split('T')[0])
+      .gte('scheduled_date', startDate)
+      .lte('scheduled_date', endDate)
       .in('status', [WorkoutStatus.PENDING, WorkoutStatus.IN_PROGRESS])
       .order('scheduled_date', { ascending: true });
 
     if (error) throw error;
 
+    const filtered = (data || []).filter((row) => {
+      const scheduledAt = row.scheduled_at ? new Date(row.scheduled_at as string) : null;
+      if (scheduledAt) {
+        return scheduledAt >= start && scheduledAt < end;
+      }
+      return true;
+    });
+
     return {
-      data: (data || []).map(mapToAssignedWorkout),
+      data: filtered.map(mapToAssignedWorkout),
       error: null,
       success: true,
     };
@@ -576,42 +609,94 @@ export async function getUpcomingWorkouts(
 }
 
 /**
- * Get today's workout for the athlete
+ * Get today's workouts for the athlete
  */
-export async function getTodaysWorkout(): Promise<ServiceResult<AssignedWorkout | null>> {
+export async function getTodaysWorkouts(): Promise<ServiceResult<AssignedWorkout[]>> {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return { data: null, error: 'Not authenticated', success: false };
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    const todayKey = getLocalDateString(today);
+    const { start, end } = getLocalDayBounds(today);
 
     const { data, error } = await supabase
       .from('assigned_workouts')
       .select('*')
       .eq('athlete_user_id', user.id)
-      .eq('scheduled_date', today)
+      .eq('scheduled_date', todayKey)
       .in('status', [WorkoutStatus.PENDING, WorkoutStatus.IN_PROGRESS])
-      .single();
+      .order('scheduled_date', { ascending: true });
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return { data: null, error: null, success: true };
+    if (error) throw error;
+
+    const filtered = (data || []).filter((row) => {
+      const scheduledAt = row.scheduled_at ? new Date(row.scheduled_at as string) : null;
+      if (scheduledAt) {
+        return scheduledAt >= start && scheduledAt < end;
       }
-      throw error;
-    }
+      return true;
+    });
 
     return {
-      data: mapToAssignedWorkout(data),
+      data: filtered.map(mapToAssignedWorkout),
       error: null,
       success: true,
     };
   } catch (error) {
-    console.error('[CoachPrograms] getTodaysWorkout error:', error);
+    console.error('[CoachPrograms] getTodaysWorkouts error:', error);
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'Failed to get workout',
+      error: error instanceof Error ? error.message : 'Failed to get workouts',
+      success: false,
+    };
+  }
+}
+
+/**
+ * Get overdue workouts for the athlete
+ */
+export async function getOverdueWorkouts(): Promise<ServiceResult<AssignedWorkout[]>> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return { data: null, error: 'Not authenticated', success: false };
+    }
+
+    const today = new Date();
+    const todayKey = getLocalDateString(today);
+    const { start } = getLocalDayBounds(today);
+
+    const { data, error } = await supabase
+      .from('assigned_workouts')
+      .select('*')
+      .eq('athlete_user_id', user.id)
+      .lt('scheduled_date', todayKey)
+      .in('status', [WorkoutStatus.PENDING, WorkoutStatus.IN_PROGRESS])
+      .order('scheduled_date', { ascending: false });
+
+    if (error) throw error;
+
+    const filtered = (data || []).filter((row) => {
+      const scheduledAt = row.scheduled_at ? new Date(row.scheduled_at as string) : null;
+      if (scheduledAt) {
+        return scheduledAt < start;
+      }
+      return true;
+    });
+
+    return {
+      data: filtered.map(mapToAssignedWorkout),
+      error: null,
+      success: true,
+    };
+  } catch (error) {
+    console.error('[CoachPrograms] getOverdueWorkouts error:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Failed to get overdue workouts',
       success: false,
     };
   }
@@ -631,10 +716,27 @@ export async function startWorkout(workoutId: string): Promise<ServiceResult<Ass
         started_at: new Date().toISOString(),
       })
       .eq('id', workoutId)
+      .is('started_at', null)
+      .in('status', [WorkoutStatus.PENDING, WorkoutStatus.IN_PROGRESS])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        const { data: existing, error: fetchError } = await supabase
+          .from('assigned_workouts')
+          .select('*')
+          .eq('id', workoutId)
+          .single();
+        if (fetchError) throw fetchError;
+        return {
+          data: mapToAssignedWorkout(existing),
+          error: null,
+          success: true,
+        };
+      }
+      throw error;
+    }
 
     const workout = mapToAssignedWorkout(data);
 
@@ -719,6 +821,45 @@ export async function completeWorkout(
       })();
     }
 
+    // Fire paths progression handler (fire and forget).
+    // SAFETY: This is the ONLY call site for 'assigned' source. Idempotency is guaranteed
+    // by processed_workouts unique constraint (user_id, workout_id, source). If called
+    // multiple times, subsequent calls return { alreadyProcessed: true } with no side effects.
+    if (user) {
+      (async () => {
+        try {
+          const { buildWorkoutCompletedEvent, handleWorkoutCompleted } = await import('../paths/handle-workout-completed');
+
+          // Build normalized event from results
+          const resultsData = results as { exercises?: Array<{ exerciseName: string; sets: Array<{ weight?: number; reps?: number; completed?: boolean }> }> };
+          const exercises = (resultsData.exercises ?? []).map(ex => ({
+            name: ex.exerciseName,
+            sets: ex.sets.map(s => ({
+              weight: s.weight,
+              reps: s.reps,
+              isCompleted: s.completed ?? false,
+            })),
+          }));
+
+          const event = buildWorkoutCompletedEvent({
+            userId: user.id,
+            workoutId, // assigned_workouts.id (UUID)
+            source: 'assigned',
+            originTable: 'assigned_workouts',
+            completedAt,
+            exercises,
+          });
+
+          const pathsResult = await handleWorkoutCompleted(event);
+          if (pathsResult.xpGained > 0) {
+            console.log(`[CoachPrograms] Paths: +${pathsResult.xpGained} XP, ${pathsResult.nodesCompleted.length} nodes completed`);
+          }
+        } catch (err) {
+          console.error('[CoachPrograms] Paths progression error:', err);
+        }
+      })();
+    }
+
     return {
       data: workout,
       error: null,
@@ -774,11 +915,20 @@ async function sendCoachNotification(payload: CoachNotificationPayload): Promise
 /**
  * Skip a workout (athlete)
  */
-export async function skipWorkout(workoutId: string): Promise<ServiceResult<void>> {
+export async function skipWorkout(
+  workoutId: string,
+  reasonCode: string,
+  reasonText?: string
+): Promise<ServiceResult<void>> {
   try {
     const { error } = await supabase
       .from('assigned_workouts')
-      .update({ status: WorkoutStatus.SKIPPED })
+      .update({
+        status: WorkoutStatus.SKIPPED,
+        skipped_reason_code: reasonCode,
+        skipped_reason_text: reasonText || null,
+        skipped_at: new Date().toISOString(),
+      })
       .eq('id', workoutId);
 
     if (error) throw error;
@@ -876,6 +1026,7 @@ function mapToAssignedWorkout(data: Record<string, unknown>): AssignedWorkout {
     assignmentId: data.assignment_id as string,
     athleteUserId: data.athlete_user_id as string,
     scheduledDate: new Date(data.scheduled_date as string),
+    scheduledAt: data.scheduled_at ? new Date(data.scheduled_at as string) : undefined,
     scheduledTime: data.scheduled_time ? new Date(data.scheduled_time as string) : undefined,
     weekNumber: data.week_number as number,
     dayNumber: data.day_number as number,
@@ -884,6 +1035,9 @@ function mapToAssignedWorkout(data: Record<string, unknown>): AssignedWorkout {
     status: data.status as WorkoutStatus,
     startedAt: data.started_at ? new Date(data.started_at as string) : undefined,
     completedAt: data.completed_at ? new Date(data.completed_at as string) : undefined,
+    skippedReasonCode: data.skipped_reason_code as string | undefined,
+    skippedReasonText: data.skipped_reason_text as string | undefined,
+    skippedAt: data.skipped_at ? new Date(data.skipped_at as string) : undefined,
     actualResults: (data.actual_results as Record<string, unknown>) || {},
     athleteFeedback: data.athlete_feedback as string | undefined,
     athleteRating: data.athlete_rating as number | undefined,
@@ -1042,7 +1196,7 @@ export async function assignQuickWorkout(
       quick_workout_id: quickWorkoutId,
       coach_id: coachProfile.id,
       athlete_user_id: athleteUserId,
-      scheduled_date: scheduledDate.toISOString().split('T')[0],
+      scheduled_date: getLocalDateString(scheduledDate),
       scheduled_time: scheduledTime?.toISOString(),
       status: 'pending',
       coach_notes: coachNotes,
@@ -1100,7 +1254,8 @@ export async function assignExercisesAsWorkout(
     const workoutEntries = athleteUserIds.map(athleteUserId => ({
       assignment_id: null, // No program assignment
       athlete_user_id: athleteUserId,
-      scheduled_date: scheduledDate.toISOString().split('T')[0],
+      scheduled_date: getLocalDateString(scheduledDate),
+      scheduled_at: scheduledDate.toISOString(),
       scheduled_time: scheduledTime?.toISOString(),
       week_number: 1,
       day_number: 1,
@@ -1137,8 +1292,8 @@ export async function getAthleteCalendarWorkouts(
       .from('assigned_workouts')
       .select('*')
       .eq('athlete_user_id', athleteUserId)
-      .gte('scheduled_date', startDate.toISOString().split('T')[0])
-      .lte('scheduled_date', endDate.toISOString().split('T')[0])
+      .gte('scheduled_date', getLocalDateString(startDate))
+      .lte('scheduled_date', getLocalDateString(endDate))
       .order('scheduled_date', { ascending: true });
 
     if (error) {

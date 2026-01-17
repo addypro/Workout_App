@@ -36,6 +36,7 @@ import type { ExtractedExercise } from '@/lib/services/voice/direct-intent-types
 
 const SELECTED_EXERCISE_KEY = '@selected_exercise_temp';
 const QUICK_WORKOUT_KEY = '@quick_workout_exercises';
+const VOICE_MATCH_CONFIRMATIONS_KEY = '@voice_match_confirmations_v1';
 
 interface QuickExercise {
   name: string;
@@ -62,6 +63,12 @@ interface QuickExercise {
   }[];
 }
 
+type VoiceMatchConfirmations = Record<string, string>;
+
+function normalizeMatchKey(name: string): string {
+  return name.toLowerCase().trim();
+}
+
 export default function QuickWorkoutScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -73,6 +80,7 @@ export default function QuickWorkoutScreen() {
   const [loading, setLoading] = useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const [processingVoice, setProcessingVoice] = useState(false); // Shows after 800ms delay
+  const confirmedMatchesRef = useRef<VoiceMatchConfirmations>({});
 
   // Track if component is mounted for async operations
   const isMountedRef = useRef(true);
@@ -86,6 +94,10 @@ export default function QuickWorkoutScreen() {
         const saved = await AsyncStorage.getItem(QUICK_WORKOUT_KEY);
         if (saved && isMountedRef.current) {
           setExercises(JSON.parse(saved));
+        }
+        const confirmations = await AsyncStorage.getItem(VOICE_MATCH_CONFIRMATIONS_KEY);
+        if (confirmations) {
+          confirmedMatchesRef.current = JSON.parse(confirmations) as VoiceMatchConfirmations;
         }
       } catch (e) {
         console.error('Error loading exercises:', e);
@@ -113,6 +125,22 @@ export default function QuickWorkoutScreen() {
       await AsyncStorage.setItem(QUICK_WORKOUT_KEY, JSON.stringify(newExercises));
     } catch (e) {
       console.error('Error saving exercises:', e);
+    }
+  };
+
+  const storeVoiceConfirmation = async (rawName: string, confirmedName: string) => {
+    const key = normalizeMatchKey(rawName);
+    confirmedMatchesRef.current = {
+      ...confirmedMatchesRef.current,
+      [key]: confirmedName,
+    };
+    try {
+      await AsyncStorage.setItem(
+        VOICE_MATCH_CONFIRMATIONS_KEY,
+        JSON.stringify(confirmedMatchesRef.current)
+      );
+    } catch (error) {
+      console.error('Error saving voice match confirmation:', error);
     }
   };
 
@@ -196,6 +224,18 @@ export default function QuickWorkoutScreen() {
         instantExercises.map(async (ex, idx) => {
           try {
             const rawName = ex.rawName || ex.name;
+            const confirmedMatch = confirmedMatchesRef.current[normalizeMatchKey(rawName)];
+            if (confirmedMatch) {
+              return {
+                ...ex,
+                name: confirmedMatch,
+                muscles: [],
+                equipment: [],
+                lowConfidence: false,
+                confidenceScore: 100,
+                alternatives: [],
+              };
+            }
 
             // Use robust modifier-aware matching (Knuth-inspired)
             const robustMatch = resolveExerciseName(rawName);
@@ -554,6 +594,7 @@ export default function QuickWorkoutScreen() {
                 colors={colors}
                 onUpdate={(updates) => handleUpdateExercise(index, updates)}
                 onRemove={() => handleRemoveExercise(index)}
+                onConfirmMatch={storeVoiceConfirmation}
               />
             ))}
           </View>
@@ -647,12 +688,14 @@ function ExerciseConfigCard({
   colors,
   onUpdate,
   onRemove,
+  onConfirmMatch,
 }: {
   exercise: QuickExercise;
   index: number;
   colors: typeof Colors['light'];
   onUpdate: (updates: Partial<QuickExercise>) => void;
   onRemove: () => void;
+  onConfirmMatch: (rawName: string, confirmedName: string) => void;
 }) {
   const [editing, setEditing] = useState<'sets' | 'reps' | null>(null);
 
@@ -692,6 +735,32 @@ function ExerciseConfigCard({
             You said "{exercise.rawName}". Did you mean:
           </ThemedText>
           <View style={styles.alternativesList}>
+            {exercise.rawName && (
+              <Pressable
+                style={[
+                  styles.alternativeChip,
+                  {
+                    backgroundColor: colors.success + '20',
+                    borderColor: colors.success,
+                  }
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onConfirmMatch(exercise.rawName!, exercise.name);
+                  onUpdate({ lowConfidence: false, isCustom: false });
+                }}
+              >
+                <ThemedText
+                  style={[
+                    styles.alternativeText,
+                    { color: colors.success }
+                  ]}
+                  numberOfLines={1}
+                >
+                  No, this is good
+                </ThemedText>
+              </Pressable>
+            )}
             {exercise.alternatives.slice(0, 4).map((alt, i) => (
               <Pressable
                 key={alt.name + i}
@@ -710,12 +779,19 @@ function ExerciseConfigCard({
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   if (alt.name.startsWith('Create Custom')) {
                     // Mark as custom and use raw name
+                    const confirmedName = exercise.rawName || alt.name;
+                    if (exercise.rawName) {
+                      onConfirmMatch(exercise.rawName, confirmedName);
+                    }
                     onUpdate({
-                      name: exercise.rawName || alt.name,
+                      name: confirmedName,
                       isCustom: true,
                       lowConfidence: false
                     });
                   } else {
+                    if (exercise.rawName) {
+                      onConfirmMatch(exercise.rawName, alt.name);
+                    }
                     onUpdate({ name: alt.name, lowConfidence: false, isCustom: false });
                   }
                 }}

@@ -153,15 +153,19 @@ export function toProgramDisplayItem(
   program: WorkoutProgram,
   source: 'builtin' | 'uploaded' | 'saved' = 'builtin'
 ): ProgramDisplayItem {
-  // Use metadata duration as base, then check if workouts array has more weeks
-  // This handles cases where workouts array only has week 1 samples
+  // Use metadata duration as base, then check if workouts array has more weeks.
+  // The catalog now ships without embedded workouts, so fall back to duration.
   const workoutsMaxWeek = program.workouts.length > 0
     ? Math.max(...program.workouts.map(w => w.week || 1), 1)
-    : 1;
+    : (program.duration || 1);
 
   // Use the larger of program.duration or calculated max week
   // This ensures we show correct duration even if workouts array is incomplete
   const actualDuration = Math.max(program.duration || 1, workoutsMaxWeek);
+
+  const workoutCount = program.workouts.length > 0
+    ? program.workouts.length
+    : (program.duration || 0) * (program.daysPerWeek || 0);
 
   return {
     id: program.id,
@@ -172,7 +176,7 @@ export function toProgramDisplayItem(
     category: program.category,
     duration: actualDuration,
     daysPerWeek: program.daysPerWeek,
-    workoutCount: program.workouts.length,
+    workoutCount,
     muscleGroups: program.muscleGroups,
     equipment: program.equipment,
     tags: program.tags || [],
@@ -462,9 +466,7 @@ export async function getFullWorkouts(program: WorkoutProgram) {
     // Cache not available - use embedded fallback
   }
 
-  // 2. Fallback: use embedded workouts as-is (no week expansion)
-  // NO KAGGLE LOADING HERE - that's done by the preloader at startup
-  return program.workouts;
+  throw new Error('curated_program_data_unavailable');
 }
 
 /**

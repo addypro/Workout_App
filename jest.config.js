@@ -5,6 +5,7 @@ module.exports = {
     testMatch: [
         '**/__tests__/integration/**/*.test.ts',
         '**/__tests__/integration/**/*.test.tsx',
+        '**/__tests__/*.pbt.ts',  // Include Property-Based Tests
     ],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
@@ -19,7 +20,6 @@ module.exports = {
     ],
     testPathIgnorePatterns: [
         '/node_modules/',
-        '/__tests__/*.pbt.ts', // Exclude Property-Based Tests
     ],
     // Ignore haste collisions from other projects
     modulePathIgnorePatterns: [

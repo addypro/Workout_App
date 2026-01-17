@@ -144,19 +144,41 @@ export default function LandingScreen() {
         }
     }, [continueAsGuest, setUserRole, triggerHaptic]);
 
-    // DEV MODE: Directly set role and navigate
+    // DEV MODE: Sign in with real test accounts for proper Supabase sessions
     const handleDevCoach = useCallback(async () => {
         triggerHaptic();
-        await AsyncStorage.setItem(HAS_SEEN_LANDING_KEY, 'true');
-        await setUserRole('coach');
-        router.replace('/coach/onboarding' as any);
+        try {
+            await AsyncStorage.setItem(HAS_SEEN_LANDING_KEY, 'true');
+            // Use real Supabase credentials (created via scripts/create-dev-accounts.mjs)
+            const { signInWithPassword } = await import('@/lib/supabase/client').then(m => ({ signInWithPassword: m.supabase.auth.signInWithPassword.bind(m.supabase.auth) }));
+            const { error } = await signInWithPassword({
+                email: 'coach@test.workout.app',
+                password: 'TestCoach123!',
+            });
+            if (error) throw error;
+            await setUserRole('coach');
+            router.replace('/coach/onboarding' as any);
+        } catch (error) {
+            console.error('[DEV] Coach login failed:', error);
+        }
     }, [setUserRole, triggerHaptic]);
 
     const handleDevAthlete = useCallback(async () => {
         triggerHaptic();
-        await AsyncStorage.setItem(HAS_SEEN_LANDING_KEY, 'true');
-        await setUserRole('athlete');
-        router.replace('/(tabs)');
+        try {
+            await AsyncStorage.setItem(HAS_SEEN_LANDING_KEY, 'true');
+            // Use real Supabase credentials (created via scripts/create-dev-accounts.mjs)
+            const { signInWithPassword } = await import('@/lib/supabase/client').then(m => ({ signInWithPassword: m.supabase.auth.signInWithPassword.bind(m.supabase.auth) }));
+            const { error } = await signInWithPassword({
+                email: 'athlete@test.workout.app',
+                password: 'TestAthlete123!',
+            });
+            if (error) throw error;
+            await setUserRole('athlete');
+            router.replace('/(tabs)');
+        } catch (error) {
+            console.error('[DEV] Athlete login failed:', error);
+        }
     }, [setUserRole, triggerHaptic]);
 
     return (

@@ -3,10 +3,16 @@
 > **Purpose**: Get a new Claude agent up to speed on this codebase in under 2 minutes.
 
 ---
+Stack: Expo + Expo Router, npm, Jest.
+
+Existing: Program templates exist, program import exists.
+
+Path integration surfaces: /explore, /challenges, /workout/[id]/summary, /leagues, /onboarding/screener.
 
 ## What Is This App?
 
 A **React Native/Expo fitness app** with:
+
 - **Voice-powered workout logging** (say "bench press 3 sets of 10 at 135")
 - **Coach/Athlete dual roles** (coaches create programs, athletes follow them)
 - **Offline-first sync** to Supabase
@@ -59,6 +65,7 @@ supabase/            # Edge functions & migrations
 ## Key Files You'll Work With
 
 ### State Machines (lib/machines/)
+
 | File | Purpose |
 |------|---------|
 | `workout-session.machine.ts` | Main workout flow (start → exercise → rest → finish) |
@@ -67,6 +74,7 @@ supabase/            # Edge functions & migrations
 | `use-workout-machine.ts` | React hook to use workout machine |
 
 ### Services (lib/services/)
+
 | Directory | Purpose |
 |-----------|---------|
 | `exercise/` | Search, match, resolve exercise names |
@@ -76,6 +84,7 @@ supabase/            # Edge functions & migrations
 | `coach/` | Coach-athlete relationships |
 
 ### Contexts (lib/context/)
+
 | File | Key Hook |
 |------|----------|
 | `auth-context.tsx` | `useAuth()`, `useUserId()` |
@@ -105,6 +114,7 @@ User Input: "incline bench"
 ```
 
 **Key functions:**
+
 - `searchExercisesAdvanced()` - Main search entry point
 - `resolveExercise()` - Get best match with confidence
 - `matchExerciseName()` - Fuzzy match a name
@@ -133,7 +143,9 @@ Speech → STT → Enhanced Parser → UFIRE Scoring → Result
 ## Type System Conventions
 
 ### Branded IDs (lib/types/brands.ts)
+
 IDs are branded to prevent mixing them up:
+
 ```typescript
 type ExerciseId = string & { __brand: 'ExerciseId' }
 type ProgramId = string & { __brand: 'ProgramId' }
@@ -146,7 +158,9 @@ parseExerciseId("abc123")  // validates existing
 ```
 
 ### Result Types (lib/types/result-types.ts)
+
 Voice parsing uses discriminated unions:
+
 ```typescript
 type ParseResult =
   | { type: 'success', data: Exercise }
@@ -159,6 +173,7 @@ type ParseResult =
 ## Common Patterns
 
 ### Adding an exercise to workout
+
 ```typescript
 const { addExercise } = useWorkoutMachineContext();
 addExercise({
@@ -169,6 +184,7 @@ addExercise({
 ```
 
 ### Searching exercises
+
 ```typescript
 import { searchExercisesAdvanced } from '@/lib/services/exercise/search';
 
@@ -179,6 +195,7 @@ const results = await searchExercisesAdvanced(
 ```
 
 ### Using voice input
+
 ```typescript
 import { parseVoiceCommand } from '@/lib/services/voice/enhanced-parser';
 
@@ -228,6 +245,7 @@ npm test
 Branch: `2025-12-15-86q0` (feature branch off `master`)
 
 Key recent changes:
+
 - Ghost Mode + Location-based Gym Picker + PR Detection
 - Coach Workflow System (Phase 1-6)
 - Voice logging improvements
@@ -257,6 +275,7 @@ Key recent changes:
 ## Need More Context?
 
 Run these commands:
+
 ```bash
 # Get code structure
 tldr structure lib/services/exercise --lang typescript

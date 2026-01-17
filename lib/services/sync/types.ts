@@ -28,10 +28,25 @@ export interface SyncableSet {
   completed: boolean;
 }
 
+export interface PathsSyncPayload {
+  userId: string;
+  workoutId: string;
+  source: 'assigned' | 'self';
+  xpAwarded: number;
+  updatedStats: Record<string, any>;  // exerciseKey -> UserLiftStats
+  nodesCompleted: string[];
+  pathInstanceId: string | null;
+  planDelta: any | null;
+}
+
+export type QueuedItemData =
+  | { type: 'workout'; data: SyncableWorkout }
+  | { type: 'paths_progress'; data: PathsSyncPayload };
+
 export interface QueuedItem {
   id: string;
-  type: 'workout';
-  data: SyncableWorkout;
+  type: 'workout' | 'paths_progress';
+  data: SyncableWorkout | PathsSyncPayload;
   createdAt: string;
   retryCount: number;
   lastAttempt?: string;

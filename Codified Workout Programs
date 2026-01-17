@@ -1,0 +1,247 @@
+Codifying Progression Protocols Across 37 Training Programs
+
+A consistent theme in well‑designed training programs is progressive overload. The user should be able to follow each program without mentally adjusting sets and reps. However, because lifters will use different working weights and may complete different numbers of reps, the system must automatically adjust load and volume based on the athlete’s performance. Below is an overview of the progression principles for each program and suggested pseudocode for codifying them. When multiple sources suggest similar ideas (e.g., adding weight when you meet the rep goal or switching to a harder variation), the citations below are representative. The user’s current training max (TM) or previous session performance is always stored and used as a baseline for the next session.
+
+General Algorithms
+Additive context and user agency
+
+Store the user’s last successful working weight and reps for each lift. After each session, update a context store (ctx[lift]) with the weight used, reps achieved on each set and whether the user reached the rep goal or failed.
+
+Use “top‑set/back‑off” or “double progression” rules to decide whether to increase weight, add reps, or deload. The 2‑for‑2 rule (increase weight when the athlete can perform two more reps for the last set of a given weight in two consecutive workouts) and double‑progression method (increase reps within a range before adding weight) are effective heuristics.
+
+Adjust for user feedback (RPE/RIR). When a set is completed at a lower perceived exertion than prescribed (e.g., RPE 6 instead of RPE 8), allow the user to voluntarily increase weight by a small increment; this will raise the TM for the next session. If the weight is too heavy (user fails or RPE is >10), reduce weight by 10 % (deload) and start building again.
+
+Use standard increments: upper‑body lifts increase by 2.5–5 lb and lower‑body lifts by 5–10 lb; body‑weight progressions jump to harder variations when rep targets are achieved; kettlebell programs increase bell weight by ~4 kg when performance standards are met.
+
+Deload and plateau management: after three consecutive failures at the same weight (or when performance drops), reduce the weight by 10 % or revert to an earlier progression stage (as in GZCLP).
+
+Add context across programs: Because programs often build on one another (e.g., Starting Strength → Texas Method → 5/3/1), carry forward the user’s TM for core lifts when switching programs. When moving to a hypertrophy‑focused program, use a percentage (e.g., 60–70 %) of the TM from the previous strength phase as a starting point.
+
+Pseudocode template
+for each lift in current workout:
+    prev = ctx.get(lift)
+    if prev is None:
+        # no context – start with recommended %1RM or user‑entered starting weight
+        working_weight = initial_estimate(lift)
+    else:
+        working_weight = prev.weight
+
+    # perform prescribed sets
+    reps_achieved = perform_sets(lift, working_weight)
+
+    # progression logic
+    if reps_achieved >= rep_goal_for_lift:
+        # increase weight based on lift type
+        increment = 5 if lift in upper_body else 10
+        working_weight += increment  # or follow specific program rules
+    elif failed_three_times(lift):
+        working_weight *= 0.9  # deload 10 %
+
+    # update context
+    ctx[lift] = { 'weight': working_weight, 'reps': reps_achieved }
+
+
+The sections below summarise program‑specific protocols. Each entry provides key progression rules and suggests how to codify them.
+
+1. Linear Progression Programs
+StrongLifts 5×5
+
+Protocol: Five sets of five at the same weight; start around 50 % of 1RM; add 5 lb each workout when all reps are completed. If the user fails to complete all sets, they repeat the weight; after three failures, deload by 10 %. Use 2.5 lb jumps if progress stalls.
+
+Codify: For each lift, store current weight. If five sets of five are completed, add +5 lb (or +2.5 lb for overhead press). Repeat the weight on partial completion. After three failures, multiply weight by 0.9.
+
+Starting Strength (Novice LP)
+
+Protocol: Three sets of five for squats, bench and press; one set of five for deadlifts. Begin with ~3×5 at manageable weight. Novices can add 10 lb per workout to squat and deadlift initially; press and bench add 5 lb; micro‑loads (2.5 lb) may be needed later.
+
+Codify: On successful 3×5 (squat) or 1×5 (deadlift), increase by +5 lb or +10 lb per guidelines. After two missed attempts at a weight, reduce weight by 10 % and start adding again. Use micro‑loading (<2.5 lb) once progress slows.
+
+Greyskull LP
+
+Protocol: Two sets of five plus an AMRAP third set. Increase weight by 2.5 lb for upper‑body lifts and 5 lb for lower‑body lifts each session. If the AMRAP set exceeds ~12 reps (upper body) or 10 reps (deadlift), double the next increment (e.g., +5 lb instead of +2.5 lb). Deload 10 % after failing to hit at least five reps on the AMRAP set.
+
+Codify: Record weight and number of reps on the AMRAP set; if reps ≥ rep_threshold, add weight using guidelines above. On insufficient reps, keep the same weight or reduce by 10 % after repeated failures.
+
+nSuns 5/3/1 LP
+
+Protocol: Follows 5/3/1 percentages but performed as high‑volume LP. On the 1+ AMRAP set each week, progression depends on extra reps: 0–1 extra rep → no change; 2–3 extra reps → +5 lb; 4–5 extra reps → +5–10 lb; >5 reps → +10–15 lb.
+
+Codify: Store last AMRAP reps; adjust the training max (TM) by adding the appropriate increment to the TM; update all working sets accordingly.
+
+Madcow 5×5
+
+Protocol: Weekly progression; in workout A the top set weight increases by ~5 lb per week for squat/deadlift and 2.5 lb for bench/row. If five reps are not achieved on the top set, repeat the week; after repeated failures, deload. Lower sets are calculated as percentages of the top set.
+
+Codify: Track top set weights and the number of reps completed. If success, increase weight according to the table; if failure, repeat weight; after three failures, reduce weight by 5 % and restart.
+
+Texas Method
+
+Protocol: Weekly undulating program with Volume Day (5×5 at ~90 % of intensity day), Light Day (80 % of volume day) and Intensity Day (1×5, 2×3 or 1×1 new PR). Increase the Intensity Day weight by 2.5–5 lb weekly; recalculate Volume and Light days accordingly.
+
+Codify: Store PR weight from Intensity Day. Each week set new Intensity weight = old weight + increment; Volume Day = 90 % of new Intensity; Light Day = 80 %. If a PR attempt fails twice, maintain current weight for another week before attempting again.
+
+Wendler 5/3/1
+
+Protocol: Based on a training max (TM) of 85 % of 1RM. Each four‑week cycle has: Week 1 (5 reps at 65/75/85 % TM), Week 2 (3 reps at 70/80/90 %), Week 3 (5/3/1+ reps at 75/85/95 %), Week 4 deload. After each cycle, add 5 lb to upper‑body TMs and 10 lb to lower‑body TMs.
+
+Codify: Compute working weights from TM; store AMRAP reps in week 3. At cycle end, update TM values (TM += 5 lb or 10 lb) if the AMRAP set achieved at least the target reps; otherwise maintain or reduce TM.
+
+GZCLP
+
+Protocol: Tier‑based linear progression. Stage 1 uses 5×3+ sets for Tier 1, 3×10 for Tier 2 and 3×15+ for Tier 3; add 5 lb (bench/OHP) or 10 lb (squat/deadlift) each workout; when you fail the total reps, move to Stage 2 (6×2+, 3×8, 3×15+) and later Stage 3 (10×1+, 3×6, 3×15+). After completing Stage 3, test a new 5RM and restart with 85 % of it.
+
+Codify: Track stage and current weight. After each session, if rep goals are met, increase weight by the prescribed increment; if not, proceed to the next stage. When Stage 3 fails, test 5RM and set new starting weights at 85 %.
+
+2. Upper/Lower and Split Programs
+Upper–Lower 4‑Day
+
+Protocol: Typically uses moderate volumes (e.g., 3–4 sets of 6–12 reps) for compound lifts and higher reps for accessories. Progress with double progression: increase reps within a rep range (e.g., 6–10) until you hit the top, then add 2.5–5 lb (upper body) or 5–10 lb (lower body). Adjust based on RIR; aim to finish sets with 1–2 reps in reserve. Deload after hitting a plateau for two weeks.
+
+Codify: For each exercise, store reps performed on the last set. If reps = max of range for two sessions, increase weight; if reps < min and the user failed two workouts, reduce weight by 10 % or remove volume temporarily.
+
+PHUL (Power Hypertrophy Upper/Lower)
+
+Protocol: Heavy power lifts performed 3–5 sets of 3–5 reps followed by hypertrophy work at 8–12 reps. Once you complete all sets and reps with good form, increase weight by ~5 lb (2.5 kg). Accessory exercises progress when you hit the top of the rep range (e.g., 12 reps). Rest about 2–3 min on compounds and 1 min on accessories.
+
+Codify: Apply double progression; maintain RIR 1–2; increase weight when you hit the rep ceiling across all sets; adjust accessory weights in smaller increments.
+
+PHAT (Power Hypertrophy Adaptive Training)
+
+Protocol: Combines a power day (3×3–5) with hypertrophy days (3–4 sets of 8–15). Add 2.5–5 lb (upper) or 5–10 lb (lower) once you hit the top of the rep range across all sets with 1–2 RIR. If progress stalls, reduce weight by 10 %, change variation or insert a deload week.
+
+Codify: Similar to PHUL; treat each lift separately; update weight only when rep targets are achieved with good form; track RIR.
+
+PPL Beginner and 6‑Day
+
+Protocol: Beginner PPL uses 4×5 plus an AMRAP set; add 2.5 kg/5 lb to upper‑body lifts and squats and 5 kg/10 lb to deadlifts each session. Accessories at 8–12 reps should increase weight when you can perform 3×12. Deload 10 % after three failures. The 6‑day powerbuilding PPL uses a heavy set followed by a back‑off AMQRAP set; increase the working weight by 2.5–10 lb whenever the AMQRAP weight increases.
+
+Codify: For the beginner program, increase weight after each successful AMRAP; adjust increments by lift type; deload after repeated failures. For the 6‑day program, tie increases to the performance of the AMQRAP set; adjust the back‑off set weight accordingly.
+
+Bro Split
+
+Protocol: Uses muscle‑group days (chest, back, shoulders, legs, arms) with 3–4 exercises per muscle. Progression is largely intuitive: if you hit your target reps last workout, add a small amount of weight; otherwise aim to increase total reps across sets. Autoregulated approaches may improve strength; listen to your body and adapt loads based on daily readiness.
+
+Codify: Track total reps per exercise. If total reps ≥ last session’s total and at least equal to the rep target, add 2.5 lb. Otherwise keep weight constant and aim for more reps. Use a deload week every 4–6 weeks.
+
+Arnold Split
+
+Protocol: High‑volume six‑day split (chest/back, shoulders/arms, legs repeated). Begin with an introductory week (fewer sets and lighter loads) and gradually increase volume and intensity. Add weight only when you can complete all prescribed reps (often 8–12) with good form across all sets.
+
+Codify: Start with 60–70 % of estimated working weight; increase sets and weight slowly. Use double progression; only increase weight once you achieve the top rep range across all sets for two consecutive sessions.
+
+Upper–Lower and Other Splits (Arm Specialization, Back Width/Thickness, Glute Builder)
+
+Protocol: These specialization programs are hypertrophy‑focused and follow double progression. They typically use 3–5 sets of 8–15 reps for target muscles. When you can perform the top of the rep range on all sets with 1–2 RIR, add 2.5–5 lb for upper‑body isolation and 5–10 lb for compound movements. Emphasize mind–muscle connection and slower eccentrics. Incorporate deloads or variation changes every 6–8 weeks.
+
+Codify: For each specialization program, track reps achieved; once at top range, increment weight; if failure occurs, repeat weight; deload after two weeks of stagnation.
+
+3. Body‑Weight & Calisthenics
+Recommended Routine (bodyweight fitness)
+
+Protocol: Each movement category (push, pull, squat, hinge, core) has a progression series (e.g., Wall Pushup → Incline → Knee → Standard → Diamond → Archer). Perform 3 sets of 5–8 reps with good form; once you can do at least 3×8 reps, move to the next harder variation. Progression lists exist for pull‑ups (e.g., scapular pulls → negatives → full pull‑ups) and squats (assisted → bodyweight → pistol).
+
+Codify: For each movement, store the current variation and the reps completed. When 3×8 is achieved for two sessions, switch to the next variation. If the user cannot reach 3×5 on the current variation after multiple sessions, add an intermediate step (e.g., assisted reps or negatives) or reduce volume.
+
+Convict Conditioning
+
+Protocol: Six movements each have ten progression steps; each step has three standards (beginner, intermediate, progression). The trainee must meet the progression standard (e.g., 3×50 incline push‑ups) before moving to the next step.
+
+Codify: For each movement, store current step and rep performance. Use progression standards table; once the athlete meets the progression reps for a step, update to the next step. If performance declines, stay at current step until progression standard is regained.
+
+Bodyweight Home (simplified)
+
+Protocol: A simplified home program uses push‑ups, rows (via table or band), squats, lunges, glute bridges and planks. Use the double progression method: perform 3 sets within an 8–12 rep range; when you can achieve 3×12 reps, switch to a harder variation or add resistance (e.g., backpack). Add challenge by reducing rest times or adding pauses.
+
+Codify: Similar to Recommended Routine: store current variation and reps; once rep ceiling is met across sets, move to next variation or add load. Maintain rest times for progression.
+
+Calisthenics Skills (planche, front lever, etc.)
+
+Protocol: Skills require step‑wise progressions (tuck, advanced tuck, straddle, full). Hold each position for sets of 10–12 sec. Progress when you can hold a position for 10–12 sec for 3–5 sets without form breakdown. Decrease lever length or add assistance if you cannot hit hold times; increase hold times gradually (e.g., add 1–2 sec per week) and eventually move to a harder progression.
+
+Codify: For each skill, store the current progression and hold duration. If hold ≥ 10 sec for all sets and RIR remains, move to the next progression; otherwise continue building time or regress if holds drop below 7 sec.
+
+Minimalist Strength
+
+Protocol: A minimal program might include just squat, press and deadlift twice per week. Use 3–5 sets of 5 reps. Add 5 lb (upper body) and 10 lb (lower body) when all reps are completed for two sessions (2‑for‑2 rule). When progress stalls, deload by 10 %, return to previous weight and build back up.
+
+Codify: Same as Starting Strength but fewer lifts; maintain context across sessions; use micro‑loading when necessary.
+
+4. Full‑Body & Dumbbell‑Based Programs
+Full‑Body 3× Week
+
+Protocol: Each workout covers push, pull, squat, hinge and core with 3–4 sets of 8–12 reps. Use double progression; once you hit the top of the rep range across sets, increase weight by 2.5–5 lb (upper) or 5–10 lb (lower). A deload week every 6 weeks helps recovery.
+
+Codify: Track weight and reps per movement. Increase weight only when rep target is met for two sessions; reduce weight by 10 % after two failed attempts.
+
+Machine‑Only Beginner
+
+Protocol: Focuses on machine exercises (leg press, chest press, lat pulldown, etc.). Use 2–3 sets of 12–15 reps. Start with a weight you can lift for 15 reps with mild challenge; once you can perform all sets at 15 reps, increase weight by the smallest increment (5 lb). Follow the double progression method; maintain a 60–90 sec rest interval.
+
+Codify: For each machine, store weight and reps. If all sets hit 15 reps, increase weight by 5 lb; if not, keep weight and aim for more reps next session. After two failed attempts, reduce weight by 10 % and re‑ramp.
+
+Dumbbell‑Only PPL and Full‑Body
+
+Protocol: Similar to machine programs but with dumbbells. Start with 3–4 sets of 8–12 reps; increase weight when you can hit 12 reps on all sets for two consecutive sessions. For lifts like dumbbell press and row, increase by 5 lb per dumbbell; for curls and raises, increase by 2.5 lb. Maintain RIR 1–2; if weight is too light (RIR ≥ 4), allow the user to add weight sooner.
+
+Codify: Same as machine program; adjust increments based on dumbbell availability.
+
+30‑Minute Full‑Body / Lunch‑Break Workout
+
+Protocol: Short sessions emphasising circuits or EMOM (every minute on the minute) style training. Progress by reducing rest intervals or increasing total rounds rather than dramatically increasing weight. Example: perform 3 circuits of 5 exercises for 40 sec on/20 sec off; each week add another round or increase the work interval to 45 sec. When using weights, apply double progression with small increments.
+
+Codify: Store number of rounds and work/rest intervals. Increase work time or rounds after two consecutive sessions completed comfortably. Adjust weights only when necessary; maintain RIR 2–3 due to conditioning focus.
+
+5. Conditioning and Sport‑Specific Programs
+Athletic Conditioning
+
+Protocol: Mixes resistance, plyometrics and cardio. Follow the 10 % rule for cardio – increase volume or intensity by no more than 10 % per week. For resistance exercises, follow the 2‑for‑2 rule and increase weight in 2.5–5 lb increments (upper) or 5–10 lb (lower). Emphasise variety and proper recovery. Beginners can start with dumbbells equalling ~5–10 % body weight and increase gradually.
+
+Codify: For cardio, track weekly mileage or time; increase by ≤10 %. For strength work, apply double progression; update weights per guidelines. Include periodic deloads.
+
+Kettlebell Simple & Sinister
+
+Protocol: Sessions consist of 10 sets of 10 one‑arm swings (100 total) and 10 Turkish get‑ups (5 per side). Beginners start with 3–5 sets of 10 swings and 1–2 get‑ups per side and gradually build to 10×10 and 5 TGUs per side. When you meet the Simple standard (100 swings in 5 min and 10 TGUs in 10 min) smoothly, increase kettlebell weight by ~4 kg and reduce volume, then rebuild.
+
+Codify: Store kettlebell weight and number of sets completed. If all swings and TGUs meet volume/time targets, increase weight by one bell size (4 kg) and drop back to 5×10 swings and 2 TGUs per side; then add sets each week until you reach full volume again.
+
+Couch‑to‑5K (Couch‑to‑Fit)
+
+Protocol: Nine‑week program where you run three times per week; begin with 1‑min runs and 1.5‑min walks and gradually increase running time until you run 30 min continuously by week 9. Always include rest days between runs and avoid increasing running volume by more than ~10 % per week.
+
+Codify: Store current week and interval durations. Each session gradually lengthens run intervals and shortens walks; when a user repeats a week due to difficulty, maintain the same intervals until comfortable; then progress.
+
+Basketball Training
+
+Protocol: Emphasises strength, plyometrics and conditioning. Use relatively light weights (50–70 % 1RM) with higher reps (8–15) to build muscular endurance and explosiveness. Progress by increasing reps or adding small increments in weight once technique remains sharp. Incorporate vertical jump drills and agility ladders; increase difficulty by reducing rest times or adding sets. For youth, emphasise body‑weight mastery before adding weights.
+
+Codify: Track weight and reps for each exercise; once athlete achieves top rep range across sets with good form, add 2.5–5 lb; limit increases to maintain quick, explosive execution. For plyometric drills, track jump height or reps and gradually increase volume by ≤10 % weekly.
+
+Golf Fitness
+
+Protocol: Focuses on rotational core strength, stability and mobility. Combine lightweight resistance (medicine balls, bands) with flexibility training. Use circuits of 12–15 reps for exercises like cable wood chops, dead bugs and glute bridges. Increase difficulty by using heavier medicine balls or bands once you complete all sets easily for two sessions. Mobility exercises should progress by increasing stretch duration and range of motion gradually.
+
+Codify: Track exercise difficulty and RPE; when user reports RPE ≤6 on all sets, move to stronger band or heavier ball. For mobility stretches, increase hold times by 5 sec once the user can hold easily for the current duration.
+
+Soccer Conditioning
+
+Protocol: Combines cardio, agility drills and strength training. Follow the 10 % rule for increasing run distance or sprint volume. Strength sessions use body‑weight and light weights; add weight when the player can do 12–15 reps with ease. Agility drills increase complexity or reduce rest as proficiency improves. Include at least one rest day per week.
+
+Codify: Track run distances and sprint reps; increase weekly volume by ≤10 %. For strength exercises, apply double progression; increase weight by 2.5–5 lb once the athlete performs 15 reps across sets. For agility, record drill times; progress by reducing rest or adding more direction changes.
+
+Mobility & Flexibility
+
+Protocol: Use static stretches (20–30 sec) and dynamic mobility drills. Progression involves increasing stretch duration and adding more challenging positions slowly. Never push into pain. After holding 30 sec comfortably, increase by 5–10 sec; add new mobility drills once the current routine becomes easy.
+
+Codify: Store stretch names and durations. When user can hold a stretch for the prescribed time without discomfort, increase by 5 sec up to 60 sec. Add new stretches gradually and maintain variety.
+
+6. Integrating RPE/Autoregulation
+
+Throughout all programs, incorporate RPE or RIR (reps in reserve) to give users some autonomy:
+
+Prompt the user after each set to log perceived exertion on a 1–10 scale. If RPE is lower than target (e.g., target RPE 8 but user logs 6), allow them to add a small increment (2.5 lb or one progression level). If RPE is higher than target (e.g., 9–10), suggest reducing load or volume.
+
+Use RPE to modify the next session’s starting weight. When RPE is consistently low across a week, increase the planned weight by the standard increment; when it is high, reduce by 5–10 %.
+
+Conclusion
+
+By codifying each program’s progression logic into simple rules, the system can automatically determine the correct weight or exercise variation for the next session based on the user’s previous performance, while still allowing the user agency to adjust for perceived difficulty. Weight increments, rep ranges, deload triggers and variation progressions are defined by evidence‑based guidelines—such as the 2‑for‑2 rule, double progression method and small increment increases (2.5–10 lb)—ensuring that progression is additive, intuitive and sustainable across all 37 programs.

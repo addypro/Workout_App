@@ -8,17 +8,17 @@
  */
 
 import { supabase } from '../../supabase/client';
-import {
-  CoachInvite,
-  CoachAthlete,
-  CreateInviteInput,
-  AcceptInviteInput,
-  ServiceResult,
-  PaginatedResult,
-  InviteMethod,
-  AthleteStatus,
-} from './types';
 import { canAddAthlete } from './profile';
+import {
+  AcceptInviteInput,
+  AthleteStatus,
+  CoachAthlete,
+  CoachInvite,
+  CreateInviteInput,
+  InviteMethod,
+  PaginatedResult,
+  ServiceResult,
+} from './types';
 
 // ============================================
 // INVITE CREATION
@@ -640,7 +640,8 @@ function mapToCoachAthlete(data: Record<string, unknown>): CoachAthlete {
  * Generate an invite URL for sharing
  */
 export function getInviteUrl(invite: CoachInvite): string {
-  const baseUrl = process.env.EXPO_PUBLIC_APP_URL || 'workout-app://';
+  // Use workoutapp:// to match app.json scheme
+  const baseUrl = process.env.EXPO_PUBLIC_APP_URL || 'workoutapp://';
 
   if (invite.inviteLinkToken) {
     return `${baseUrl}join?token=${invite.inviteLinkToken}`;
@@ -648,3 +649,4 @@ export function getInviteUrl(invite: CoachInvite): string {
 
   return `${baseUrl}join?code=${invite.inviteCode}`;
 }
+

@@ -246,3 +246,117 @@ export function unsafeCoerceLbs(value: number): WeightLbs {
 export function unsafeCoerceKg(value: number): WeightKg {
     return value as WeightKg;
 }
+
+// ============================================
+// E1RM CALCULATIONS (Epley Formula)
+// ============================================
+
+/**
+ * Calculates estimated one-rep max using the Epley formula.
+ * Note: Prefer EWMA e1rm from lift_stats when available.
+ *
+ * @param weight - The weight lifted (raw number)
+ * @param reps - The number of reps performed
+ * @returns Estimated 1RM, or the weight itself if reps <= 1
+ *
+ * @example
+ * calculateE1RM(225, 5) // returns ~253
+ */
+export function calculateE1RM(weight: number, reps: number): number {
+    if (reps <= 1) return weight;
+    return weight * (1 + reps / 30);
+}
+
+/**
+ * Derives target weight from E1RM for a given rep count.
+ * Inverse of the Epley formula.
+ *
+ * @param e1rm - The estimated one-rep max
+ * @param targetReps - The target number of reps
+ * @returns The weight to use for the target reps
+ *
+ * @example
+ * deriveWeightFromE1RM(300, 5) // returns ~259
+ */
+export function deriveWeightFromE1RM(e1rm: number, targetReps: number): number {
+    if (targetReps <= 1) return e1rm;
+    return e1rm / (1 + targetReps / 30);
+}
+
+// ============================================
+// LOAD SUGGESTION UTILITIES
+// ============================================
+
+/**
+ * Rounds a value to the nearest increment.
+ * Essential for suggesting weights that match available plates.
+ *
+ * @param value - The weight value to round
+ * @param increment - The increment to round to (e.g., 5 for lbs, 2.5 for kg)
+ * @returns The rounded value
+ *
+ * @example
+ * roundToIncrement(137, 5) // returns 135
+ * roundToIncrement(52.3, 2.5) // returns 52.5
+ */
+export function roundToIncrement(value: number, increment: number): number {
+    if (increment <= 0) return value;
+    return Math.round(value / increment) * increment;
+}
+
+/**
+ * Clamps a number between a minimum and maximum value.
+ * Used to enforce weight limits (e.g., minimum barbell weight, max gym capacity).
+ *
+ * @param n - The number to clamp
+ * @param min - Minimum allowed value
+ * @param max - Maximum allowed value
+ * @returns The clamped value
+ *
+ * @example
+ * clamp(25, 45, 500) // returns 45 (enforces minimum barbell weight)
+ * clamp(600, 45, 500) // returns 500 (enforces max)
+ */
+export function clamp(n: number, min: number, max: number): number {
+    return Math.max(min, Math.min(max, n));
+}
+
+/** Standard weight plate increments */
+export const STANDARD_INCREMENTS = {
+    lbs: 5,
+    kg: 2.5,
+} as const;
+
+/**
+ * Suggests a working weight rounded to the appropriate increment.
+ *
+ * @param weight - Raw calculated weight
+ * @param unit - The unit system ('lbs' or 'kg')
+ * @param customIncrement - Optional custom increment (defaults to standard)
+ * @returns Rounded weight suitable for loading
+ */
+export function suggestWorkingWeight(
+    weight: number,
+    unit: WeightUnit,
+    customIncrement?: number
+): number {
+    const increment = customIncrement ?? STANDARD_INCREMENTS[unit];
+    return roundToIncrement(weight, increment);
+}
+
+/**
+ * Applies a percentage increase to a weight and rounds appropriately.
+ *
+ * @param baseWeight - Starting weight
+ * @param percentIncrease - Percentage to increase (e.g., 0.025 for 2.5%)
+ * @param unit - The unit system
+ * @returns New rounded weight
+ */
+export function applyPercentIncrease(
+    baseWeight: number,
+    percentIncrease: number,
+    unit: WeightUnit
+): number {
+    const newWeight = baseWeight * (1 + percentIncrease);
+    return suggestWorkingWeight(newWeight, unit);
+}

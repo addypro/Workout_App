@@ -144,7 +144,7 @@ export default function CoachTabScreen() {
       subtitle: 'Discover & adapt',
       icon: 'sparkles-outline',
       color: '#BF5AF2',
-      onPress: () => router.push('/(tabs)/browse'),
+      onPress: () => router.push('/browse'),
     },
   ];
 

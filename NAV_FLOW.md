@@ -158,7 +158,7 @@ const handleResume = useCallback(() => {
 }, [pendingWorkout.source, pendingWorkout.assignedWorkoutId, pendingWorkout.programId, pendingWorkout.workoutKey, router]);
 ```
 
-**Alternate Resume Location:** `app/(tabs)/_layout.tsx:165-169`
+**Alternate Resume Location:** `app/(tabs)/_layout.tsx:165-171`
 
 ```typescript
 if (pendingWorkout.source === 'assigned') {
@@ -167,7 +167,7 @@ if (pendingWorkout.source === 'assigned') {
   return;
 }
 const programId = pendingWorkout.programId ?? pendingWorkout.workoutKey;
-router.push(`/workout/${programId}` as any);
+router.push(`/workout/${programId}?source=self` as any);
 ```
 
 ---

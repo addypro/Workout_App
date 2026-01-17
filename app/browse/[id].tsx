@@ -46,6 +46,7 @@ export default function ProgramDetailsScreen() {
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number> | null>(null);
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
+  const [workoutsError, setWorkoutsError] = useState<string | null>(null);
 
   // Memoize program lookup to avoid recalculation on re-renders
   const program = useMemo(() => getProgramById(id as string), [id]);
@@ -61,15 +62,16 @@ export default function ProgramDetailsScreen() {
       }
 
       setWorkoutsLoading(true);
+      setWorkoutsError(null);
       try {
         const full = await getFullWorkouts(program);
         if (!cancelled) {
           setWorkouts(full);
         }
       } catch (error) {
-        console.warn('[ProgramDetails] Failed to load full workouts, using embedded data:', error);
         if (!cancelled) {
-          setWorkouts(program.workouts || []);
+          setWorkouts([]);
+          setWorkoutsError('Program data is still syncing. Please try again in a moment.');
         }
       } finally {
         if (!cancelled) {
@@ -97,9 +99,9 @@ export default function ProgramDetailsScreen() {
   const coverageWeeks = workouts.length > 0
     ? Math.max(...workouts.map((w) => w.week || 1), 1)
     : 0;
-  const displayWeeks = programDuration > 0
-    ? Array.from({ length: programDuration }, (_, index) => index + 1)
-    : Array.from({ length: coverageWeeks }, (_, index) => index + 1);
+  const displayWeeks = coverageWeeks > 0
+    ? Array.from({ length: coverageWeeks }, (_, index) => index + 1)
+    : [];
   const showPreviewNote = coverageWeeks > 0 && programDuration > coverageWeeks;
 
   // Initialize expanded weeks once data is ready
@@ -142,7 +144,11 @@ export default function ProgramDetailsScreen() {
   };
 
   const doInstall = async () => {
-    const installWorkouts = workouts.length > 0 ? workouts : program.workouts;
+    if (workouts.length === 0) {
+      const msg = 'Program data is still syncing. Please try again shortly.';
+      Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Unavailable', msg);
+      return;
+    }
     await saveProgram({
       name: program.name,
       description: program.description || `${program.type} program - ${program.difficulty}`,
@@ -156,7 +162,7 @@ export default function ProgramDetailsScreen() {
         difficulty: program.difficulty,
         muscleGroups: program.muscleGroups,
         equipment: program.equipment,
-        workouts: installWorkouts.map(w => ({
+        workouts: workouts.map(w => ({
           week: w.week,
           day: w.day,
           name: w.name,
@@ -213,9 +219,8 @@ export default function ProgramDetailsScreen() {
     }
   };
 
-  const workoutCount = workoutsLoading ? program.workouts.length : workouts.length;
-  const totalExercises = (workoutsLoading ? program.workouts : workouts)
-    .reduce((sum, w) => sum + w.exercises.length, 0);
+  const workoutCount = workouts.length;
+  const totalExercises = workouts.reduce((sum, w) => sum + w.exercises.length, 0);
 
   return (
     <Screen contentStyle={styles.screenContent} edges={['top', 'left', 'right', 'bottom']}>
@@ -309,6 +314,13 @@ export default function ProgramDetailsScreen() {
               </ThemedText>
             </View>
           )}
+          {workoutsError && (
+            <View style={styles.previewNote}>
+              <ThemedText style={[styles.previewNoteText, { color: colors.textSecondary }]}>
+                {workoutsError}
+              </ThemedText>
+            </View>
+          )}
           <View style={styles.weeksList}>
             {displayWeeks.map(week => {
               const isExpanded = expandedWeeks?.has(week) ?? false;
@@ -397,7 +409,7 @@ export default function ProgramDetailsScreen() {
             const fakeProgram = {
               id: program.id,
               name: program.name,
-              parsedData: { workouts: workouts.length > 0 ? workouts : program.workouts },
+              parsedData: { workouts },
             };
             const content = programToCSV(fakeProgram as any);
             const safeName = program.name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
@@ -406,6 +418,7 @@ export default function ProgramDetailsScreen() {
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
           }}
+          disabled={workoutsLoading || workouts.length === 0}
         >
           <IconSymbol name="arrow.down.circle" size={20} color={colors.textSecondary} />
         </Pressable>
@@ -416,11 +429,11 @@ export default function ProgramDetailsScreen() {
             installing && { opacity: 0.7 },
           ]}
           onPress={installProgram}
-          disabled={installing}
+          disabled={installing || workoutsLoading || workouts.length === 0}
         >
           <IconSymbol name={installing ? 'arrow.down.circle' : 'plus.circle.fill'} size={20} color="#fff" />
           <ThemedText style={styles.installButtonText}>
-            {installing ? 'Installing...' : 'Add to My Programs'}
+            {installing ? 'Installing...' : workoutsLoading ? 'Syncing...' : 'Add to My Programs'}
           </ThemedText>
         </Pressable>
       </View>

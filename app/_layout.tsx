@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, useGlobalSearchParams, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -18,6 +18,7 @@ import { TabContextProvider } from '@/lib/context/tab-context';
 import { AppThemeProvider } from '@/lib/context/theme-context';
 import { WorkoutMachineProvider } from '@/lib/context/workout-machine-provider';
 import { initFeatureFlags } from '@/lib/config/feature-flags';
+import { ensureCuratedProgramsReady } from '@/lib/services/programs/curated-preloader';
 
 // Prevent splash from auto-hiding before app is ready
 // This MUST be called before any React code runs
@@ -48,6 +49,11 @@ function NavigationGuard({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
   const router = useRouter();
   const [hasSeenLanding, setHasSeenLanding] = useState<boolean | null>(null);
+  const inAuthGroup = segments[0] === '(auth)';
+  const searchParams = useGlobalSearchParams<{ guestAuth?: string }>();
+  const [guestAuthSession, setGuestAuthSession] = useState(false);
+  const guestAuthParam = searchParams?.guestAuth === '1' || searchParams?.guestAuth === 'true';
+  const allowGuestAuth = guestAuthSession || guestAuthParam;
 
   // Check if user has seen landing on mount
   useEffect(() => {
@@ -58,6 +64,19 @@ function NavigationGuard({ children }: { children: React.ReactNode }) {
     };
     checkLandingState();
   }, []);
+
+  useEffect(() => {
+    if (!isGuest || !inAuthGroup) {
+      if (guestAuthSession) {
+        setGuestAuthSession(false);
+      }
+      return;
+    }
+
+    if (guestAuthParam && !guestAuthSession) {
+      setGuestAuthSession(true);
+    }
+  }, [guestAuthParam, guestAuthSession, inAuthGroup, isGuest]);
 
   useEffect(() => {
     // Debug logging
@@ -75,16 +94,26 @@ function NavigationGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const inAuthGroup = segments[0] === '(auth)';
-
     // GUEST RESCUE: If user is a guest but stuck in (auth) group, force them to tabs
     // This fixes the "stuck on landing" issue if the button click navigation fails
-    if (isGuest && inAuthGroup) {
+    if (isGuest && inAuthGroup && !allowGuestAuth) {
       console.log('[NavigationGuard] Guest rescue - redirecting to tabs');
       // Use setImmediate to ensure we don't conflict with current render
       setTimeout(() => {
         router.replace('/(tabs)');
       }, 0);
+      return;
+    }
+
+    // AUTH RESCUE: If user is authenticated but still in auth stack, send them forward
+    if (user && inAuthGroup) {
+      if (needsRoleSelection) {
+        console.log('[NavigationGuard] Authenticated user needs role selection');
+        router.replace('/(auth)/select-role' as any);
+      } else {
+        console.log('[NavigationGuard] Authenticated user in auth stack, redirecting to tabs');
+        router.replace('/(tabs)' as any);
+      }
       return;
     }
 
@@ -111,7 +140,7 @@ function NavigationGuard({ children }: { children: React.ReactNode }) {
       router.replace('/(auth)/select-role' as any);
       return;
     }
-  }, [user, isLoading, isGuest, needsRoleSelection, isCoach, segments, hasSeenLanding]);
+  }, [user, isLoading, isGuest, needsRoleSelection, isCoach, segments, hasSeenLanding, allowGuestAuth, inAuthGroup]);
 
   return <>{children}</>;
 }
@@ -119,23 +148,39 @@ function NavigationGuard({ children }: { children: React.ReactNode }) {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
+  const [curatedReady, setCuratedReady] = useState(false);
 
   // Hide splash screen once app is fully ready and interactive
-  useAppReady();
+  useAppReady(curatedReady);
 
   // Pre-warm data indices in parallel for instant first-button-press
   // STATE-OF-THE-ART PATTERN: Background preloading eliminates first-interaction lag
   useEffect(() => {
+    let cancelled = false;
+
+    const hydrateCuratedPrograms = async () => {
+      try {
+        const { ready, missingIds } = await ensureCuratedProgramsReady();
+        if (!ready) {
+          console.warn('[CuratedPreload] Missing curated programs:', missingIds);
+        }
+        if (!cancelled) {
+          setCuratedReady(ready);
+        }
+      } catch (error) {
+        console.warn('[CuratedPreload] Ready check failed:', error);
+        if (!cancelled) {
+          setCuratedReady(false);
+        }
+      }
+    };
+
+    hydrateCuratedPrograms();
+
     const task = InteractionManager.runAfterInteractions(() => {
       // Dynamic imports to avoid slowing initial bundle parse
       // All preloads run in parallel for maximum speed
       Promise.all([
-        // Curated programs preload - extracts 38 programs from Kaggle to SQLite
-        // This is the ONE-TIME heavy load that eliminates runtime Kaggle loading
-        import('@/lib/services/programs/curated-preloader').then(({ preloadCuratedPrograms }) => {
-          preloadCuratedPrograms();
-        }),
-
         // Exercise search index for instant search/filter responses
         import('@/lib/services/exercise/search').then(({ warmSearchIndex }) => {
           warmSearchIndex();
@@ -150,6 +195,7 @@ function RootLayoutNav() {
     });
 
     return () => {
+      cancelled = true;
       task.cancel();
     };
   }, []);

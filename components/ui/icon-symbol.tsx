@@ -8,11 +8,11 @@
  * <IconSymbol name="house.fill" size={24} color={colors.tint} />
  */
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { SymbolWeight } from 'expo-symbols';
 import { ComponentProps } from 'react';
-import { OpaqueColorValue, type StyleProp, type TextStyle, Platform } from 'react-native';
+import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 type IoniconName = ComponentProps<typeof Ionicons>['name'];
@@ -51,6 +51,7 @@ const MAPPING = {
 
   // Media
   'play.fill': 'play-arrow',
+  'play.circle.fill': 'play-circle-fill',
   'pause.fill': 'pause',
   'stop.fill': 'stop',
   'forward.fill': 'fast-forward',
@@ -98,6 +99,11 @@ const MAPPING = {
   'clock.arrow.circlepath': 'history',
   'calendar': 'calendar-today',
   'calendar.badge.plus': 'event',
+
+  // Security & Locks
+  'lock.fill': 'lock',
+  'lock': 'lock-outline',
+  'cross.case.fill': 'medical-services',
 
   // Status & Info
   'info.circle': 'info-outline',

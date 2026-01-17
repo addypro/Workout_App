@@ -49,6 +49,11 @@ export type CachedProgramWorkouts = {
     meta: CachedProgramMeta;
 };
 
+type CuratedReadyResult = {
+    ready: boolean;
+    missingIds: string[];
+};
+
 function getMaxWeek(workouts: Workout[]): number {
     if (!workouts.length) return 0;
     return Math.max(...workouts.map(w => w.week || 1), 1);
@@ -233,4 +238,38 @@ export async function preloadCuratedPrograms(): Promise<void> {
     } catch (error) {
         console.error('[CuratedPreload] Failed:', error);
     }
+}
+
+async function getCachedProgramIds(): Promise<Set<string>> {
+    const db = await getDatabase();
+    if (!db) return new Set();
+
+    try {
+        const rows = await db.getAllAsync<{ program_id: string }>(
+            'SELECT program_id FROM curated_program_workouts'
+        );
+        return new Set(rows.map((row) => row.program_id));
+    } catch (error) {
+        console.warn('[CuratedPreload] Failed to read cached program IDs:', error);
+        return new Set();
+    }
+}
+
+export async function ensureCuratedProgramsReady(): Promise<CuratedReadyResult> {
+    if (Platform.OS === 'web') {
+        return { ready: true, missingIds: [] };
+    }
+
+    const tableReady = await ensureCuratedProgramsTable();
+    if (!tableReady) {
+        return { ready: false, missingIds: [] };
+    }
+
+    await preloadCuratedPrograms();
+
+    const expected = getAllPrograms().map((program) => program.id);
+    const cached = await getCachedProgramIds();
+    const missingIds = expected.filter((id) => !cached.has(id));
+
+    return { ready: missingIds.length === 0, missingIds };
 }

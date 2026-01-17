@@ -339,9 +339,9 @@ export default function WorkoutSummaryScreen() {
         }
 
         return {
-          exercises: historyExercises.map((ex) => ({
+          exercises: historyExercises.map((ex: { name: string; sets?: Array<{ weight?: number; reps?: number; isCompleted?: boolean }> }) => ({
             exerciseName: ex.name,
-            sets: (ex.sets || []).map((s) => ({
+            sets: (ex.sets || []).map((s: { weight?: number; reps?: number; isCompleted?: boolean }) => ({
               weight: s.weight,
               reps: s.reps,
               completed: s.isCompleted ?? true,

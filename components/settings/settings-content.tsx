@@ -4,11 +4,12 @@
  * Reusable settings UI for both the Settings screen and the You tab.
  */
 
-import React, { useEffect, useState } from 'react';
+import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -16,16 +17,15 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { PDFImportModal, StrongImportModal } from '@/components/import';
 import { Screen } from '@/components/screen';
+import { JoinCoachModal } from '@/components/settings/join-coach-modal';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { useAuth, useUserId } from '@/lib/context/auth-context';
 import { usePreferences } from '@/lib/context/preferences-context';
 import { getWorkoutStats } from '@/lib/db/storage';
@@ -51,10 +51,11 @@ export function SettingsContent() {
   const { weightUnit, setWeightUnit } = usePreferences();
   const [showImportModal, setShowImportModal] = useState(false);
   const [showPDFImportModal, setShowPDFImportModal] = useState(false);
+  const [showJoinCoachModal, setShowJoinCoachModal] = useState(false);
   const [achievementStats, setAchievementStats] = useState<AchievementStats | null>(null);
   const [achievementLoading, setAchievementLoading] = useState(false);
 
-  const showAchievements = isFeatureEnabled('new_tab_bar');
+  const showAchievements = true;
 
   const isMetric = weightUnit === 'kg';
 
@@ -62,13 +63,25 @@ export function SettingsContent() {
     setWeightUnit(value ? 'kg' : 'lbs');
   };
 
+  const handleGuestSignIn = useCallback(async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({ pathname: '/(auth)/landing', params: { guestAuth: '1' } });
+  }, [router]);
+
   const handleSignOut = () => {
     Alert.alert(
       'Sign Out',
       'Are you sure you want to sign out?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign Out', style: 'destructive', onPress: signOut },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            signOut();
+          },
+        },
       ]
     );
   };
@@ -141,6 +154,27 @@ export function SettingsContent() {
                   </View>
                 </View>
               </View>
+              {/* Join Coach - only for authenticated non-coaches */}
+              {!isGuest && !isCoach && (
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.row,
+                    { borderBottomColor: colors.separator, opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  onPress={() => setShowJoinCoachModal(true)}
+                >
+                  <View style={styles.rowContent}>
+                    <IconSymbol name="person.badge.plus" size={20} color="#30D158" />
+                    <View style={styles.rowText}>
+                      <ThemedText style={styles.rowLabel}>Join Coach</ThemedText>
+                      <ThemedText style={[styles.rowValue, { color: colors.textSecondary }]}>
+                        Enter an invite code
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+                </Pressable>
+              )}
               {isCoach && (
                 <Pressable
                   style={({ pressed }) => [
@@ -209,6 +243,35 @@ export function SettingsContent() {
             </Card>
           </View>
 
+          <View style={styles.section}>
+            <ThemedText style={[styles.sectionTitle, { color: colors.textSecondary }]}>
+              Programs
+            </ThemedText>
+            <Card padding="sm">
+              <Pressable
+                style={({ pressed }) => [
+                  styles.row,
+                  {
+                    borderBottomWidth: 0,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+                onPress={() => router.push('/browse')}
+              >
+                <View style={styles.rowContent}>
+                  <IconSymbol name="magnifyingglass" size={20} color={colors.tint} />
+                  <View style={styles.rowText}>
+                    <ThemedText style={styles.rowLabel}>Browse Programs</ThemedText>
+                    <ThemedText style={[styles.rowValue, { color: colors.textSecondary }]}>
+                      Explore the full program library
+                    </ThemedText>
+                  </View>
+                </View>
+                <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+              </Pressable>
+            </Card>
+          </View>
+
           {/* Data Section */}
           <View style={styles.section}>
             <ThemedText style={[styles.sectionTitle, { color: colors.textSecondary }]}>
@@ -240,7 +303,7 @@ export function SettingsContent() {
                   styles.row,
                   { borderBottomColor: colors.separator, opacity: pressed ? 0.7 : 1 },
                 ]}
-                onPress={() => router.push('/(tabs)/tools')}
+                onPress={() => router.push('/settings/program-import')}
               >
                 <View style={styles.rowContent}>
                   <IconSymbol name="square.and.arrow.down" size={20} color="#0A84FF" />
@@ -421,7 +484,7 @@ export function SettingsContent() {
                     styles.row,
                     { borderBottomWidth: 0, opacity: pressed ? 0.7 : 1 },
                   ]}
-                  onPress={() => router.push('/(auth)/landing')}
+                  onPress={handleGuestSignIn}
                 >
                   <View style={styles.rowContent}>
                     <IconSymbol name="person.badge.plus" size={20} color="#34C759" />
@@ -471,6 +534,12 @@ export function SettingsContent() {
       <PDFImportModal
         visible={showPDFImportModal}
         onClose={() => setShowPDFImportModal(false)}
+      />
+
+      {/* Join Coach Modal */}
+      <JoinCoachModal
+        visible={showJoinCoachModal}
+        onClose={() => setShowJoinCoachModal(false)}
       />
     </>
   );

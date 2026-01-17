@@ -13,10 +13,10 @@ import { InteractionManager } from 'react-native';
 // Minimum time to hold splash (covers async init that runs after isLoading = false)
 const MIN_SPLASH_HOLD_MS = 800;
 
-export function useAppReady() {
-    const { isLoading } = useAuth();
-    const hasHiddenSplash = useRef(false);
-    const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+export function useAppReady(isReady: boolean = true) {
+  const { isLoading } = useAuth();
+  const hasHiddenSplash = useRef(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
     // Start minimum hold timer on mount
     useEffect(() => {
@@ -28,7 +28,7 @@ export function useAppReady() {
 
     useEffect(() => {
         // Only hide once auth is ready AND minimum time has passed AND we haven't hidden yet
-        if (!isLoading && minTimeElapsed && !hasHiddenSplash.current) {
+        if (!isLoading && isReady && minTimeElapsed && !hasHiddenSplash.current) {
             hasHiddenSplash.current = true;
 
             // Wait for all pending interactions (animations, layout) to complete
@@ -54,4 +54,3 @@ export function useAppReady() {
         }
     }, [isLoading, minTimeElapsed]);
 }
-

@@ -15,7 +15,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/lib/context/auth-context';
-import { isFeatureEnabled } from '@/lib/config/feature-flags';
 
 interface ProfileButtonProps {
   size?: 'small' | 'medium';
@@ -48,8 +47,7 @@ export function ProfileButton({ size = 'medium', showLabel = false }: ProfileBut
   }, [user]);
 
   const handlePress = () => {
-    const target = isFeatureEnabled('new_tab_bar') ? '/(tabs)/you' : '/settings';
-    router.push(target as any);
+    router.push('/(tabs)/you' as any);
   };
 
   const buttonSize = size === 'small' ? 32 : 40;

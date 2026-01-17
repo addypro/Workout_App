@@ -137,7 +137,7 @@ export default function AssignProgramScreen() {
   // Navigate to browse with return tracking
   const handleBrowsePrograms = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push('/(tabs)/browse?returnTo=/coach/assign-program' as any);
+    router.push('/browse?returnTo=/coach/assign-program' as any);
   };
 
   const handleAssign = async () => {

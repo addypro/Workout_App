@@ -8,16 +8,16 @@
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { AppState, AppStateStatus } from 'react-native';
 
+import { hasNewerPopularityData, syncPopularity } from './popularity-sync';
 import { syncQueue } from './queue';
-import { syncWorkoutToServer } from './workout-sync';
-import { syncPopularity, hasNewerPopularityData } from './popularity-sync';
 import type {
+  PopularityCache,
   SyncableWorkout,
   SyncResult,
   SyncState,
   SyncStatus,
-  PopularityCache,
 } from './types';
+import { syncWorkoutToServer } from './workout-sync';
 
 type SyncListener = (state: SyncState) => void;
 
@@ -116,12 +116,15 @@ class SyncService {
    * Queue a workout for sync
    */
   async queueWorkout(workout: SyncableWorkout): Promise<void> {
+    console.log('[SyncService] queueWorkout called:', workout.localId);
     await syncQueue.addWorkout(workout);
     const pendingCount = await syncQueue.getPendingCount();
+    console.log('[SyncService] Workout queued, pending count:', pendingCount, 'isOnline:', this.isOnline, 'userId:', this.userId);
     this.updateState({ pendingCount });
 
     // Try immediate sync if online
     if (this.isOnline && this.userId) {
+      console.log('[SyncService] Triggering immediate syncAllPending');
       this.syncAllPending();
     }
   }
@@ -144,7 +147,8 @@ class SyncService {
 
       for (const item of pending) {
         if (item.type === 'workout') {
-          const result = await syncWorkoutToServer(item.data, this.userId);
+          const workoutData = item.data as SyncableWorkout;
+          const result = await syncWorkoutToServer(workoutData, this.userId);
           results.push(result);
 
           if (result.success) {
@@ -153,6 +157,7 @@ class SyncService {
             await syncQueue.markFailed(item.id, result.error || 'Unknown error');
           }
         }
+        // paths_progress items are handled by paths-sync.ts separately
       }
 
       const newPendingCount = await syncQueue.getPendingCount();
@@ -235,6 +240,7 @@ class SyncService {
 export const syncService = new SyncService();
 
 // Re-export types
-export type { SyncableWorkout, SyncResult, SyncState, SyncStatus, PopularityCache };
-export { syncQueue } from './queue';
 export { syncPopularity } from './popularity-sync';
+export { syncQueue } from './queue';
+export type { PopularityCache, SyncableWorkout, SyncResult, SyncState, SyncStatus };
+

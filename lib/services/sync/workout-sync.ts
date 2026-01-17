@@ -19,6 +19,7 @@ export async function syncWorkoutToServer(
   workout: SyncableWorkout,
   userId: string
 ): Promise<SyncResult> {
+  console.log('[WorkoutSync] syncWorkoutToServer called:', { workoutId: workout.localId, userId });
   try {
     // First, insert/upsert the workout log (WITHOUT embedded exercises)
     const workoutRecord = {
@@ -58,6 +59,7 @@ export async function syncWorkoutToServer(
       }
     } else {
       // Insert new
+      console.log('[WorkoutSync] Inserting new workout log:', workoutRecord);
       const { data: newWorkout, error: insertError } = await supabase
         .from('workout_logs')
         .insert(workoutRecord)
@@ -65,12 +67,14 @@ export async function syncWorkoutToServer(
         .single();
 
       if (insertError || !newWorkout) {
+        console.error('[WorkoutSync] INSERT FAILED:', insertError?.message, insertError?.code, insertError?.details);
         return {
           success: false,
           itemId: workout.localId,
           error: `Failed to insert workout: ${insertError?.message || 'Unknown error'}`,
         };
       }
+      console.log('[WorkoutSync] Workout inserted successfully, id:', newWorkout.id);
       workoutLogId = newWorkout.id;
     }
 
@@ -113,6 +117,42 @@ export async function syncWorkoutToServer(
         // The workout itself was saved successfully
       }
     }
+
+    // Fire paths progression handler (fire and forget).
+    // SAFETY: This is the ONLY call site for 'self' source. Idempotency is guaranteed
+    // by processed_workouts unique constraint (user_id, workout_id, source). workoutLogId
+    // is stable across upserts, so re-syncs will use the same UUID.
+    (async () => {
+      try {
+        const { buildWorkoutCompletedEvent, handleWorkoutCompleted } = await import('../paths/handle-workout-completed');
+
+        // Build normalized event from workout data
+        const exercises = workout.exercises.map(ex => ({
+          name: ex.exerciseName,
+          sets: ex.sets.map(s => ({
+            weight: s.weight,
+            reps: s.reps,
+            isCompleted: s.completed,
+          })),
+        }));
+
+        const event = buildWorkoutCompletedEvent({
+          userId,
+          workoutId: workout.localId, // Use localId (hist-XXXXX) so cache key matches summary read
+          source: 'self',
+          originTable: 'workout_logs',
+          completedAt: new Date(workout.completedAt),
+          exercises,
+        });
+
+        const pathsResult = await handleWorkoutCompleted(event);
+        if (pathsResult.xpGained > 0) {
+          console.log(`[WorkoutSync] Paths: +${pathsResult.xpGained} XP, ${pathsResult.nodesCompleted.length} nodes completed`);
+        }
+      } catch (err) {
+        console.error('[WorkoutSync] Paths progression error:', err);
+      }
+    })();
 
     return {
       success: true,

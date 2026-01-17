@@ -10,7 +10,7 @@
 
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -30,7 +30,6 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Screen } from '@/components/screen';
-import { SwipeTabs } from '@/components/swipe-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
@@ -528,7 +527,9 @@ export default function BrowseScreen() {
       }
     } catch (e) {
       console.error(e);
-      const msg = 'Failed to add programs';
+      const msg = e instanceof Error && e.message === 'curated_program_data_unavailable'
+        ? 'Program data is still syncing. Please try again shortly.'
+        : 'Failed to add programs';
       Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Error', msg);
     } finally {
       setIsAdding(false);
@@ -573,7 +574,9 @@ export default function BrowseScreen() {
       Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Added!', msg);
     } catch (e) {
       console.error(e);
-      const msg = 'Failed to add program';
+      const msg = e instanceof Error && e.message === 'curated_program_data_unavailable'
+        ? 'Program data is still syncing. Please try again shortly.'
+        : 'Failed to add program';
       Platform.OS === 'web' ? window.alert(msg) : Alert.alert('Error', msg);
     } finally {
       setIsAdding(false);
@@ -622,7 +625,30 @@ export default function BrowseScreen() {
   }, [hasActiveFilters, featuredPrograms, colors, renderProgramCard]);
 
   return (
-    <SwipeTabs current="browse">
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Browse Programs',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: colors.groupedBackground },
+          headerLeft: () => (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={() => router.back()}
+              style={({ pressed }) => [
+                styles.headerBackButton,
+                { opacity: pressed ? 0.6 : 1 },
+              ]}
+            >
+              <IconSymbol name="chevron.left" size={16} color={colors.tint} />
+              <ThemedText style={[styles.headerBackText, { color: colors.tint }]}>
+                Back
+              </ThemedText>
+            </Pressable>
+          ),
+        }}
+      />
       <Screen contentStyle={styles.screenContent}>
         {/* Return Banner */}
         {returnTo && (
@@ -835,7 +861,7 @@ export default function BrowseScreen() {
           isDark={isDark}
         />
       </Screen>
-    </SwipeTabs>
+    </>
   );
 }
 
@@ -1415,6 +1441,17 @@ function ProgramDetailModal({
 }
 
 const styles = StyleSheet.create({
+  headerBackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingRight: 6,
+  },
+  headerBackText: {
+    ...Typography.caption1,
+    fontWeight: '600',
+  },
   screenContent: {
     paddingHorizontal: 0,
   },

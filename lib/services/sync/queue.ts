@@ -60,7 +60,7 @@ class AsyncStorageQueueBackend implements QueueBackend {
     await this.load();
 
     const existing = this.queue.find(
-      item => item.type === 'workout' && item.data.localId === workout.localId
+      item => item.type === 'workout' && (item.data as SyncableWorkout).localId === workout.localId
     );
 
     if (existing) {

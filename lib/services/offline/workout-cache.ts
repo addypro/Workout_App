@@ -92,8 +92,10 @@ export async function getCachedWorkouts(): Promise<AssignedWorkout[]> {
         return cached.workouts.map(w => ({
             ...w,
             scheduledDate: new Date(w.scheduledDate),
+            scheduledAt: w.scheduledAt ? new Date(w.scheduledAt) : undefined,
             startedAt: w.startedAt ? new Date(w.startedAt) : undefined,
             completedAt: w.completedAt ? new Date(w.completedAt) : undefined,
+            skippedAt: w.skippedAt ? new Date(w.skippedAt) : undefined,
             createdAt: new Date(w.createdAt),
             updatedAt: new Date(w.updatedAt),
         }));
@@ -101,6 +103,24 @@ export async function getCachedWorkouts(): Promise<AssignedWorkout[]> {
         console.error('[OfflineCache] Error reading cache:', error);
         return [];
     }
+}
+
+/**
+ * Get a cached assigned workout by id
+ */
+export async function getCachedWorkoutById(workoutId: string): Promise<AssignedWorkout | null> {
+    const workouts = await getCachedWorkouts();
+    return workouts.find(w => w.id === workoutId) ?? null;
+}
+
+/**
+ * Upsert a cached assigned workout by id
+ */
+export async function upsertCachedWorkout(workout: AssignedWorkout): Promise<void> {
+    const workouts = await getCachedWorkouts();
+    const next = workouts.filter(w => w.id !== workout.id);
+    next.unshift(workout);
+    await cacheAssignedWorkouts(next);
 }
 
 /**

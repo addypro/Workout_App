@@ -1,0 +1,42 @@
+---
+session: fix-bug-feature-flag-pattern
+ts: 2026-01-16T00:00:00Z
+commit: f072883
+branch: audit/2026-01-16-workoutkey
+status: complete
+---
+
+scope: bug
+options: []
+
+issue:
+  description: |
+    Feature flag access pattern inconsistency - services using FEATURES.X.enabled
+    instead of isFeatureEnabled() which bypasses remote sync and rollout logic.
+  evidence:
+    - challenge-service.ts: 7 occurrences of FEATURES.challenges.enabled
+    - screener-service.ts: 1 occurrence of FEATURES.smart_screener.enabled
+
+diagnosis:
+  root_cause: Direct property access bypasses feature flag infrastructure
+  hypothesis: Code was written before isFeatureEnabled() was the standard pattern
+  files:
+    - lib/services/challenges/challenge-service.ts
+    - lib/services/recommendations/screener-service.ts
+
+fix:
+  approach: |
+    Replace FEATURES.X.enabled with isFeatureEnabled('X') calls.
+    Update imports from FEATURES to isFeatureEnabled.
+  files_modified:
+    - lib/services/challenges/challenge-service.ts
+    - lib/services/recommendations/screener-service.ts
+  test_added: __tests__/integration/feature-flag-pattern.test.ts
+
+verification:
+  test_command: npm test -- --testPathPattern="feature-flag-pattern"
+  human_confirmed: true
+
+next:
+  - Consider auditing other files for this pattern
+  - Add lint rule to catch FEATURES.X.enabled usage

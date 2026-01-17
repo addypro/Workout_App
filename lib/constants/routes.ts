@@ -12,18 +12,12 @@
 export const TABS = {
   /** Home / My Programs tab */
   HOME: '/(tabs)' as const,
-  /** Discover / Browse programs tab */
-  BROWSE: '/(tabs)/browse' as const,
   /** History / Explore tab */
   HISTORY: '/(tabs)/explore' as const,
-  /** Import / Tools tab */
-  TOOLS: '/(tabs)/tools' as const,
   /** You tab (profile + settings) */
   YOU: '/(tabs)/you' as const,
   /** Coach dashboard tab (role-gated) */
   COACH: '/(tabs)/coach' as const,
-  /** Upload (hidden from tab bar) */
-  UPLOAD: '/(tabs)/upload' as const,
 } as const;
 
 // ============================================
@@ -84,7 +78,7 @@ export const PROGRAM = {
   /** Program builder/editor */
   EDIT: (programId: string) => `/program/${programId}/edit` as const,
   /** Browse program detail */
-  DETAIL: (programId: string) => `/(tabs)/browse?programId=${programId}` as const,
+  DETAIL: (programId: string) => `/browse?programId=${programId}` as const,
   /** Legacy program detail route */
   LEGACY_DETAIL: (programId: string) => `/browse/${programId}` as const,
 } as const;

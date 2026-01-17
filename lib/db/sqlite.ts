@@ -106,6 +106,8 @@ export async function ensureStorageTables(): Promise<boolean> {
         id TEXT PRIMARY KEY NOT NULL,
         user_id TEXT NOT NULL,
         type TEXT NOT NULL,
+        source TEXT,
+        external_workout_id TEXT,
         program_id TEXT,
         program_name TEXT,
         workout_name TEXT NOT NULL,
@@ -148,6 +150,18 @@ export async function ensureStorageTables(): Promise<boolean> {
     for (const statement of statements) {
       await db.runAsync(statement);
     }
+    const historyColumns = await db.getAllAsync<{ name: string }>(
+      'PRAGMA table_info(unified_workout_history)'
+    );
+    const historyColumnNames = new Set(historyColumns.map((col) => col.name));
+
+    const addHistoryColumnIfMissing = async (name: string, ddl: string) => {
+      if (historyColumnNames.has(name)) return;
+      await db.runAsync(`ALTER TABLE unified_workout_history ADD COLUMN ${ddl};`);
+    };
+
+    await addHistoryColumnIfMissing('source', 'source TEXT');
+    await addHistoryColumnIfMissing('external_workout_id', 'external_workout_id TEXT');
     return true;
   } catch (error) {
     console.warn('[SQLite] Failed to ensure storage tables:', error);

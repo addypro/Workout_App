@@ -107,11 +107,11 @@ export const DeepLinks = {
     `/exercise/${exerciseId}${encodeParams({ source })}`,
 
   /** Program detail */
-  program: (programId: string) => `/(tabs)/browse?programId=${programId}`,
+  program: (programId: string) => `/browse?programId=${programId}`,
 
   /** Browse with filters */
   browseFiltered: (filters: Partial<WorkoutContext>) =>
-    `/(tabs)/browse${encodeParams(filters)}`,
+    `/browse${encodeParams(filters)}`,
 
   /** Exercises with filters */
   exercisesFiltered: (filters: Partial<WorkoutContext>) =>
@@ -237,7 +237,7 @@ export function useBreadcrumbs() {
     if (context.programId && context.programName) {
       crumbs.push({
         label: context.programName,
-        path: `/(tabs)/browse?programId=${context.programId}`,
+        path: `/browse?programId=${context.programId}`,
       });
     }
 

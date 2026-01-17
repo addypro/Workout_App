@@ -1,0 +1,351 @@
+---
+type: exploration
+ts: 2026-01-16T00:00:00Z
+depth: architecture
+focus: full codebase
+commit: db0dae1
+---
+
+summary: React Native/Expo fitness app with clean 3-layer architecture - zero circular dependencies, XState machines for complex flows, Supabase backend
+
+# ============================================================================
+# ARCHITECTURE OVERVIEW
+# ============================================================================
+
+tech_stack:
+  framework: React Native (Expo SDK 53)
+  routing: expo-router (file-based)
+  state_machines: XState v5
+  backend: Supabase (PostgreSQL + Edge Functions)
+  storage: AsyncStorage + SQLite (local), Supabase (remote)
+  gestures: react-native-gesture-handler + react-native-reanimated
+
+# ============================================================================
+# LAYER ARCHITECTURE
+# ============================================================================
+
+layers:
+  entry:
+    description: "Controllers, screens, providers - HIGH calls_out, LOW calls_in"
+    directories:
+      - path: app/(tabs)/
+        role: Main tab screens (home, browse, explore, you, coach)
+        function_count: 18
+        calls_out: 22
+      - path: app/workout/
+        role: Active workout session screens
+        function_count: 32
+        calls_out: 33
+      - path: app/settings/
+        role: Settings and configuration screens
+        function_count: 8
+        calls_out: 7
+      - path: lib/context/
+        role: React Context providers (auth, sync, preferences, mode)
+        function_count: 31
+        calls_out: 11
+      - path: lib/hooks/
+        role: Custom React hooks
+        function_count: 24
+        calls_out: 16
+      - path: components/
+        role: Reusable UI components
+        function_count: 9
+        calls_out: 4
+
+  middle:
+    description: "Business logic services - balanced calls_out/calls_in"
+    directories:
+      - path: lib/services/sync/
+        role: Supabase synchronization queue and workers
+        function_count: 63
+        calls_out: 6
+        calls_in: 3
+      - path: lib/services/paths/
+        role: Training path progression logic
+        function_count: 41
+        calls_out: 9
+        calls_in: 11
+      - path: lib/services/import/
+        role: Workout data import/parsing
+        function_count: 38
+        calls_out: 2
+        calls_in: 2
+      - path: lib/services/popularity/
+        role: Exercise popularity scoring
+        function_count: 25
+        calls_out: 2
+        calls_in: 1
+      - path: lib/services/stats/
+        role: Workout statistics calculation
+        function_count: 11
+        calls_out: 2
+
+  leaf:
+    description: "Utilities and data - LOW calls_out, HIGH calls_in"
+    directories:
+      - path: lib/db/
+        role: AsyncStorage + SQLite persistence layer
+        function_count: 63
+        calls_in: 91
+      - path: lib/types/
+        role: TypeScript type definitions and branded IDs
+        function_count: 35
+        calls_in: 23
+      - path: lib/utils/
+        role: Utility functions (weight, fuzzy, string-distance)
+        function_count: 63
+        calls_in: 7
+      - path: lib/services/exercise/
+        role: Exercise database and search
+        function_count: 134
+        calls_in: 20
+      - path: lib/services/offline/
+        role: Offline cache for workouts and paths
+        function_count: 25
+        calls_in: 15
+      - path: lib/config/
+        role: Feature flags and configuration
+        function_count: 6
+        calls_in: 6
+      - path: lib/navigation/
+        role: Navigation types and utilities
+        function_count: 4
+        calls_in: 6
+
+# ============================================================================
+# DEPENDENCY HEALTH
+# ============================================================================
+
+circular_dependencies: []  # CLEAN - No circular deps detected
+
+dependency_summary:
+  entry_count: 512
+  middle_count: 307
+  leaf_count: 518
+  health: "EXCELLENT - Clear layer separation, no cycles"
+
+# ============================================================================
+# STATE MACHINES (XState v5)
+# ============================================================================
+
+state_machines:
+  - name: workout-session.machine.ts
+    location: lib/machines/workout-session.machine.ts
+    states: [idle, active.exercising, active.resting, paused, finished]
+    events: [START_WORKOUT, COMPLETE_SET, START_REST, SKIP_REST, PAUSE, RESUME, FINISH_WORKOUT, CANCEL_WORKOUT]
+    purpose: Core workout flow orchestration
+
+  - name: voice-builder.machine.ts
+    location: lib/machines/voice-builder.machine.ts
+    purpose: Voice workout construction (has TypeScript issues - known tech debt)
+
+  - name: superset.machine.ts
+    location: lib/machines/superset.machine.ts
+    purpose: Superset exercise flow management
+
+  - name: sync-item.machine.ts
+    location: lib/machines/sync-item.machine.ts
+    purpose: Individual sync item state tracking
+
+# ============================================================================
+# KEY ENTRY POINTS
+# ============================================================================
+
+entry_points:
+  - file: app/_layout.tsx
+    role: Root layout, provider composition
+    providers: [GestureHandlerRootView, AuthProvider, SyncProvider, PreferencesProvider, WorkoutMachineProvider]
+
+  - file: app/(tabs)/index.tsx
+    role: Home screen - program list, quick actions
+    key_functions: [loadPrograms, confirmDeleteProgram, getDayStart]
+
+  - file: app/workout/[id].tsx
+    role: Active workout session
+    key_functions: [completeSet, updateSetTarget, handleSupersetSetCompletion]
+
+  - file: app/workout/quick.tsx
+    role: Quick workout (no program)
+    key_functions: [handleUpdateExercise, handleVoiceExercisesExtracted]
+
+# ============================================================================
+# SERVICE DOMAINS
+# ============================================================================
+
+domains:
+  exercise:
+    files:
+      - lib/services/exercise/database.ts (getExerciseById, getExerciseDatabase)
+      - lib/services/exercise/search.ts (getExercisesByCategory, getPopularityScore)
+      - lib/services/exercise/search-index.ts (queryExerciseSearchIndex)
+      - lib/services/exercise/progression-dag.ts (buildProgressionTree, getProgressions)
+    data_source: data/hevy_complete_database.json (bundled)
+
+  programs:
+    files:
+      - lib/services/programs/index.ts (getProgramById, getFullWorkouts)
+      - lib/services/programs/programs-service.ts (ProgramsService.listCatalog)
+      - lib/services/programs/curated-preloader.ts (preloads curated programs)
+    storage: AsyncStorage (@workout_programs prefix)
+
+  sync:
+    files:
+      - lib/services/sync/index.ts (SyncService.forceSync)
+      - lib/services/sync/queue.ts (AsyncStorageQueueBackend)
+      - lib/services/sync/workout-sync.ts (workout-specific sync)
+    backend: Supabase
+
+  voice:
+    files:
+      - lib/services/voice/voice-direct-service.ts (VoiceDirectService.startRecording)
+      - lib/services/voice/enhanced-parser.ts (parseRepRangeCommand)
+      - lib/services/voice/cache.ts (getCachedResult, hashString)
+    purpose: Voice command processing for workout logging
+
+  coach:
+    files:
+      - lib/services/coach/index.ts (hasActiveSubscription)
+      - lib/services/coach/programs.ts (getProgram, mapToCoachProgram)
+      - lib/services/coach/profile.ts (createCoachProfile, updateCoachProfile)
+    purpose: Coach-athlete relationship management
+
+  paths:
+    files:
+      - lib/services/paths/progress-controller.ts (processWorkoutCompleted, calculateE1RM)
+      - lib/services/paths/storage.ts (upsertLiftStats)
+    purpose: Training path progression and periodization
+
+# ============================================================================
+# STORAGE PATTERNS
+# ============================================================================
+
+storage:
+  local:
+    engine: AsyncStorage + SQLite
+    key_prefixes:
+      - "@workout_programs" → Saved programs
+      - "@workout_program_templates:*" → User customizations
+      - "@active_workout:*" → In-progress session (crash recovery)
+      - "@unified_workout_history" → Completed workout records
+      - "@workout_history:*" → Per-program completion tracking
+
+  remote:
+    engine: Supabase PostgreSQL
+    key_tables: [workouts, programs, user_profiles, coach_athletes]
+
+# ============================================================================
+# COMPONENT ARCHITECTURE
+# ============================================================================
+
+component_patterns:
+  - pattern: Screen components in app/
+    example: app/(tabs)/index.tsx
+    style: Function component with hooks
+
+  - pattern: Reusable UI in components/
+    example: components/expandable-fab.tsx
+    style: Gesture-aware with Reanimated
+
+  - pattern: Context providers in lib/context/
+    example: lib/context/auth-context.tsx
+    style: Provider + custom hooks (useAuth, useUserId)
+
+  - pattern: Service modules in lib/services/
+    example: lib/services/sync/index.ts
+    style: Class or function-based service
+
+# ============================================================================
+# FEATURE FLAGS
+# ============================================================================
+
+feature_flags:
+  location: lib/config/feature-flags.ts
+  pattern: "isFeatureEnabled('flag_name')"
+  current_flags:
+    - ghost_mode (workout privacy)
+    - leagues (competitive features)
+    - challenges (fitness challenges)
+    - new_tab_bar (4-tab UX redesign)
+    - smart_fab (gesture-aware FAB)
+    - resume_hero (session recovery card)
+    - voice_first (voice prompt)
+
+# ============================================================================
+# HOT PATHS (High Traffic)
+# ============================================================================
+
+hot_paths:
+  - name: Workout Completion
+    flow: completeSet → XState COMPLETE_SET → session update → setActiveWorkoutState → (on finish) saveWorkoutToHistory → syncService.queueWorkout
+    files: [app/workout/[id].tsx, lib/machines/workout-session.machine.ts, lib/db/storage.ts, lib/services/sync/index.ts]
+
+  - name: Exercise Search
+    flow: user types → queryExerciseSearchIndex → fuzzy match → getPopularityScore → ranked results
+    files: [lib/services/exercise/search-index.ts, lib/services/exercise/search.ts, lib/utils/fuzzy.ts]
+
+  - name: Program Load
+    flow: loadPrograms → getPrograms (AsyncStorage) → getProgramById → render ProgramCard
+    files: [app/(tabs)/index.tsx, lib/db/storage.ts, components/program/program-card.tsx]
+
+# ============================================================================
+# KNOWN TECH DEBT
+# ============================================================================
+
+tech_debt:
+  - file: lib/machines/voice-builder.machine.ts
+    issue: 48 TypeScript errors (XState v5 type issues)
+    severity: medium
+    notes: Voice builder machine has type mismatches with XState patterns
+
+  - file: supabase/functions/*
+    issue: Various TypeScript errors in edge functions
+    severity: low
+    notes: Edge functions use Deno runtime, some type issues
+
+  - file: app/(tabs)/index.tsx
+    issue: Uses FEATURES.CHALLENGES_ENABLED incorrectly
+    severity: low
+    notes: Should use isFeatureEnabled('challenges') or standalone export
+
+# ============================================================================
+# RECOMMENDATIONS
+# ============================================================================
+
+next_steps:
+  - title: Fix voice-builder.machine.ts types
+    priority: P2
+    effort: medium
+    notes: XState v5 migration incomplete
+
+  - title: Unify feature flag access pattern
+    priority: P3
+    effort: low
+    notes: Use isFeatureEnabled() consistently
+
+  - title: Complete P1 UX redesign
+    priority: P1
+    effort: medium
+    notes: Resume Hero integration into home screen, voice-first prompt
+
+# ============================================================================
+# REFERENCES
+# ============================================================================
+
+refs:
+  - path: app/_layout.tsx
+    role: Root provider composition
+  - path: lib/machines/workout-session.machine.ts
+    role: Core workout state machine
+  - path: lib/context/auth-context.tsx
+    role: Authentication state and methods
+  - path: lib/db/storage.ts
+    role: Local persistence layer
+  - path: lib/services/sync/index.ts
+    role: Supabase sync orchestration
+  - path: lib/config/feature-flags.ts
+    role: Feature flag definitions
+  - path: .agent/ARCHITECTURE_MAP.md
+    role: Visual architecture diagrams
+  - path: .agent/NAVIGATION_MAP.md
+    role: Navigation flow diagrams

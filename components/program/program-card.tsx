@@ -58,7 +58,7 @@ function ProgramCardComponent({
       onPress(program);
       return;
     }
-    router.push(`/(tabs)/browse?programId=${program.id}`);
+    router.push(`/browse?programId=${program.id}`);
   }, [router, program.id, onPress, program]);
 
   const handleCheckboxPress = useCallback(() => {

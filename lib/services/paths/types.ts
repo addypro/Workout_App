@@ -133,3 +133,211 @@ export interface PathState {
   /** Error state */
   error: string | null;
 }
+
+// ============================================
+// EXERCISE NORMALIZATION
+// ============================================
+
+/**
+ * Normalize exercise name to a consistent key.
+ * Matches existing canonicalName pattern in sync/types.ts.
+ */
+export function normalizeExerciseKey(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, '_');
+}
+
+// ============================================
+// WORKOUT COMPLETED EVENT (Unified from both flows)
+// ============================================
+
+export type WorkoutSource = 'assigned' | 'self';
+
+export interface NormalizedSet {
+  weight?: number;
+  reps?: number;
+  isCompleted: boolean;
+  rpe?: number;
+  rir?: number;
+}
+
+export interface NormalizedExercise {
+  exerciseKey: string;   // normalized name (db key)
+  exerciseName: string;  // display name
+  sets: NormalizedSet[];
+}
+
+export interface WorkoutCompletedEvent {
+  userId: string;
+  workoutId: string;
+  source: WorkoutSource;
+  originTable: 'assigned_workouts' | 'workout_logs';
+  completedAt: Date;
+  exercises: NormalizedExercise[];
+}
+
+// ============================================
+// LIFT STATS (Strength tracking)
+// ============================================
+
+export interface UserLiftStats {
+  exerciseKey: string;
+  e1rmKg: number | null;
+  trainingMaxKg: number | null;
+  ewmaE1rmKg: number | null;
+  volatility: number | null;
+  updatedAt: Date;
+}
+
+// ============================================
+// PLAN DELTA (Adaptation recommendations)
+// ============================================
+
+export type PlanDeltaType = 'increase_weight' | 'decrease_weight' | 'add_set' | 'remove_set' | 'rest_day' | 'none';
+
+export interface PlanDelta {
+  type: PlanDeltaType;
+  exerciseKey?: string;
+  reason: string;
+  suggestedValue?: number;
+}
+
+// ============================================
+// PROGRESS RESULT (Output of pure function)
+// ============================================
+
+export interface ProgressResult {
+  /** Updated lift stats (only for exercises in this workout) */
+  updatedStats: Map<string, UserLiftStats>;
+  /** Nodes that were completed by this workout */
+  nodesCompleted: string[];
+  /** Plan adaptation recommendations */
+  planDeltas: PlanDelta[];
+  /** XP awarded for this workout */
+  xpGained: number;
+  /** Whether this workout was already processed (idempotency) */
+  alreadyProcessed: boolean;
+}
+
+// ============================================
+// PATH INSTANCE STATUS
+// ============================================
+
+export type PathInstanceStatus = 'active' | 'paused' | 'completed' | 'failed';
+export type PathTier = 'base' | 'silver' | 'gold' | 'diamond';
+
+// ============================================
+// PROGRESSION PROFILES (Weight Suggestion)
+// ============================================
+
+/**
+ * Progression profile determines how weights are adjusted between sessions.
+ * Ported from rn-progression-coach for weight suggestion integration.
+ */
+export type ProgressionProfile =
+  | 'LINEAR_LP'            // Linear progression: add weight each session
+  | 'PERCENT_TM'           // Percentage of training max
+  | 'DOUBLE_PROGRESSION'   // Increase reps first, then weight
+  | 'BODYWEIGHT_STEP'      // Bodyweight exercises (difficulty progressions)
+  | 'CONDITIONING_PROGRESS' // Cardio/conditioning (time/distance based)
+  | 'MOBILITY_MAINTAIN';    // Mobility/flexibility (maintain, no progression)
+
+/**
+ * Exercise kind determines which progression rules apply.
+ * Matches prototype definition.
+ */
+export type ExerciseKind = 'strength' | 'hypertrophy' | 'bodyweight' | 'conditioning' | 'mobility';
+
+// ============================================
+// WEIGHT SUGGESTION CONTEXT
+// ============================================
+
+/**
+ * Context required to generate a weight suggestion for an exercise.
+ * This is the input interface for the weight suggestion engine (Phase 2).
+ */
+export interface WeightSuggestionContext {
+  /** Normalized exercise identifier (lowercase, underscores) */
+  exerciseKey: string;
+
+  /** Display name for the exercise */
+  exerciseName: string;
+
+  /** Type of exercise (determines progression rules) */
+  exerciseKind: ExerciseKind;
+
+  /** User's current E1RM for this exercise (from lift_stats.ewma_e1rm_kg) */
+  e1rmKg: number | null;
+
+  /** EWMA E1RM if available (preferred over simple Epley) */
+  ewmaE1rmKg: number | null;
+
+  /** User's training max if set (from lift_stats) */
+  trainingMaxKg: number | null;
+
+  /** Target reps for the set */
+  targetReps: number;
+
+  /** Target RPE if specified */
+  targetRpe?: number;
+
+  /** What set number this is (1-indexed) */
+  setNumber: number;
+
+  /** Progression profile (from program or default) */
+  progressionProfile: ProgressionProfile;
+
+  /** User's preferred weight unit */
+  preferredUnit: 'lbs' | 'kg';
+
+  /** Last session's weight for this exercise (if any) */
+  lastSessionWeightKg?: number;
+
+  /** Last session's reps for this exercise (if any) */
+  lastSessionReps?: number;
+
+  /** Last session's RPE for this exercise (if any) */
+  lastSessionRpe?: number;
+}
+
+/**
+ * Output from the weight suggestion engine.
+ */
+export interface WeightSuggestionResult {
+  /** Suggested weight in user's preferred unit */
+  suggestedWeight: number;
+
+  /** The unit of the suggested weight */
+  unit: 'lbs' | 'kg';
+
+  /** Confidence level (0-1, where 1 = high confidence) */
+  confidence: number;
+
+  /** Human-readable reason for the suggestion */
+  reason: string;
+
+  /** Source of the suggestion (for debugging/analytics) */
+  source: 'ewma_e1rm' | 'epley_e1rm' | 'training_max' | 'last_session' | 'default';
+}
+
+export interface PathInstance {
+  id: string;
+  userId: string;
+  pathId: string;
+  challengeId: string | null;
+  tier: PathTier;
+  status: PathInstanceStatus;
+  startedAt: Date;
+  updatedAt: Date;
+  configJson: Record<string, unknown>;
+}
+
+// ============================================
+// CACHE KEYS
+// ============================================
+
+export const CACHE_KEYS = {
+  PATHS_PROGRESS: '@paths_progress_v1',
+  LIFT_STATS: '@lift_stats_v1',
+  PROCESSED_WORKOUTS: '@paths_processed_v1',
+} as const;
+

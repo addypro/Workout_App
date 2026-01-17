@@ -80,23 +80,69 @@ export default function LeaguesScreen() {
         }
 
         try {
-            // Fetch user's league membership
-            const { data, error: fetchError } = await supabase
-                .from('league_members')
-                .select('user_id, tier_id, weekly_xp, rank_in_tier, total_in_tier')
-                .eq('user_id', user.id)
+            // Get active league period
+            const { data: activePeriod, error: periodError } = await supabase
+                .from('league_periods')
+                .select('id')
+                .eq('status', 'active')
+                .order('start_date', { ascending: false })
+                .limit(1)
                 .single();
 
-            if (fetchError && fetchError.code !== 'PGRST116') {
-                // PGRST116 = no rows returned
-                throw fetchError;
+            if (periodError && periodError.code !== 'PGRST116') {
+                throw periodError;
             }
 
-            setMembership(data);
+            if (!activePeriod) {
+                setMembership(null);
+                setError('Leagues are not active yet. Check back soon.');
+                return;
+            }
+
+            // Fetch user's standing for the active period
+            const { data: standing, error: standingError } = await supabase
+                .from('league_standings')
+                .select('user_id, tier_id, xp, rank')
+                .eq('user_id', user.id)
+                .eq('period_id', activePeriod.id)
+                .single();
+
+            if (standingError && standingError.code !== 'PGRST116') {
+                throw standingError;
+            }
+
+            if (!standing) {
+                setMembership(null);
+                setError('You are not placed in a league yet.');
+                return;
+            }
+
+            const { count, error: countError } = await supabase
+                .from('league_standings')
+                .select('id', { count: 'exact', head: true })
+                .eq('period_id', activePeriod.id)
+                .eq('tier_id', standing.tier_id);
+
+            if (countError) {
+                throw countError;
+            }
+
+            setMembership({
+                user_id: standing.user_id,
+                tier_id: standing.tier_id,
+                weekly_xp: standing.xp || 0,
+                rank_in_tier: standing.rank ?? null,
+                total_in_tier: count ?? null,
+            });
             setError(null);
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error loading league data:', err);
-            setError('Unable to load league data');
+            const code = err?.code;
+            if (code === 'PGRST205') {
+                setError('Leagues are not configured on this server yet.');
+            } else {
+                setError('Unable to load league data');
+            }
         } finally {
             setLoading(false);
             setRefreshing(false);

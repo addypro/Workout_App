@@ -28,11 +28,8 @@ export type AppRoutes = {
     // TAB ROUTES (main navigation)
     // ==========================================
     '/(tabs)': undefined;
-    '/(tabs)/browse': { returnTo?: string; programId?: string };
     '/(tabs)/coach': undefined;
     '/(tabs)/explore': undefined;
-    '/(tabs)/tools': undefined;
-    '/(tabs)/upload': undefined;
     '/(tabs)/you': undefined;
 
     // ==========================================
@@ -52,6 +49,8 @@ export type AppRoutes = {
         week?: number;
         day?: number;
         assignmentId?: string;
+        source?: 'self' | 'assigned';
+        assignedWorkoutId?: string;
     };
     '/workout/[id]/summary': {
         id: string;
@@ -60,6 +59,8 @@ export type AppRoutes = {
         totalSets?: number;
         totalVolume?: number;
         savedToHistory?: boolean;
+        source?: 'self' | 'assigned';
+        workoutId?: string;
     };
 
     // ==========================================
@@ -72,6 +73,7 @@ export type AppRoutes = {
     // ==========================================
     '/program/[id]/edit': { id: string };
     '/program/import-review': undefined;
+    '/browse': { returnTo?: string; programId?: string };
     '/browse/[id]': { id: string };
 
     // ==========================================
@@ -84,6 +86,7 @@ export type AppRoutes = {
     // SETTINGS ROUTES
     // ==========================================
     '/settings': undefined;
+    '/settings/program-import': undefined;
 
     // ==========================================
     // COACH ROUTES
@@ -171,7 +174,7 @@ function buildUrl<T extends keyof AppRoutes>(
  * 
  * @example
  * // Navigate to a static route
- * safeNavigate(router, '/(tabs)/browse');
+ * safeNavigate(router, '/browse');
  * 
  * // Navigate to a dynamic route
  * safeNavigate(router, '/workout/[id]', { id: 'abc123', week: 1 });

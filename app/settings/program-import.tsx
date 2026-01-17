@@ -18,10 +18,9 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
+import { Stack, router } from 'expo-router';
 
 import { Screen } from '@/components/screen';
-import { SwipeTabs } from '@/components/swipe-tabs';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Card } from '@/components/ui/card';
@@ -449,7 +448,14 @@ export default function ImportScreen() {
   );
 
   return (
-    <SwipeTabs current="tools">
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Import Program',
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: colors.groupedBackground },
+        }}
+      />
       <Screen>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -908,7 +914,7 @@ export default function ImportScreen() {
         )}
         </ScrollView>
       </Screen>
-    </SwipeTabs>
+    </>
   );
 }
 

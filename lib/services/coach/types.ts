@@ -226,6 +226,7 @@ export interface AssignedWorkout {
   assignmentId: string;
   athleteUserId: string;
   scheduledDate: Date;
+  scheduledAt?: Date;
   scheduledTime?: Date;  // Optional specific time for workout
   weekNumber: number;
   dayNumber: number;
@@ -234,6 +235,9 @@ export interface AssignedWorkout {
   status: WorkoutStatus;
   startedAt?: Date;
   completedAt?: Date;
+  skippedReasonCode?: string;
+  skippedReasonText?: string;
+  skippedAt?: Date;
   actualResults: Record<string, unknown>;
   athleteFeedback?: string;
   athleteRating?: number;
