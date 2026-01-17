@@ -174,7 +174,10 @@ export function ScheduleSessionModal({
                         {/* Date Row */}
                         <TouchableOpacity
                             style={styles.row}
-                            onPress={() => setShowDatePicker(true)}
+                            onPress={() => {
+                                setShowTimePicker(false); // Close other picker first
+                                setShowDatePicker(true);
+                            }}
                         >
                             <Ionicons name="calendar-outline" size={20} color={Colors.dark.textSecondary} />
                             <Text style={styles.rowLabel}>Date</Text>
@@ -185,7 +188,10 @@ export function ScheduleSessionModal({
                         {/* Time Row */}
                         <TouchableOpacity
                             style={[styles.row, styles.rowLast]}
-                            onPress={() => setShowTimePicker(true)}
+                            onPress={() => {
+                                setShowDatePicker(false); // Close other picker first
+                                setShowTimePicker(true);
+                            }}
                         >
                             <Ionicons name="time-outline" size={20} color={Colors.dark.textSecondary} />
                             <Text style={styles.rowLabel}>Time</Text>
