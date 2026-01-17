@@ -5,7 +5,7 @@
  * Uses Ghost Scan (analyze history) OR 3-question wizard.
  */
 
-import { FEATURES } from '@/lib/config/feature-flags';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import * as tribunal from '@/lib/services/tribunal/engine';
 
 import type { ChallengeRecommendation } from '../challenges/types';
@@ -33,7 +33,7 @@ export interface WizardAnswers {
  * "Ghost Scan" - reads existing data without asking questions.
  */
 export async function analyzeHistory(userId: string): Promise<ChallengeRecommendation> {
-    if (!FEATURES.smart_screener.enabled) {
+    if (!isFeatureEnabled('smart_screener')) {
         return {
             templateId: null,
             confidence: 'low',

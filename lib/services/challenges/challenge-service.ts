@@ -9,7 +9,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { FEATURES } from '@/lib/config/feature-flags';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import * as pathfinder from '@/lib/services/paths/engine';
 import * as tribunal from '@/lib/services/tribunal/engine';
 
@@ -39,7 +39,7 @@ function getUserChallengeKey(userId: string): string {
  * Get all available challenge templates
  */
 export function getAllTemplates(): ChallengeTemplate[] {
-    if (!FEATURES.challenges.enabled) return [];
+    if (!isFeatureEnabled('challenges')) return [];
     return ALL_CHALLENGE_TEMPLATES;
 }
 
@@ -47,7 +47,7 @@ export function getAllTemplates(): ChallengeTemplate[] {
  * Get a specific template by ID
  */
 export function getTemplate(templateId: string): ChallengeTemplate | undefined {
-    if (!FEATURES.challenges.enabled) return undefined;
+    if (!isFeatureEnabled('challenges')) return undefined;
     return getTemplateById(templateId);
 }
 
@@ -62,7 +62,7 @@ export async function joinChallenge(
     userId: string,
     templateId: string
 ): Promise<UserChallenge | null> {
-    if (!FEATURES.challenges.enabled) {
+    if (!isFeatureEnabled('challenges')) {
         console.warn('[ChallengeService] Challenges are disabled');
         return null;
     }
@@ -130,7 +130,7 @@ export async function joinChallenge(
  * Get all challenges for a user
  */
 export async function getUserChallenges(userId: string): Promise<UserChallenge[]> {
-    if (!FEATURES.challenges.enabled) return [];
+    if (!isFeatureEnabled('challenges')) return [];
 
     try {
         const key = getUserChallengeKey(userId);
@@ -190,7 +190,7 @@ export async function getChallengeProgress(
  * Called when a workout is completed
  */
 export async function recordWorkoutForChallenge(userId: string): Promise<void> {
-    if (!FEATURES.challenges.enabled) return;
+    if (!isFeatureEnabled('challenges')) return;
 
     const today = new Date().toISOString().split('T')[0];
     const challenges = await getActiveChallenges(userId);
@@ -218,7 +218,7 @@ export async function recordWorkoutForChallenge(userId: string): Promise<void> {
 export async function checkDailyProgress(
     userId: string
 ): Promise<{ failed: string[]; continued: string[] }> {
-    if (!FEATURES.challenges.enabled) return { failed: [], continued: [] };
+    if (!isFeatureEnabled('challenges')) return { failed: [], continued: [] };
 
     const challenges = await getActiveChallenges(userId);
     const yesterday = getYesterday();
@@ -282,7 +282,7 @@ export async function checkDailyProgress(
 export async function checkPRMilestones(
     userId: string
 ): Promise<{ unlocked: string[]; currentTotal: number }> {
-    if (!FEATURES.challenges.enabled) return { unlocked: [], currentTotal: 0 };
+    if (!isFeatureEnabled('challenges')) return { unlocked: [], currentTotal: 0 };
 
     const challenges = await getActiveChallenges(userId);
     const unlocked: string[] = [];
