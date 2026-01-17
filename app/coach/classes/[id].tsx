@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ScheduleSessionModal } from '@/components/classes/ScheduleSessionModal';
 import { Colors } from '@/constants/theme';
 import {
     cancelClassSession,
@@ -25,6 +26,7 @@ import {
     ClassTemplate,
     completeClassSession,
     createClassSession,
+    CreateClassSessionInput,
     deleteClassSession,
     deleteClassTemplate,
     getClassTemplate,
@@ -39,6 +41,7 @@ export default function ClassDetailScreen() {
     const [template, setTemplate] = useState<ClassTemplate | null>(null);
     const [sessions, setSessions] = useState<ClassSession[]>([]);
     const [loading, setLoading] = useState(true);
+    const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
 
     useEffect(() => {
         loadData();
@@ -90,23 +93,20 @@ export default function ClassDetailScreen() {
         );
     };
 
-    const handleScheduleSession = async () => {
-        if (!template) return;
+    const handleOpenScheduleModal = () => {
+        setScheduleModalVisible(true);
+    };
 
-        // Quick schedule for tomorrow at 9 AM (in real app, show date picker)
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(9, 0, 0, 0);
-
-        const result = await createClassSession({
-            templateId: template.id,
-            startAt: tomorrow,
-        });
-
+    const handleScheduleSession = async (input: CreateClassSessionInput) => {
+        const result = await createClassSession(input);
         if (result.error) {
             Alert.alert('Error', result.error);
         } else {
-            Alert.alert('Scheduled!', `Class scheduled for ${tomorrow.toLocaleDateString()}`);
+            setScheduleModalVisible(false);
+            Alert.alert(
+                'Scheduled!',
+                `Class scheduled for ${input.startAt.toLocaleDateString()} at ${input.startAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+            );
             loadData();
         }
     };
@@ -365,11 +365,19 @@ export default function ClassDetailScreen() {
 
             {/* Schedule Button */}
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.scheduleButton} onPress={handleScheduleSession}>
+                <TouchableOpacity style={styles.scheduleButton} onPress={handleOpenScheduleModal}>
                     <Ionicons name="calendar" size={20} color="#fff" />
                     <Text style={styles.scheduleButtonText}>Schedule Class</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Schedule Session Modal */}
+            <ScheduleSessionModal
+                visible={scheduleModalVisible}
+                template={template}
+                onSchedule={handleScheduleSession}
+                onClose={() => setScheduleModalVisible(false)}
+            />
         </SafeAreaView>
     );
 }
