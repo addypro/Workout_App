@@ -234,31 +234,59 @@ export function ScheduleSessionModal({
                     </View>
                 </View>
 
-                {/* Date Picker */}
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        minimumDate={new Date()}
-                        onChange={(event, selectedDate) => {
-                            setShowDatePicker(Platform.OS === 'ios');
-                            if (selectedDate) setDate(selectedDate);
-                        }}
-                    />
-                )}
+                {/* 
+                 * SINGLE PICKER AREA - iOS UX Best Practice
+                 * Only ONE picker is ever rendered at a time.
+                 * The picker area is always in the same location for visual consistency.
+                 */}
+                {(showDatePicker || showTimePicker) && (
+                    <View style={styles.pickerContainer}>
+                        <View style={styles.pickerHeader}>
+                            <Text style={styles.pickerTitle}>
+                                {showDatePicker ? 'Select Date' : 'Select Time'}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowDatePicker(false);
+                                    setShowTimePicker(false);
+                                }}
+                                style={styles.pickerDoneButton}
+                            >
+                                <Text style={styles.pickerDoneText}>Done</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                {/* Time Picker */}
-                {showTimePicker && (
-                    <DateTimePicker
-                        value={time}
-                        mode="time"
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        onChange={(event, selectedTime) => {
-                            setShowTimePicker(Platform.OS === 'ios');
-                            if (selectedTime) setTime(selectedTime);
-                        }}
-                    />
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={date}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                minimumDate={new Date()}
+                                onChange={(event, selectedDate) => {
+                                    if (Platform.OS === 'android') {
+                                        setShowDatePicker(false);
+                                    }
+                                    if (selectedDate) setDate(selectedDate);
+                                }}
+                                style={styles.picker}
+                            />
+                        )}
+
+                        {showTimePicker && (
+                            <DateTimePicker
+                                value={time}
+                                mode="time"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                onChange={(event, selectedTime) => {
+                                    if (Platform.OS === 'android') {
+                                        setShowTimePicker(false);
+                                    }
+                                    if (selectedTime) setTime(selectedTime);
+                                }}
+                                style={styles.picker}
+                            />
+                        )}
+                    </View>
                 )}
             </View>
         </Modal>
@@ -377,5 +405,38 @@ const styles = StyleSheet.create({
     inputWide: {
         flex: 1,
         textAlign: 'left',
+    },
+    // Picker container styles - iOS UX best practice
+    pickerContainer: {
+        backgroundColor: Colors.dark.card,
+        borderTopWidth: 1,
+        borderTopColor: Colors.dark.border,
+        paddingBottom: Spacing.lg,
+    },
+    pickerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.dark.border,
+    },
+    pickerTitle: {
+        ...Typography.headline,
+        color: Colors.dark.text,
+        fontWeight: '600',
+    },
+    pickerDoneButton: {
+        paddingVertical: Spacing.xs,
+        paddingHorizontal: Spacing.md,
+    },
+    pickerDoneText: {
+        ...Typography.body,
+        color: Colors.dark.primary,
+        fontWeight: '600',
+    },
+    picker: {
+        backgroundColor: Colors.dark.card,
     },
 });
