@@ -96,10 +96,15 @@ export async function getMyUpcomingSessions(
     page: number = 1,
     pageSize: number = 20
 ): Promise<ServiceResult<PaginatedResult<ClassSession>>> {
+    // Graceful degradation when feature is disabled
+    if (!isFeatureEnabled('workout_classes')) {
+        return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
+    }
+
     try {
         const { data: user } = await supabase.auth.getUser();
         if (!user?.user?.id) {
-            return { data: null, error: 'Not authenticated' };
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         const { data: coach } = await supabase
@@ -109,7 +114,8 @@ export async function getMyUpcomingSessions(
             .single();
 
         if (!coach) {
-            return { data: null, error: 'Coach profile not found' };
+            // Not a coach - return empty gracefully
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         const now = new Date().toISOString();
@@ -134,8 +140,9 @@ export async function getMyUpcomingSessions(
             .range(from, to);
 
         if (error) {
-            console.error('[ClassSessions] List error:', error);
-            return { data: null, error: error.message };
+            // Graceful degradation: log warning but return empty
+            console.warn('[ClassSessions] List query failed (RLS or DB issue):', error.message);
+            return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
         }
 
         return {
@@ -149,8 +156,9 @@ export async function getMyUpcomingSessions(
             error: null,
         };
     } catch (e: any) {
-        console.error('[ClassSessions] List exception:', e);
-        return { data: null, error: e.message };
+        // Graceful degradation: log warning but return empty
+        console.warn('[ClassSessions] List exception (RLS or DB issue):', e.message);
+        return { data: { items: [], total: 0, page, pageSize, hasMore: false }, error: null };
     }
 }
 
