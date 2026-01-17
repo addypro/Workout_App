@@ -28,7 +28,9 @@ export type FeatureFlagName =
     // Weight Suggestion Engine (Phase 3)
     | 'weight_suggestions'
     // Workout Classes (Phase 3+)
-    | 'workout_classes';
+    | 'workout_classes'
+    // Protocol Engine (Research-Driven Progression)
+    | 'protocol_engine';
 
 export interface FeatureFlag {
     enabled: boolean;
@@ -79,6 +81,10 @@ export const FEATURES: Record<FeatureFlagName, FeatureFlag> = {
     // ========== WORKOUT CLASSES ==========
     /** Group workout classes for coaches */
     workout_classes: { enabled: __DEV__, rolloutPercent: 100 },
+
+    // ========== PROTOCOL ENGINE ==========
+    /** Research-driven progression engine */
+    protocol_engine: { enabled: __DEV__, rolloutPercent: 10 },
 };
 
 // ============================================

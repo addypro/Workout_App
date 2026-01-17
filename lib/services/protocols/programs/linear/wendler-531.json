@@ -1,0 +1,259 @@
+{
+  "protocol": {
+    "id": "wendler-531",
+    "name": "Wendler 5/3/1",
+    "version": "1.0.0",
+    "category": "LINEAR",
+    "description": "4-week percentage-based mesocycle using Training Max (90% of 1RM). Week 1: 5+ @ 65/75/85%, Week 2: 3+ @ 70/80/90%, Week 3: 5/3/1+ @ 75/85/95%, Week 4: Deload @ 40/50/60%. Add 5lb upper or 10lb lower per cycle. Last set is always AMRAP.",
+    "authors": ["Jim Wendler"],
+
+    "defaults": {
+      "increment": {
+        "type": "ABSOLUTE",
+        "upperBody": 5,
+        "lowerBody": 10,
+        "roundTo": 5
+      },
+      "deloadTrigger": 0,
+      "deloadFactor": 1.0,
+      "trainingMaxPercent": 90
+    },
+
+    "periodization": {
+      "type": "PERCENTAGE_CYCLE",
+      "cycleLength": 4,
+      "phases": [
+        {
+          "id": "week1",
+          "name": "5+ Week",
+          "week": 1,
+          "scheme": {
+            "sets": 3,
+            "reps": [5, 5, "5+"],
+            "percentages": [65, 75, 85]
+          }
+        },
+        {
+          "id": "week2",
+          "name": "3+ Week",
+          "week": 2,
+          "scheme": {
+            "sets": 3,
+            "reps": [3, 3, "3+"],
+            "percentages": [70, 80, 90]
+          }
+        },
+        {
+          "id": "week3",
+          "name": "5/3/1+ Week",
+          "week": 3,
+          "scheme": {
+            "sets": 3,
+            "reps": [5, 3, "1+"],
+            "percentages": [75, 85, 95]
+          }
+        },
+        {
+          "id": "week4",
+          "name": "Deload Week",
+          "week": 4,
+          "scheme": {
+            "sets": 3,
+            "reps": [5, 5, 5],
+            "percentages": [40, 50, 60]
+          }
+        }
+      ]
+    },
+
+    "rules": [
+      {
+        "id": "531-cycle-complete",
+        "name": "Cycle Complete - Add to Training Max",
+        "description": "After completing week 4 (deload), increment training max",
+        "priority": 90,
+        "enabled": true,
+        "trigger": {
+          "event": "CYCLE_COMPLETED",
+          "conditions": [
+            {
+              "type": "WEEK_COMPLETED",
+              "params": { "week": 4 }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "target": "TRAINING_MAX",
+            "amount": "$defaults.increment",
+            "roundTo": 5
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["wendler-531-book"]
+        }
+      },
+      {
+        "id": "531-amrap-progress",
+        "name": "AMRAP Performance Tracking",
+        "description": "Track AMRAP reps for estimated 1RM recalculation",
+        "priority": 80,
+        "enabled": true,
+        "trigger": {
+          "event": "SET_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_EXCEEDED",
+              "params": { "target": 1, "onSet": "AMRAP" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "Great AMRAP set! ${amrapReps} reps estimates 1RM of ${estimated1rm}lb",
+            "severity": "INFO"
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["wendler-531-book", "brzycki-1993"]
+        }
+      },
+      {
+        "id": "531-minimum-amrap",
+        "name": "AMRAP Minimum Check",
+        "description": "If AMRAP set achieves less than minimum reps, training max may be too high",
+        "priority": 85,
+        "enabled": true,
+        "trigger": {
+          "event": "SET_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": 3, "onSet": "AMRAP", "met": false }
+            }
+          ]
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "Consider resetting Training Max. AMRAP should yield at least 3 reps for sustainable progress.",
+            "severity": "WARNING",
+            "actionable": true
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["wendler-531-book"]
+        }
+      },
+      {
+        "id": "531-tm-reset",
+        "name": "Training Max Reset",
+        "description": "If multiple weeks of low AMRAP performance, reset TM",
+        "priority": 95,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "CONSECUTIVE_FAILURE",
+              "params": { "count": 2, "criteria": "amrap_below_minimum" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "MULTIPLY_WEIGHT",
+          "params": {
+            "target": "TRAINING_MAX",
+            "factor": 0.9,
+            "roundTo": 5
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["wendler-531-forever"]
+        }
+      },
+      {
+        "id": "531-joker-sets",
+        "name": "Joker Sets (Optional)",
+        "description": "If AMRAP exceeds 5 reps on 95% set, offer joker sets at 100-105%",
+        "priority": 70,
+        "enabled": false,
+        "trigger": {
+          "event": "SET_COMPLETED",
+          "conditions": [
+            {
+              "type": "WEEK_COMPLETED",
+              "params": { "week": 3 }
+            },
+            {
+              "type": "REPS_EXCEEDED",
+              "params": { "target": 5, "onSet": "AMRAP" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "Feeling strong? Consider a Joker Set at ${jokerWeight}lb",
+            "severity": "INFO",
+            "actionable": true
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["wendler-beyond-531"]
+        }
+      }
+    ],
+
+    "evidence": {
+      "grade": "B",
+      "sources": [
+        {
+          "id": "wendler-531-book",
+          "type": "EXPERT_OPINION",
+          "citation": "Wendler J. (2011). 5/3/1: The Simplest and Most Effective Training System to Increase Raw Strength, 2nd ed.",
+          "year": 2011,
+          "relevance": 1.0
+        },
+        {
+          "id": "wendler-531-forever",
+          "type": "EXPERT_OPINION",
+          "citation": "Wendler J. (2017). 5/3/1 Forever.",
+          "year": 2017,
+          "relevance": 0.9
+        },
+        {
+          "id": "wendler-beyond-531",
+          "type": "EXPERT_OPINION",
+          "citation": "Wendler J. (2013). Beyond 5/3/1.",
+          "year": 2013,
+          "relevance": 0.7
+        },
+        {
+          "id": "brzycki-1993",
+          "type": "RCT",
+          "citation": "Brzycki M. (1993). Strength Testing: Predicting a One-Rep Max from Reps-to-Fatigue. JOPERD.",
+          "year": 1993,
+          "relevance": 0.8
+        },
+        {
+          "id": "peterson-2006",
+          "type": "META_ANALYSIS",
+          "citation": "Peterson MD, et al. (2006). Progression of Volume Load and Muscular Adaptation During Resistance Exercise. Eur J Appl Physiol.",
+          "doi": "10.1007/s00421-005-0129-7",
+          "year": 2006,
+          "sampleSize": 2200,
+          "relevance": 0.6
+        }
+      ],
+      "reasoning": "Widely adopted intermediate/advanced program with strong practitioner support. Percentage-based approach is well-validated in periodization literature."
+    }
+  }
+}

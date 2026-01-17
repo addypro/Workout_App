@@ -1,0 +1,367 @@
+{
+  "protocol": {
+    "id": "gzclp",
+    "name": "GZCLP (GZCL Linear Progression)",
+    "version": "1.0.0",
+    "category": "LINEAR",
+    "description": "Tiered linear progression with stage transitions. T1 (main lift): 5x3+ → 6x2+ → 10x1+. T2 (secondary): 3x10 → 3x8 → 3x6. T3 (accessory): 3x15+. Fail a stage → advance to next. After Stage 3 failure, test 5RM and reset to Stage 1 at 85%.",
+    "authors": ["Cody Lefever (GZCL)"],
+
+    "defaults": {
+      "increment": {
+        "type": "ABSOLUTE",
+        "upperBody": 5,
+        "lowerBody": 10,
+        "roundTo": 5
+      },
+      "deloadTrigger": 1,
+      "deloadFactor": 0.85
+    },
+
+    "stages": {
+      "T1": [
+        {
+          "id": "t1-stage1",
+          "name": "T1 Stage 1",
+          "scheme": { "sets": 5, "reps": 3, "amrap": true }
+        },
+        {
+          "id": "t1-stage2",
+          "name": "T1 Stage 2",
+          "scheme": { "sets": 6, "reps": 2, "amrap": true }
+        },
+        {
+          "id": "t1-stage3",
+          "name": "T1 Stage 3",
+          "scheme": { "sets": 10, "reps": 1, "amrap": true }
+        }
+      ],
+      "T2": [
+        {
+          "id": "t2-stage1",
+          "name": "T2 Stage 1",
+          "scheme": { "sets": 3, "reps": 10, "amrap": false }
+        },
+        {
+          "id": "t2-stage2",
+          "name": "T2 Stage 2",
+          "scheme": { "sets": 3, "reps": 8, "amrap": false }
+        },
+        {
+          "id": "t2-stage3",
+          "name": "T2 Stage 3",
+          "scheme": { "sets": 3, "reps": 6, "amrap": false }
+        }
+      ],
+      "T3": [
+        {
+          "id": "t3-stage1",
+          "name": "T3 Stage 1",
+          "scheme": { "sets": 3, "reps": 15, "amrap": true }
+        }
+      ]
+    },
+
+    "rules": [
+      {
+        "id": "gzclp-t1-progress",
+        "name": "T1 Weight Progression",
+        "description": "Complete all T1 sets → add weight next session",
+        "priority": 80,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "target": "$stage.t1.sets", "tier": "T1" }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$stage.t1.reps", "onSet": "ALL", "tier": "T1" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "tier": "T1",
+            "amount": "$defaults.increment",
+            "roundTo": 5
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-t1-stage-advance",
+        "name": "T1 Stage Advance on Failure",
+        "description": "Fail to complete T1 volume → advance to next stage",
+        "priority": 90,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "STAGE_FAILED",
+              "params": { "tier": "T1" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "CHANGE_STAGE",
+          "params": {
+            "tier": "T1",
+            "direction": "NEXT"
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog", "gzcl-infographic"]
+        }
+      },
+      {
+        "id": "gzclp-t1-stage3-fail",
+        "name": "T1 Stage 3 Failure - Reset",
+        "description": "After Stage 3 failure, test 5RM and reset to Stage 1 at 85%",
+        "priority": 95,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "STAGE_FAILED",
+              "params": { "tier": "T1", "stage": "t1-stage3" }
+            }
+          ]
+        },
+        "effect": [
+          {
+            "type": "NOTIFY",
+            "params": {
+              "message": "Stage 3 complete! Test your 5RM next session to establish new baseline.",
+              "severity": "INFO",
+              "actionable": true
+            }
+          },
+          {
+            "type": "RESET_TO_BASELINE",
+            "params": {
+              "tier": "T1",
+              "test": "5RM",
+              "newWeightFactor": 0.85
+            }
+          },
+          {
+            "type": "CHANGE_STAGE",
+            "params": {
+              "tier": "T1",
+              "target": "t1-stage1"
+            }
+          }
+        ],
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-t2-progress",
+        "name": "T2 Weight Progression",
+        "description": "Complete all T2 sets → add weight next session",
+        "priority": 75,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "target": 3, "tier": "T2" }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$stage.t2.reps", "onSet": "ALL", "tier": "T2" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "tier": "T2",
+            "amount": "$defaults.increment",
+            "roundTo": 5
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-t2-stage-advance",
+        "name": "T2 Stage Advance on Failure",
+        "description": "Fail T2 volume → advance to next stage",
+        "priority": 85,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "STAGE_FAILED",
+              "params": { "tier": "T2" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "CHANGE_STAGE",
+          "params": {
+            "tier": "T2",
+            "direction": "NEXT"
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-t2-stage3-reset",
+        "name": "T2 Stage 3 Failure - Reset",
+        "description": "After T2 Stage 3 failure, reset to Stage 1 at 85%",
+        "priority": 92,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "STAGE_FAILED",
+              "params": { "tier": "T2", "stage": "t2-stage3" }
+            }
+          ]
+        },
+        "effect": [
+          {
+            "type": "MULTIPLY_WEIGHT",
+            "params": {
+              "tier": "T2",
+              "factor": 0.85,
+              "roundTo": 5
+            }
+          },
+          {
+            "type": "CHANGE_STAGE",
+            "params": {
+              "tier": "T2",
+              "target": "t2-stage1"
+            }
+          }
+        ],
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-t3-progress",
+        "name": "T3 Rep/Weight Progression",
+        "description": "T3 uses double progression: add reps until 25, then add weight and reset to 15",
+        "priority": 70,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_EXCEEDED",
+              "params": { "target": 25, "onSet": "AMRAP", "tier": "T3" }
+            }
+          ]
+        },
+        "effect": [
+          {
+            "type": "ADD_WEIGHT",
+            "params": {
+              "tier": "T3",
+              "amount": 5,
+              "roundTo": 5
+            }
+          },
+          {
+            "type": "NOTIFY",
+            "params": {
+              "message": "T3 progression: Weight increased, target reps reset to 15",
+              "severity": "INFO"
+            }
+          }
+        ],
+        "evidence": {
+          "grade": "C",
+          "sources": ["gzcl-blog"]
+        }
+      },
+      {
+        "id": "gzclp-amrap-1rm-update",
+        "name": "AMRAP Estimated 1RM Update",
+        "description": "Update estimated 1RM based on AMRAP performance",
+        "priority": 60,
+        "enabled": true,
+        "trigger": {
+          "event": "SET_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_EXCEEDED",
+              "params": { "target": 1, "onSet": "AMRAP" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "AMRAP set: ${amrapReps} reps at ${weight}lb (est. 1RM: ${estimated1rm}lb)",
+            "severity": "INFO"
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["brzycki-1993"]
+        }
+      }
+    ],
+
+    "evidence": {
+      "grade": "C",
+      "sources": [
+        {
+          "id": "gzcl-blog",
+          "type": "EXPERT_OPINION",
+          "citation": "Lefever C. GZCLP Infographic and Program Guide. swoleateveryheight.blogspot.com",
+          "year": 2016,
+          "relevance": 1.0
+        },
+        {
+          "id": "gzcl-infographic",
+          "type": "EXPERT_OPINION",
+          "citation": "Lefever C. GZCLP Infographic. Reddit r/gzcl",
+          "year": 2016,
+          "relevance": 0.9
+        },
+        {
+          "id": "brzycki-1993",
+          "type": "RCT",
+          "citation": "Brzycki M. (1993). Strength Testing: Predicting a One-Rep Max from Reps-to-Fatigue. JOPERD.",
+          "year": 1993,
+          "relevance": 0.8
+        },
+        {
+          "id": "helms-2016",
+          "type": "SYSTEMATIC_REVIEW",
+          "citation": "Helms ER, et al. (2016). Application of the Repetitions in Reserve-Based Rating of Perceived Exertion Scale for Resistance Training. Strength Cond J.",
+          "year": 2016,
+          "relevance": 0.6
+        }
+      ],
+      "reasoning": "Popular linear progression variant with built-in periodization through stage changes. Less research backing than StrongLifts/5/3/1 but strong community validation."
+    }
+  }
+}

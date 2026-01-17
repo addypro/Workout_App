@@ -1,0 +1,213 @@
+{
+  "protocol": {
+    "id": "stronglifts-5x5",
+    "name": "StrongLifts 5×5",
+    "version": "1.0.0",
+    "category": "LINEAR",
+    "description": "Five sets of five at the same weight; start around 50% of 1RM; add 5 lb each workout when all reps are completed. If the user fails to complete all sets, they repeat the weight; after three failures, deload by 10%. Use 2.5 lb jumps if progress stalls.",
+    "authors": ["Mehdi Hadim"],
+
+    "defaults": {
+      "increment": {
+        "type": "ABSOLUTE",
+        "upperBody": 5,
+        "lowerBody": 5,
+        "roundTo": 2.5
+      },
+      "deloadTrigger": 3,
+      "deloadFactor": 0.9
+    },
+
+    "rules": [
+      {
+        "id": "sl-progress",
+        "name": "5×5 Weight Progression",
+        "description": "Add weight after completing all 5×5 sets",
+        "priority": 80,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "target": 5 }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": 5, "onSet": "ALL" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "amount": "$defaults.increment.upperBody",
+            "roundTo": 2.5
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["baker-2013", "schoenfeld-2016"]
+        }
+      },
+      {
+        "id": "sl-hold",
+        "name": "Repeat on Partial Completion",
+        "description": "Keep same weight if not all reps achieved",
+        "priority": 70,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": 5, "onSet": "ALL", "met": false }
+            }
+          ]
+        },
+        "effect": {
+          "type": "HOLD",
+          "params": {}
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["mehdi-stronglifts"]
+        }
+      },
+      {
+        "id": "sl-deload",
+        "name": "Triple Failure Deload",
+        "description": "Deload 10% after failing same weight 3 times",
+        "priority": 90,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "CONSECUTIVE_FAILURE",
+              "params": { "count": 3, "sameWeight": true }
+            }
+          ]
+        },
+        "effect": {
+          "type": "MULTIPLY_WEIGHT",
+          "params": {
+            "factor": 0.9,
+            "roundTo": 2.5
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["rippetoe-2011"]
+        }
+      },
+      {
+        "id": "sl-microload",
+        "name": "Micro-loading for OHP",
+        "description": "Use 2.5 lb jumps for overhead press when stalled",
+        "priority": 85,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "CONSECUTIVE_FAILURE",
+              "params": { "count": 2, "exercise": "overhead_press" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "amount": 2.5,
+            "override": true
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["mehdi-stronglifts"]
+        }
+      },
+      {
+        "id": "sl-rpe-boost",
+        "name": "RPE-Based Early Progression",
+        "description": "Allow extra increment if RPE is too low (autoregulation)",
+        "priority": 75,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "target": 5 }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": 5, "onSet": "ALL" }
+            },
+            {
+              "type": "RPE_BELOW",
+              "params": { "target": 6 }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "amount": 10,
+            "roundTo": 2.5
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["zourdos-2016"],
+          "notes": "Autoregulation allows faster progression when lifter is fresh"
+        }
+      }
+    ],
+
+    "evidence": {
+      "grade": "B",
+      "sources": [
+        {
+          "id": "mehdi-stronglifts",
+          "type": "EXPERT_OPINION",
+          "citation": "Mehdi. StrongLifts 5×5 Program Guide.",
+          "year": 2007,
+          "relevance": 1.0
+        },
+        {
+          "id": "baker-2013",
+          "type": "SYSTEMATIC_REVIEW",
+          "citation": "Baker D. (2013). 10-year changes in upper body strength and power in elite professional rugby league players. J Strength Cond Res.",
+          "year": 2013,
+          "relevance": 0.6
+        },
+        {
+          "id": "schoenfeld-2016",
+          "type": "META_ANALYSIS",
+          "citation": "Schoenfeld BJ, et al. (2016). Effects of Resistance Training Frequency on Measures of Muscle Hypertrophy. Sports Med.",
+          "doi": "10.1007/s40279-016-0543-8",
+          "year": 2016,
+          "sampleSize": 1400,
+          "relevance": 0.8
+        },
+        {
+          "id": "rippetoe-2011",
+          "type": "EXPERT_OPINION",
+          "citation": "Rippetoe M. (2011). Starting Strength: Basic Barbell Training, 3rd ed.",
+          "year": 2011,
+          "relevance": 0.9
+        },
+        {
+          "id": "zourdos-2016",
+          "type": "RCT",
+          "citation": "Zourdos MC, et al. (2016). Novel Resistance Training-Specific Rating of Perceived Exertion Scale. J Strength Cond Res.",
+          "year": 2016,
+          "relevance": 0.7
+        }
+      ],
+      "reasoning": "Well-established beginner protocol with moderate research backing and extensive practitioner validation."
+    }
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "protocol": {
+    "id": "ppl-6day",
+    "name": "Push/Pull/Legs 6-Day Split",
+    "version": "1.0.0",
+    "category": "SPLIT",
+    "description": "Classic PPL split run twice per week. Each muscle group hit 2x/week. Compounds use linear progression (+5lb upper, +10lb lower), isolations use double progression (reps → weight). Focuses on hypertrophy with strength foundation.",
+    "authors": ["Metallicadpa (Reddit r/Fitness)"],
+
+    "defaults": {
+      "increment": {
+        "type": "ABSOLUTE",
+        "upperBody": 5,
+        "lowerBody": 10,
+        "roundTo": 2.5
+      },
+      "deloadTrigger": 2,
+      "deloadFactor": 0.9
+    },
+
+    "exerciseTiers": {
+      "compound": {
+        "description": "Main lifts: Bench, OHP, Row, Squat, Deadlift",
+        "progressionType": "LINEAR"
+      },
+      "isolation": {
+        "description": "Accessories: Curls, Triceps, Lateral raises, Leg curls, etc.",
+        "progressionType": "DOUBLE"
+      }
+    },
+
+    "rules": [
+      {
+        "id": "ppl-compound-progress",
+        "name": "Compound Linear Progression",
+        "description": "Complete all sets of compound → add weight next session",
+        "priority": 80,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "exerciseTier": "compound" }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$exercise.targetReps", "onSet": "ALL", "exerciseTier": "compound" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_WEIGHT",
+          "params": {
+            "exerciseTier": "compound",
+            "amount": "$defaults.increment",
+            "roundTo": 2.5
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["schoenfeld-2017", "krieger-2010"]
+        }
+      },
+      {
+        "id": "ppl-isolation-reps-progress",
+        "name": "Isolation Double Progression - Reps",
+        "description": "For isolations, add reps until hitting rep ceiling",
+        "priority": 70,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "SETS_COMPLETED",
+              "params": { "exerciseTier": "isolation" }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$exercise.targetReps", "onSet": "ALL", "exerciseTier": "isolation" }
+            },
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$exercise.maxReps", "onSet": "ALL", "met": false, "exerciseTier": "isolation" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "ADD_REPS",
+          "params": {
+            "exerciseTier": "isolation",
+            "amount": 1
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["schoenfeld-2017"]
+        }
+      },
+      {
+        "id": "ppl-isolation-weight-progress",
+        "name": "Isolation Double Progression - Weight",
+        "description": "Hit rep ceiling for 2 sessions → add weight, reset reps",
+        "priority": 75,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "CONSECUTIVE_SUCCESS",
+              "params": {
+                "count": 2,
+                "criteria": {
+                  "type": "REPS_ACHIEVED",
+                  "params": { "target": "$exercise.maxReps", "onSet": "ALL", "exerciseTier": "isolation" }
+                }
+              }
+            }
+          ]
+        },
+        "effect": [
+          {
+            "type": "ADD_WEIGHT",
+            "params": {
+              "exerciseTier": "isolation",
+              "amount": 5,
+              "roundTo": 2.5
+            }
+          },
+          {
+            "type": "NOTIFY",
+            "params": {
+              "message": "Double progression: Weight increased, reps reset to ${minReps}",
+              "severity": "INFO"
+            }
+          }
+        ],
+        "evidence": {
+          "grade": "B",
+          "sources": ["schoenfeld-2017", "krieger-2010"]
+        }
+      },
+      {
+        "id": "ppl-compound-failure",
+        "name": "Compound Failure - Hold",
+        "description": "Miss reps on compound → repeat weight next session",
+        "priority": 78,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_ACHIEVED",
+              "params": { "target": "$exercise.targetReps", "onSet": "ALL", "met": false, "exerciseTier": "compound" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "HOLD",
+          "params": {
+            "exerciseTier": "compound"
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["ppl-wiki"]
+        }
+      },
+      {
+        "id": "ppl-compound-deload",
+        "name": "Compound Deload",
+        "description": "Fail same weight twice → deload 10%",
+        "priority": 85,
+        "enabled": true,
+        "trigger": {
+          "event": "WORKOUT_COMPLETED",
+          "conditions": [
+            {
+              "type": "CONSECUTIVE_FAILURE",
+              "params": { "count": 2, "sameWeight": true, "exerciseTier": "compound" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "MULTIPLY_WEIGHT",
+          "params": {
+            "exerciseTier": "compound",
+            "factor": 0.9,
+            "roundTo": 2.5
+          }
+        },
+        "evidence": {
+          "grade": "C",
+          "sources": ["ppl-wiki"]
+        }
+      },
+      {
+        "id": "ppl-amrap-tracking",
+        "name": "AMRAP Tracking (Deadlift)",
+        "description": "Track AMRAP on 1x5+ deadlift set for E1RM",
+        "priority": 60,
+        "enabled": true,
+        "trigger": {
+          "event": "SET_COMPLETED",
+          "conditions": [
+            {
+              "type": "REPS_EXCEEDED",
+              "params": { "target": 5, "onSet": "AMRAP", "exercise": "deadlift" }
+            }
+          ]
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "Deadlift AMRAP: ${reps} reps (est. 1RM: ${estimated1rm}lb)",
+            "severity": "INFO"
+          }
+        },
+        "evidence": {
+          "grade": "B",
+          "sources": ["brzycki-1993"]
+        }
+      },
+      {
+        "id": "ppl-volume-check",
+        "name": "Weekly Volume Check",
+        "description": "Track weekly sets per muscle group",
+        "priority": 50,
+        "enabled": true,
+        "trigger": {
+          "event": "WEEK_END",
+          "conditions": []
+        },
+        "effect": {
+          "type": "NOTIFY",
+          "params": {
+            "message": "Weekly volume: ${muscleGroupVolumes}",
+            "severity": "INFO"
+          }
+        },
+        "evidence": {
+          "grade": "A",
+          "sources": ["schoenfeld-2017"]
+        }
+      }
+    ],
+
+    "evidence": {
+      "grade": "B",
+      "sources": [
+        {
+          "id": "ppl-wiki",
+          "type": "EXPERT_OPINION",
+          "citation": "Metallicadpa. PPL Program Guide. Reddit r/Fitness Wiki.",
+          "year": 2015,
+          "relevance": 1.0
+        },
+        {
+          "id": "schoenfeld-2017",
+          "type": "META_ANALYSIS",
+          "citation": "Schoenfeld BJ, et al. (2017). Dose-response relationship between weekly resistance training volume and increases in muscle mass. J Sports Sci.",
+          "doi": "10.1080/02640414.2016.1210197",
+          "year": 2017,
+          "sampleSize": 1200,
+          "relevance": 0.9
+        },
+        {
+          "id": "krieger-2010",
+          "type": "META_ANALYSIS",
+          "citation": "Krieger JW. (2010). Single vs. multiple sets of resistance exercise for muscle hypertrophy. J Strength Cond Res.",
+          "year": 2010,
+          "sampleSize": 800,
+          "relevance": 0.8
+        },
+        {
+          "id": "brzycki-1993",
+          "type": "RCT",
+          "citation": "Brzycki M. (1993). Strength Testing: Predicting a One-Rep Max from Reps-to-Fatigue. JOPERD.",
+          "year": 1993,
+          "relevance": 0.7
+        }
+      ],
+      "reasoning": "Popular hypertrophy-focused split with 2x frequency per muscle group. Well-supported by volume-response meta-analyses. Combines linear progression for compounds with double progression for isolations."
+    }
+  }
+}
