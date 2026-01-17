@@ -1,3 +1,4 @@
+import { UpcomingClassesCard } from '@/components/classes/UpcomingClassesCard';
 import { ExpandableFAB } from '@/components/expandable-fab';
 import { MyProgramCard, type ProgramWithProgress } from '@/components/program';
 import { Screen } from '@/components/screen';
@@ -612,6 +613,9 @@ export default function ProgramsScreen() {
                 <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
               </View>
             </Pressable>
+
+            {/* Upcoming Classes (feature-gated inside component) */}
+            <UpcomingClassesCard />
 
             {inProgressWorkouts.length > 0 && (
               <View style={styles.section}>

@@ -32,14 +32,17 @@ export function UpcomingClassesCard({ onRefreshComplete }: Props) {
     const [sessions, setSessions] = useState<ClassSession[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Feature gate
-    if (!isFeatureEnabled('workout_classes')) {
-        return null;
-    }
+    // Check feature flag (must be after hooks per Rules of Hooks)
+    const featureEnabled = isFeatureEnabled('workout_classes');
 
     useEffect(() => {
-        loadSessions();
-    }, []);
+        // Only load if feature is enabled
+        if (featureEnabled) {
+            loadSessions();
+        } else {
+            setLoading(false);
+        }
+    }, [featureEnabled]);
 
     const loadSessions = async () => {
         const result = await getMyJoinedSessions();
@@ -50,7 +53,8 @@ export function UpcomingClassesCard({ onRefreshComplete }: Props) {
         onRefreshComplete?.();
     };
 
-    if (loading || sessions.length === 0) {
+    // Conditional returns AFTER all hooks
+    if (!featureEnabled || loading || sessions.length === 0) {
         return null;
     }
 

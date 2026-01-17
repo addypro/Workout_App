@@ -31,6 +31,7 @@ import { Screen } from '@/components/screen';
 import { SwipeTabs } from '@/components/swipe-tabs';
 import { Colors, Radius, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isFeatureEnabled } from '@/lib/config/feature-flags';
 import { createProgram } from '@/lib/db/storage';
 import {
   AthleteStatus,
@@ -139,13 +140,20 @@ export default function CoachTabScreen() {
       color: '#64D2FF',
       onPress: () => router.push('/coach/athletes' as any),
     },
-    {
+    // Only show Run Classes if feature is enabled
+    ...(isFeatureEnabled('workout_classes') ? [{
+      title: 'Run Classes',
+      subtitle: 'Group workouts',
+      icon: 'people-circle-outline',
+      color: '#BF5AF2',
+      onPress: () => router.push('/coach/classes' as any),
+    }] : [{
       title: 'Browse Programs',
       subtitle: 'Discover & adapt',
       icon: 'sparkles-outline',
       color: '#BF5AF2',
       onPress: () => router.push('/browse'),
-    },
+    }]),
   ];
 
   const styles = StyleSheet.create({
@@ -445,205 +453,205 @@ export default function CoachTabScreen() {
             />
           }
         >
-        {/* Trial Banner */}
-        {dashboard?.subscriptionTier === 'trial' && dashboard.trialDaysRemaining !== undefined && (
-          <View style={styles.trialBanner}>
-            <View style={styles.trialHeader}>
-              <Ionicons name="time-outline" size={24} color="#FFFFFF" />
-              <Text style={styles.trialTitle}>Free Trial</Text>
-            </View>
-            <Text style={styles.trialText}>
-              <Text style={styles.trialDays}>{dashboard.trialDaysRemaining} days</Text> remaining
-            </Text>
-            <TouchableOpacity style={styles.upgradeButton}>
-              <Text style={styles.upgradeButtonText}>View Plans</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Stats */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{dashboard?.currentAthleteCount || 0}</Text>
-            <Text style={styles.statLabel}>Athletes</Text>
-            <Text style={styles.statLimit}>of {dashboard?.maxAthletes || 50}</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{dashboard?.totalPrograms || 0}</Text>
-            <Text style={styles.statLabel}>Programs</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{dashboard?.activeAssignments || 0}</Text>
-            <Text style={styles.statLabel}>Active</Text>
-          </View>
-        </View>
-
-        {/* Quick Actions */}
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.actionsGrid}>
-          {quickActions.map((action, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.actionCard}
-              onPress={action.onPress}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}>
-                <Ionicons name={action.icon as any} size={24} color={action.color} />
+          {/* Trial Banner */}
+          {dashboard?.subscriptionTier === 'trial' && dashboard.trialDaysRemaining !== undefined && (
+            <View style={styles.trialBanner}>
+              <View style={styles.trialHeader}>
+                <Ionicons name="time-outline" size={24} color="#FFFFFF" />
+                <Text style={styles.trialTitle}>Free Trial</Text>
               </View>
-              <Text style={styles.actionTitle}>{action.title}</Text>
-              <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+              <Text style={styles.trialText}>
+                <Text style={styles.trialDays}>{dashboard.trialDaysRemaining} days</Text> remaining
+              </Text>
+              <TouchableOpacity style={styles.upgradeButton}>
+                <Text style={styles.upgradeButtonText}>View Plans</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {/* Stats */}
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>{dashboard?.currentAthleteCount || 0}</Text>
+              <Text style={styles.statLabel}>Athletes</Text>
+              <Text style={styles.statLimit}>of {dashboard?.maxAthletes || 50}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>{dashboard?.totalPrograms || 0}</Text>
+              <Text style={styles.statLabel}>Programs</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statValue}>{dashboard?.activeAssignments || 0}</Text>
+              <Text style={styles.statLabel}>Active</Text>
+            </View>
+          </View>
+
+          {/* Quick Actions */}
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.actionsGrid}>
+            {quickActions.map((action, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.actionCard}
+                onPress={action.onPress}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}>
+                  <Ionicons name={action.icon as any} size={24} color={action.color} />
+                </View>
+                <Text style={styles.actionTitle}>{action.title}</Text>
+                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Saved Library Section */}
+          <View style={styles.libraryHeader}>
+            <Text style={styles.sectionTitle}>My Library</Text>
+            <TouchableOpacity onPress={() => router.push('/coach/programs' as any)}>
+              <Text style={[styles.viewAllText, { marginTop: 0 }]}>View All</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          </View>
 
-        {/* Saved Library Section */}
-        <View style={styles.libraryHeader}>
-          <Text style={styles.sectionTitle}>My Library</Text>
-          <TouchableOpacity onPress={() => router.push('/coach/programs' as any)}>
-            <Text style={[styles.viewAllText, { marginTop: 0 }]}>View All</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Library Tabs */}
+          <View style={styles.libraryTabs}>
+            <TouchableOpacity
+              style={[styles.libraryTab, libraryTab === 'programs' && styles.libraryTabActive]}
+              onPress={() => setLibraryTab('programs')}
+            >
+              <Ionicons
+                name="document-text"
+                size={16}
+                color={libraryTab === 'programs' ? colors.tint : colors.textSecondary}
+              />
+              <Text style={[
+                styles.libraryTabText,
+                libraryTab === 'programs' && { color: colors.tint }
+              ]}>Programs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.libraryTab, libraryTab === 'quick' && styles.libraryTabActive]}
+              onPress={() => setLibraryTab('quick')}
+            >
+              <Ionicons
+                name="flash"
+                size={16}
+                color={libraryTab === 'quick' ? colors.tint : colors.textSecondary}
+              />
+              <Text style={[
+                styles.libraryTabText,
+                libraryTab === 'quick' && { color: colors.tint }
+              ]}>Quick Workouts</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Library Tabs */}
-        <View style={styles.libraryTabs}>
-          <TouchableOpacity
-            style={[styles.libraryTab, libraryTab === 'programs' && styles.libraryTabActive]}
-            onPress={() => setLibraryTab('programs')}
-          >
-            <Ionicons
-              name="document-text"
-              size={16}
-              color={libraryTab === 'programs' ? colors.tint : colors.textSecondary}
-            />
-            <Text style={[
-              styles.libraryTabText,
-              libraryTab === 'programs' && { color: colors.tint }
-            ]}>Programs</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.libraryTab, libraryTab === 'quick' && styles.libraryTabActive]}
-            onPress={() => setLibraryTab('quick')}
-          >
-            <Ionicons
-              name="flash"
-              size={16}
-              color={libraryTab === 'quick' ? colors.tint : colors.textSecondary}
-            />
-            <Text style={[
-              styles.libraryTabText,
-              libraryTab === 'quick' && { color: colors.tint }
-            ]}>Quick Workouts</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Programs List */}
-        {libraryTab === 'programs' ? (
-          <View style={styles.programsList}>
-            {savedPrograms.length > 0 ? (
-              savedPrograms.slice(0, 3).map((program) => (
-                <TouchableOpacity
-                  key={program.id}
-                  style={styles.programCard}
-                  onPress={() => router.push(`/coach/programs/builder?id=${program.id}` as any)}
-                >
-                  <View style={styles.programCardContent}>
-                    <View style={[styles.programIcon, { backgroundColor: colors.tint + '15' }]}>
-                      <Ionicons name="barbell" size={20} color={colors.tint} />
+          {/* Programs List */}
+          {libraryTab === 'programs' ? (
+            <View style={styles.programsList}>
+              {savedPrograms.length > 0 ? (
+                savedPrograms.slice(0, 3).map((program) => (
+                  <TouchableOpacity
+                    key={program.id}
+                    style={styles.programCard}
+                    onPress={() => router.push(`/coach/programs/builder?id=${program.id}` as any)}
+                  >
+                    <View style={styles.programCardContent}>
+                      <View style={[styles.programIcon, { backgroundColor: colors.tint + '15' }]}>
+                        <Ionicons name="barbell" size={20} color={colors.tint} />
+                      </View>
+                      <View style={styles.programInfo}>
+                        <Text style={styles.programName} numberOfLines={1}>{program.name}</Text>
+                        <Text style={styles.programMeta}>
+                          {program.durationWeeks ? `${program.durationWeeks} weeks` : 'Custom'} • {program.daysPerWeek || 3}x/week
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.assignButton}
+                        onPress={() => router.push(`/coach/assign-program?programId=${program.id}` as any)}
+                      >
+                        <Ionicons name="send" size={16} color={colors.tint} />
+                      </TouchableOpacity>
                     </View>
-                    <View style={styles.programInfo}>
-                      <Text style={styles.programName} numberOfLines={1}>{program.name}</Text>
-                      <Text style={styles.programMeta}>
-                        {program.durationWeeks ? `${program.durationWeeks} weeks` : 'Custom'} • {program.daysPerWeek || 3}x/week
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.assignButton}
-                      onPress={() => router.push(`/coach/assign-program?programId=${program.id}` as any)}
-                    >
-                      <Ionicons name="send" size={16} color={colors.tint} />
-                    </TouchableOpacity>
-                  </View>
-                </TouchableOpacity>
-              ))
-            ) : (
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <View style={styles.emptyLibrary}>
+                  <Ionicons name="folder-open-outline" size={40} color={colors.textTertiary} />
+                  <Text style={styles.emptyLibraryText}>No saved programs yet</Text>
+                  <TouchableOpacity
+                    style={styles.createLibraryButton}
+                    onPress={handleCreateProgram}
+                  >
+                    <Text style={styles.createLibraryButtonText}>Create Program</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={styles.programsList}>
               <View style={styles.emptyLibrary}>
-                <Ionicons name="folder-open-outline" size={40} color={colors.textTertiary} />
-                <Text style={styles.emptyLibraryText}>No saved programs yet</Text>
+                <Ionicons name="flash-outline" size={40} color={colors.textTertiary} />
+                <Text style={styles.emptyLibraryText}>No quick workouts yet</Text>
                 <TouchableOpacity
                   style={styles.createLibraryButton}
-                  onPress={handleCreateProgram}
+                  onPress={() => router.push('/coach/quick-workout' as any)}
                 >
-                  <Text style={styles.createLibraryButtonText}>Create Program</Text>
+                  <Text style={styles.createLibraryButtonText}>Create Quick Workout</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {/* Recent Athletes */}
+          <Text style={styles.sectionTitle}>Recent Athletes</Text>
+          <View style={styles.athletesList}>
+            {recentAthletes.length > 0 ? (
+              <>
+                {recentAthletes.map((athlete, index) => (
+                  <TouchableOpacity
+                    key={athlete.id}
+                    style={[
+                      styles.athleteRow,
+                      index === recentAthletes.length - 1 && { borderBottomWidth: 0 },
+                    ]}
+                    onPress={() => router.push(`/coach/athlete/${athlete.athleteUserId}` as any)}
+                  >
+                    <View style={styles.athleteAvatar}>
+                      <Ionicons name="person" size={20} color={colors.tint} />
+                    </View>
+                    <View style={styles.athleteInfo}>
+                      <Text style={styles.athleteName}>
+                        {athlete.athleteName || 'Athlete'}
+                      </Text>
+                      <Text style={styles.athleteStatus}>
+                        Joined {athlete.joinedAt?.toLocaleDateString() || 'recently'}
+                      </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity
+                  style={styles.viewAllButton}
+                  onPress={() => router.push('/coach/athletes' as any)}
+                >
+                  <Text style={styles.viewAllText}>View All Athletes</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <View style={styles.emptyState}>
+                <Ionicons name="people-outline" size={48} color={colors.textTertiary} />
+                <Text style={styles.emptyText}>
+                  No athletes yet.{'\n'}Invite your first athlete to get started!
+                </Text>
+                <TouchableOpacity
+                  style={[styles.upgradeButton, { backgroundColor: colors.tint, marginTop: Spacing.md }]}
+                  onPress={() => router.push('/coach/invite' as any)}
+                >
+                  <Text style={styles.upgradeButtonText}>Invite Athletes</Text>
                 </TouchableOpacity>
               </View>
             )}
           </View>
-        ) : (
-          <View style={styles.programsList}>
-            <View style={styles.emptyLibrary}>
-              <Ionicons name="flash-outline" size={40} color={colors.textTertiary} />
-              <Text style={styles.emptyLibraryText}>No quick workouts yet</Text>
-              <TouchableOpacity
-                style={styles.createLibraryButton}
-                onPress={() => router.push('/coach/quick-workout' as any)}
-              >
-                <Text style={styles.createLibraryButtonText}>Create Quick Workout</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-
-        {/* Recent Athletes */}
-        <Text style={styles.sectionTitle}>Recent Athletes</Text>
-        <View style={styles.athletesList}>
-          {recentAthletes.length > 0 ? (
-            <>
-              {recentAthletes.map((athlete, index) => (
-                <TouchableOpacity
-                  key={athlete.id}
-                  style={[
-                    styles.athleteRow,
-                    index === recentAthletes.length - 1 && { borderBottomWidth: 0 },
-                  ]}
-                  onPress={() => router.push(`/coach/athlete/${athlete.athleteUserId}` as any)}
-                >
-                  <View style={styles.athleteAvatar}>
-                    <Ionicons name="person" size={20} color={colors.tint} />
-                  </View>
-                  <View style={styles.athleteInfo}>
-                    <Text style={styles.athleteName}>
-                      {athlete.athleteName || 'Athlete'}
-                    </Text>
-                    <Text style={styles.athleteStatus}>
-                      Joined {athlete.joinedAt?.toLocaleDateString() || 'recently'}
-                    </Text>
-                  </View>
-                  <Ionicons name="chevron-forward" size={20} color={colors.textTertiary} />
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity
-                style={styles.viewAllButton}
-                onPress={() => router.push('/coach/athletes' as any)}
-              >
-                <Text style={styles.viewAllText}>View All Athletes</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <View style={styles.emptyState}>
-              <Ionicons name="people-outline" size={48} color={colors.textTertiary} />
-              <Text style={styles.emptyText}>
-                No athletes yet.{'\n'}Invite your first athlete to get started!
-              </Text>
-              <TouchableOpacity
-                style={[styles.upgradeButton, { backgroundColor: colors.tint, marginTop: Spacing.md }]}
-                onPress={() => router.push('/coach/invite' as any)}
-              >
-                <Text style={styles.upgradeButtonText}>Invite Athletes</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
         </ScrollView>
       </Screen>
     </SwipeTabs>
