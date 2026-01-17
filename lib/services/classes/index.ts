@@ -8,9 +8,15 @@
 // Export types
 export * from './types';
 
-// Service functions will be added in Phase 2
-// - Template CRUD
-// - Session scheduling
-// - Participant management
-// - Check-in flow
-// - Workout log management
+// Export template operations
+export * from './templates';
+
+// Export session operations
+export * from './sessions';
+
+// Export participant operations
+export * from './participants';
+
+// Export workout log operations
+export * from './logs';
+
