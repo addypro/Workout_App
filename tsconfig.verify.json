@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": true
+    },
+    "exclude": [
+        "supabase/functions/**",
+        "rn-progression-coach/**",
+        "scripts/**",
+        "node_modules/**"
+    ]
+}

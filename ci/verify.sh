@@ -50,11 +50,19 @@ run_if_exists "format:check"
 run_if_exists "lint"
 run_if_exists "typecheck"
 
-# If you don't have a typecheck script, fall back to tsc if TS is present
+# If you do not have a typecheck script, fall back to tsc if TS is present
 if ! script_exists "typecheck"; then
   if [ -f tsconfig.json ] && command -v npx >/dev/null 2>&1; then
-    echo "\n==> npx tsc --noEmit"
-    npx -y tsc --noEmit
+    echo ""
+    echo "==> TypeScript"
+
+    if [ -f tsconfig.verify.json ]; then
+      echo "==> npx tsc -p tsconfig.verify.json --noEmit"
+      npx -y tsc -p tsconfig.verify.json --noEmit
+    else
+      echo "==> npx tsc --noEmit"
+      npx -y tsc --noEmit
+    fi
   fi
 fi
 
