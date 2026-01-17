@@ -26,7 +26,9 @@ export type FeatureFlagName =
     | 'resume_hero'
     | 'voice_first'
     // Weight Suggestion Engine (Phase 3)
-    | 'weight_suggestions';
+    | 'weight_suggestions'
+    // Workout Classes (Phase 3+)
+    | 'workout_classes';
 
 export interface FeatureFlag {
     enabled: boolean;
@@ -73,6 +75,10 @@ export const FEATURES: Record<FeatureFlagName, FeatureFlag> = {
     // ========== WEIGHT SUGGESTION ENGINE ==========
     /** Weight suggestions based on E1RM/EWMA progression */
     weight_suggestions: { enabled: __DEV__, rolloutPercent: 100 },
+
+    // ========== WORKOUT CLASSES ==========
+    /** Group workout classes for coaches */
+    workout_classes: { enabled: __DEV__, rolloutPercent: 100 },
 };
 
 // ============================================
