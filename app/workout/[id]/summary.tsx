@@ -1,11 +1,12 @@
+// PostWorkoutSurvey removed with gamification service
+// PathProgressCard removed with paths service
 import { GymBusynessPrompt } from '@/components/gym/gym-busyness-prompt';
-import { PathProgressCard } from '@/components/paths/PathProgressCard';
 import { Screen } from '@/components/screen';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { PRCelebration } from '@/components/workout/pr-celebration';
-import { Colors, Radius, Shadows, Spacing, Typography } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ProgressionRecommendationCard } from '@/components/workout/progression-recommendation-card';
+import { Radius, Shadows, Spacing, Typography } from '@/constants/theme';
 import { useUserId } from '@/lib/context/auth-context';
 import { usePreferences } from '@/lib/context/preferences-context';
 import {
@@ -20,10 +21,16 @@ import {
   saveWorkoutToHistory,
   upsertProgramTemplate
 } from '@/lib/db/storage';
+import { invalidateHistoryCache } from '@/lib/hooks/use-history-swr';
+import { useThemeColors } from '@/lib/hooks/use-theme-colors';
 import { completeWorkout } from '@/lib/services/coach';
 import { getCachedWorkoutById, isOnline, queueWorkoutCompletion, startNetworkMonitoring } from '@/lib/services/offline/workout-cache';
+import type { PlanDelta } from '@/lib/services/paths/types';
+import { getProtocolInfo } from '@/lib/services/protocols/bridges';
 import { invalidateStatsCache } from '@/lib/services/stats';
 import { detectPRsLocal, type DetectedPR } from '@/lib/services/workout/pr-detector-local';
+
+
 import { supabase } from '@/lib/supabase/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAudioPlayer } from 'expo-audio';
@@ -65,8 +72,7 @@ export default function WorkoutSummaryScreen() {
   const workoutKey = assignedWorkoutId ?? String(id);
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const colors = useThemeColors();
   const { homeGym } = usePreferences();
   const userId = useUserId();
 
@@ -81,6 +87,9 @@ export default function WorkoutSummaryScreen() {
   const [actualSessionData, setActualSessionData] = useState<any | null>(null);
   const [detectedPRs, setDetectedPRs] = useState<DetectedPR[]>([]);
   const [pathProgress, setPathProgress] = useState<{ xpGained: number; nodesCompleted: string[] } | null>(null);
+  const [planDelta, setPlanDelta] = useState<PlanDelta | null>(null);
+  const [protocolInfo, setProtocolInfo] = useState<{ name: string; evidenceGrade?: 'A' | 'B' | 'C' | 'D'; progressionPattern?: string } | null>(null);
+  // survey removed with gamification service
   const prSound = useAudioPlayer('https://cdn.freesound.org/previews/411/411089_5121236-lq.mp3');
 
   // Animations
@@ -213,6 +222,19 @@ export default function WorkoutSummaryScreen() {
 
       const edits = await getPendingWorkoutEdits(program.userId, program.id);
       setTemplateEdits(edits);
+
+      // Load protocol info for this program
+      try {
+        const info = getProtocolInfo(program.id);
+        if (info && info.available) {
+          setProtocolInfo({
+            name: info.protocolName || 'Protocol',
+            evidenceGrade: info.evidenceGrade as 'A' | 'B' | 'C' | 'D' | undefined,
+          });
+        }
+      } catch (protocolError) {
+        console.log('[Summary] Protocol info load error:', protocolError);
+      }
     })();
   }, [id, workoutWeek, workoutDay, isAssignedWorkout, assignedWorkoutId, userId]);
 
@@ -226,7 +248,7 @@ export default function WorkoutSummaryScreen() {
     }
   }, [detectedPRs.length, prSound]);
 
-  // Load path progress from cache (set by handler after workout completion)
+  // Load path progress and plan delta from cache (set by handler after workout completion)
   useEffect(() => {
     (async () => {
       try {
@@ -240,6 +262,10 @@ export default function WorkoutSummaryScreen() {
             xpGained: result.xpGained,
             nodesCompleted: result.nodesCompleted,
           });
+          // Also load plan delta for progression recommendations
+          if (result.planDelta) {
+            setPlanDelta(result.planDelta);
+          }
         }
       } catch (error) {
         console.log('[Summary] Path progress load error:', error);
@@ -460,8 +486,11 @@ export default function WorkoutSummaryScreen() {
         console.log('[Summary] Path progress post-save load error:', e);
       }
 
-      // Invalidate stats cache so Stats tab shows fresh data
-      invalidateStatsCache();
+      // Invalidate caches so tabs show fresh data (Phase 9.1)
+      await Promise.all([
+        invalidateStatsCache(),
+        invalidateHistoryCache(),
+      ]);
     } catch (historyError) {
       console.error('Error saving to history:', historyError);
     }
@@ -488,6 +517,9 @@ export default function WorkoutSummaryScreen() {
     }
 
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+    // Navigate to tabs (survey removed with gamification service)
+    setSaving(false);
     router.replace('/(tabs)');
   };
 
@@ -633,12 +665,24 @@ export default function WorkoutSummaryScreen() {
           />
         </Animated.View>
 
-        {/* Path Progress Card */}
+        {/* Path Progress Card - REMOVED with paths service
         {pathProgress && pathProgress.xpGained > 0 && (
           <View style={styles.section}>
             <PathProgressCard
               xpGained={pathProgress.xpGained}
               nodesCompleted={pathProgress.nodesCompleted}
+            />
+          </View>
+        )}
+        */}
+
+        {/* Progression Recommendations */}
+        {planDelta && planDelta.type !== 'none' && (
+          <View style={styles.section}>
+            <ProgressionRecommendationCard
+              planDeltas={[planDelta]}
+              protocolInfo={protocolInfo || undefined}
+              protocolUsed={!!protocolInfo}
             />
           </View>
         )}

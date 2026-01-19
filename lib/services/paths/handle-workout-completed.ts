@@ -327,12 +327,18 @@ async function writeToSupabase(
             }
         }
 
-        // 4. Insert plan delta
+        // 4. Insert plan delta (skip for local workouts - they get queued for PathsSync)
+        // Local workouts have 'hist-*' IDs, but plan_deltas.workout_id expects UUID
         if (planDelta && planDelta.type !== 'none') {
-            const deltaResult = await insertPlanDelta(userId, workoutId, source, planDelta);
-            if (deltaResult.error) {
-                console.error('[HandleWorkout] Failed to insert plan delta:', deltaResult.error);
-                return false;
+            const isLocalWorkout = workoutId.startsWith('hist-');
+            if (isLocalWorkout) {
+                console.log('[HandleWorkout] Skipping plan delta insert for local workout (will sync later)');
+            } else {
+                const deltaResult = await insertPlanDelta(userId, workoutId, source, planDelta);
+                if (deltaResult.error) {
+                    console.error('[HandleWorkout] Failed to insert plan delta:', deltaResult.error);
+                    return false;
+                }
             }
         }
 
