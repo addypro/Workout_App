@@ -4,9 +4,15 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import 'dotenv/config';
 
-const supabaseUrl = 'https://dahuiaqdbaenlsiniykx.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhaHVpYXFkYmFlbmxzaW5peWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMjcwMDQsImV4cCI6MjA4MDkwMzAwNH0.I-I773D0fcyHQCI80warLU3kQJjVOdqsCSCzyszagZw';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY in .env');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -38,7 +44,7 @@ async function testSchema() {
       if (error && !error.message.includes('no rows')) {
         // RLS errors are expected for unauthenticated requests
         if (error.code === 'PGRST301' || error.message.includes('JWTExpired') ||
-            error.message.includes('permission denied') || error.code === '42501') {
+          error.message.includes('permission denied') || error.code === '42501') {
           console.log(`✅ ${table} - exists (RLS active)`);
           passed++;
         } else {
@@ -69,7 +75,7 @@ async function testSchema() {
         .limit(1);
 
       if (error && (error.code === 'PGRST301' || error.code === '42501' ||
-                    error.message.includes('permission'))) {
+        error.message.includes('permission'))) {
         console.log(`✅ ${view} - exists (RLS active)`);
         passed++;
       } else if (error) {
@@ -114,7 +120,7 @@ async function testSchema() {
       p_share_metrics: false
     });
     if (error && (error.code === '42501' || error.message.includes('permission') ||
-                  error.message.includes('Invalid or expired'))) {
+      error.message.includes('Invalid or expired'))) {
       console.log('✅ accept_coach_invite() - exists (requires auth/valid code)');
       passed++;
     } else if (error) {
